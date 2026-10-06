@@ -210,3 +210,14 @@ UI/controller/gameplay acceptance. Edward's installed 0.1.4 app was not replaced
 
 - Native PR #1 remains a draft. No automated, visual, hardware or gameplay tests
   were run. Owner manually upgrades from TROA, normally without uninstalling.
+
+## 2026-10-06 - Diagnose missing 0.1.5 templates
+
+- Screenshot plus actual read-only MCP status/list show 0.1.5 and only two generic
+  templates. STO read rejects controller_family as an unknown field. This is an
+  app validator regression, independent of whether a controller is connected.
+- Accept the already validated controller_family field in the final allowlist.
+  Improve catalog feedback with exact ID and validation error; retain all-or-
+  nothing persistence and hardware-model compatibility checks.
+- Bump to 0.1.6 for a corrected installer. Build/release/site delivery are pending.
+  No tests or user mapping changes; current installation remains untouched.

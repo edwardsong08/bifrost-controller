@@ -4,9 +4,23 @@
 
 Build Bifrost Controller, TROA's modern desktop controller mapping app alongside Bifrost Server Manager in the TROA gaming software ecosystem, based on Edward's AntiMicroX fork. Implementation of the Windows preview is authorized.
 
+## 0.1.6 template validation correction - 2026-10-06
+
+Owner's 0.1.5 screenshot and actual read-only MCP metadata show only Desktop and
+Browser templates. The validator checks controller_family values but omitted the
+same field from its final allowed-field set. Every game/Steam template is therefore
+rejected, and catalog download fails atomically. Actual MCP read of the STO template
+reports Unknown profile field: controller_family. Fix the allowed-field set and
+report the exact template/validation error for future rejected downloads. Preserve
+strict unknown-field rejection, atomic catalog persistence and controller-model
+compatibility. Prepare 0.1.6 installer; build/publication/site delivery are pending.
+No automated, visual, hardware or gameplay tests are authorized. Do not install or
+restart the owner's app; he upgrades manually. Native PR #1 remains draft.
+
 ## Current audit implementation — 2026-10-06
 
-Version 0.1.5 is being prepared on codex/troa-controller-mapper. Edward requested
+Version 0.1.5 was released on codex/troa-controller-mapper; 0.1.6 corrects its
+template-validation regression. Edward requested
 a fresh task-based UI, full source audit, Apply in Settings, Xbox plus both Valve
 Steam Controller hardware generations, STO layouts, app-update popups and removal
 of language mode. English-only startup retires the previous Language preference.

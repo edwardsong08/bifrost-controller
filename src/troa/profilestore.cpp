@@ -186,8 +186,12 @@ QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
         const auto profile = value.toObject();
         const auto id = profile.value("id").toString();
         const auto validation = validate(profile);
-        if (!id.startsWith("builtin-") || ids.contains(id) || !validation.isEmpty())
-            return failure("These templates need a newer app or contain invalid data. Existing profiles were kept.");
+        if (!id.startsWith("builtin-"))
+            return failure("Community template IDs must start with builtin-. Existing profiles were kept.");
+        if (ids.contains(id))
+            return failure("Duplicate community template: " + id + ". Existing profiles were kept.");
+        if (!validation.isEmpty())
+            return failure("Community template " + id + ": " + validation + " Existing profiles were kept.");
         ids.insert(id);
     }
     if (!QDir().mkpath(dataDirectory()))
@@ -320,8 +324,9 @@ QString ProfileStore::validate(const QJsonObject &profile)
             if (!fields.contains(field))
                 return "Unknown binding field: " + field;
     }
-    const QSet<QString> fields = {"id",        "name",     "description", "category", "controller", "schema_version",
-                                  "dead_zone", "bindings", "layouts"};
+    const QSet<QString> fields = {
+        "id",        "name",     "description", "category", "controller", "controller_family", "schema_version",
+        "dead_zone", "bindings", "layouts"};
     for (const auto &field : profile.keys())
         if (!fields.contains(field))
             return "Unknown profile field: " + field;
