@@ -1,5 +1,23 @@
 # Work log
 
+## 2026-10-06 - Public Windows preview release
+
+- Owner explicitly authorized installer delivery from the live TROA site.
+  Published prerelease v0.1.2-preview at exact built commit
+  c0a8d9837ebf743107ca52fa52cbbbe773855184. Included installer, portable ZIP,
+  corresponding GPL source ZIP and SHA256SUMS.txt; all uploaded asset digests
+  match local originals. Publication did not rebuild or test the application.
+- Public release URL: https://github.com/edwardsong08/bifrost-controller/releases/tag/v0.1.2-preview.
+  Installer is 16,876,924 bytes; SHA256 remains
+  d38fd60c9e68fc820404b0e94cae4333e73b7027577d5b23ab810fce2b9d9b75.
+  Authenticode status is NotSigned. Signing remains future release work.
+- Confirmed the exact build workflow enables CHECK_FOR_UPDATES. The inherited
+  startup checker displays a download button for a newer stable version and
+  opens its GitHub release page; it does not install updates. Prereleases are
+  excluded from that stable endpoint. Bundled templates are not remotely synced.
+- Website publication follow-up is tracked separately; delivery is verified
+  through the deployed page/download response, not inferred from this release.
+
 ## 2026-10-06 - Bifrost Controller preview installed and opened
 
 - Renamed the personal fork to edwardsong08/bifrost-controller and updated origin, product URLs, and draft PR #1; permissions remain unchanged.

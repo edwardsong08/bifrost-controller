@@ -106,6 +106,19 @@ Windows 0.1.2 compilation and packaging succeeded in GitHub Actions run 37411297
 
 ## Current delivery - 2026-10-06
 
+- Owner explicitly authorized making the Windows installer available on the live
+  TROA site. Published GitHub prerelease `v0.1.2-preview` at the exact built
+  commit `c0a8d9837ebf743107ca52fa52cbbbe773855184`, containing installer,
+  portable ZIP, corresponding source ZIP and SHA256SUMS.txt. All GitHub asset
+  digests match local originals. No rebuild or additional tests were performed.
+- The website follow-up pins its download to that release; live delivery must
+  be verified independently. Earlier notes withholding publication describe
+  their historical authorization state.
+- The compiled preview enables CHECK_FOR_UPDATES. At startup it checks the
+  latest stable GitHub release and exposes a download-page button for a newer
+  version; it does not install updates. Prereleases are excluded from this
+  stable check. Profile templates are bundled with the application, not synced
+  remotely. Preview-channel updating and curated catalog delivery are future work.
 - Personal repository is now edwardsong08/bifrost-controller; draft PR #1 remains open and attached. Ownership/collaborator access is unchanged.
 - Bifrost Controller 0.1.2 compiled, packaged, installed, and opened as detailed above. Earlier pending-build notes describe their historical state.
 - Edward authorized two new main-site pages and a final Gaming > Bifrost Downloads submenu for local review before pushing. Server Manager is a coming-soon overview; Controller is Windows-only with installer setup and GitHub access. This website work is separate and does not authorize a public release or site deployment.
