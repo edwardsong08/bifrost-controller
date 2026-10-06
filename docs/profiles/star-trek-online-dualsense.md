@@ -8,7 +8,7 @@ No game or hardware-input tests have been performed.
 
 ## Install and select
 
-1. Install Bifrost Controller 0.1.8 or newer. This corrects stick directions and fixes false profile-load failure
+1. Install Bifrost Controller 0.1.11 or newer for automatic Space camera control. This corrects stick directions and fixes false profile-load failure
    feedback and applies the selected Space/Ground/Menus layout. Version 0.1.2 cannot download
    catalogs or use triggers in managed profiles; 0.1.3 has a bundled-resource
    packaging issue and must also be upgraded.
@@ -37,7 +37,7 @@ settings, game preferences or account bindings for you.
 | Control | Space | Ground | Menus |
 | --- | --- | --- | --- |
 | Left stick | Ship pitch/turn (S/W/A/D) | Movement/strafe (W/S/Q/E) | Unassigned |
-| Right stick | Pointer; hold R3 for camera drag | Pointer; hold L2 for camera drag | Pointer |
+| Right stick | Camera look directly while deflected | RPG: hold L2 for camera; Shooter: direct aim | Pointer |
 | R2 | Energy weapons (Space) | Primary attack / slot 1 | Left click |
 | R1 | Torpedoes (Ctrl+Space) | Secondary attack / slot 2 | Scroll down |
 | L1 | Ship/item shortcut / slot 5 | Captain shortcut / slot 5 | Scroll up |
@@ -47,7 +47,7 @@ settings, game preferences or account bindings for you.
 | Square | Science shortcut / slot 1 | Kit/item shortcut / slot 4 | Interact |
 | Triangle | Engineering shortcut / slot 2 | Swap weapon (Z) | Map (M) |
 | L3 | Distribute shields (Delete) | Hold to sprint (Shift) | Enter |
-| R3 | Hold for camera drag | Unassigned | Tab |
+| R3 | Unassigned | Unassigned | Tab |
 | D-pad Up / Down | Throttle + / - (E / Q) | Interact / holster (F / H) | Arrow navigation |
 | D-pad Left / Right | Scan / next target (V / Tab) | Scan / next target (V / Tab) | Arrow navigation |
 | Options | Escape | Escape | Escape |
@@ -58,6 +58,20 @@ tray to suit the labels; Science, Engineering, Tactical and Captain buttons do
 not automatically discover powers. Ground RPG/Shooter settings and ship pitch
 inversion can change the expected actions. Check the game's Controls/Key Binds
 screen before relying on these assumptions; adjust a personal copy as needed.
+
+Space camera movement automatically holds right mouse only while the stick is
+outside its dead zone. Centering the stick or changing layout releases the
+button through the existing mapping engine. No R3 hold or extra toggle is needed.
+Menus keeps ordinary pointer movement. This also applies to the Xbox and both
+Valve Steam Controller Space templates; the original model uses its right pad.
+
+Ground has two game control schemes. Keyboard B switches RPG/Shooter mode with
+default game binds. In RPG mode, hold L2 while moving the stick for camera drag.
+In Shooter mode, mouse movement aims directly; do not hold L2 for looking because
+right mouse fires the secondary attack there. Bifrost cannot detect this in-game
+setting, so Ground retains the explicit camera binding rather than auto-firing.
+Older app versions keep the v2 feed; update the app and reapply the template to
+obtain the v3 Space camera mappings. Save/export again for existing App rules.
 
 After updating from 0.1.7 or earlier, select the template again and press **Use
 this profile** to regenerate the mapping. Catalog refreshes do not overwrite your

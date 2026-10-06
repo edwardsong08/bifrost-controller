@@ -128,6 +128,10 @@ void bindingXml(QXmlStreamWriter &xml, const QJsonObject &binding, const QString
         slot(xml, "mousebutton", binding.value("mouse_button").toInt());
     if (binding.contains("mouse_move"))
     {
+        // The existing input engine releases and reference-counts ordinary mouse slots.
+        // Hold before moving, so camera drag follows stick activity rather than a toggle.
+        if (binding.contains("mouse_drag"))
+            slot(xml, "mousebutton", binding.value("mouse_drag").toInt());
         const QMap<QString, int> mouse = {{"up", 1}, {"down", 2}, {"left", 3}, {"right", 4}};
         slot(xml, "mousemovement", mouse.value(binding.value("mouse_move").toString()));
     }
@@ -157,7 +161,7 @@ QJsonArray ProfileStore::catalog()
     QJsonArray result;
     if (file.open(QIODevice::ReadOnly))
         result = QJsonDocument::fromJson(file.readAll()).array();
-    QFile cache(QDir(dataDirectory()).filePath("community-catalog-v2.json"));
+    QFile cache(QDir(dataDirectory()).filePath("community-catalog-v3.json"));
     if (!cache.open(QIODevice::ReadOnly) || cache.size() > 256 * 1024)
         return result;
     const auto downloaded = QJsonDocument::fromJson(cache.readAll()).array();
@@ -202,7 +206,7 @@ QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
     }
     if (!QDir().mkpath(dataDirectory()))
         return failure("Could not create the community cache folder.");
-    const auto path = QDir(dataDirectory()).filePath("community-catalog-v2.json");
+    const auto path = QDir(dataDirectory()).filePath("community-catalog-v3.json");
     QFile existing(path);
     // Cache formatting must not inflate a valid bounded download past the same size limit.
     const auto normalized = document.toJson(QJsonDocument::Compact);
@@ -326,7 +330,14 @@ QString ProfileStore::validate(const QJsonObject &profile)
         }
         if (actions != 1)
             return "Each binding needs exactly one of keys, mouse_button, or mouse_move.";
-        const QSet<QString> fields = {"input", "label", "keys", "mouse_button", "mouse_move"};
+        if (binding.contains("mouse_drag"))
+        {
+            const auto code = binding.value("mouse_drag");
+            if (!binding.contains("mouse_move") || !code.isDouble() || code.toDouble() != code.toInt() || code.toInt() < 1 ||
+                code.toInt() > 3)
+                return "mouse_drag requires mouse_move and an integer mouse button from 1 to 3.";
+        }
+        const QSet<QString> fields = {"input", "label", "keys", "mouse_button", "mouse_move", "mouse_drag"};
         for (const auto &field : binding.keys())
             if (!fields.contains(field))
                 return "Unknown binding field: " + field;

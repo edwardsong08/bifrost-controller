@@ -152,6 +152,12 @@ QString actionName(const QJsonObject &binding)
                                    "Back",      "Forward"};
         return names.value(binding.value("mouse_button").toInt());
     }
+    if (binding.contains("mouse_drag"))
+    {
+        const QStringList buttons = {"", "left", "middle", "right"};
+        return "Camera / drag " + binding.value("mouse_move").toString() + " (" +
+               buttons.value(binding.value("mouse_drag").toInt()) + " mouse held)";
+    }
     return "Move pointer " + binding.value("mouse_move").toString();
 }
 void feedback(QLabel *widget, const QString &text, bool error = false)
@@ -934,7 +940,7 @@ void ModernShell::updateCommunityProfiles()
     m_updateProfiles->setEnabled(false);
     m_catalogStatus->setText("Checking for community profiles…");
     const QUrl url("https://raw.githubusercontent.com/edwardsong08/bifrost-controller/"
-                   "codex/troa-controller-mapper/profiles/catalog-v2.json");
+                   "codex/troa-controller-mapper/profiles/catalog-v3.json");
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setRawHeader("User-Agent", "Bifrost-Controller-Community-Profiles");

@@ -456,3 +456,20 @@ normally over the existing version, then restart the mapper. No uninstall usuall
 needed; Codex can remain open. Existing explicit CloseToTray opt-out is respected.
 Templates are untested console-inspired PC starting mappings; native controls
 are preferred where supported. Native PR #1 remains draft and unmerged.
+
+## 2026-10-06 — Direct STO Space camera, 0.1.11 preparation
+
+Owner authorized direct right-stick camera look and a review of other templates.
+All four STO Space variants now bind mouse movement plus automatic right-mouse
+hold while deflected; original Steam hardware uses its right touchpad. Removed
+Space's redundant manual camera-hold buttons. Menus remains pointer movement.
+Ground keeps explicit camera hold because Ground Shooter uses right-click for
+secondary fire. Minecraft Java, Palworld and Space Engineers already use direct
+mouse look and are unchanged. New optional validated mouse_drag field exports
+ordinary reference-counted mouse slots before movement. Existing set/input release
+paths release those slots; no engine/input lifetime change or persistent toggle.
+0.1.11 embeds/downloads isolated catalog-v3/cache so older clients retain v2.
+Update app, reapply template and save/export App-rule mappings to opt in. Personal
+files, active mappings and installed app are not changed by this work.
+Formatting: clang-format 14.0.0. No automated, visual, hardware or gameplay tests.
+Compilation, release packaging and manual game acceptance remain pending.

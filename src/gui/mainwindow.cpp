@@ -312,6 +312,7 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
             {"assistant_access", m_troaApi && m_troaApi->isEnabled()},
             {"profile_directory", Troa::profileDirectory()},
             {"profile_schema_version", 1},
+            {"profile_features", QJsonArray{QStringLiteral("mouse_drag")}},
             {"supported_inputs", QJsonArray::fromStringList(Troa::ProfileStore::inputs())},
             {"named_keys", QJsonArray::fromStringList(Troa::ProfileStore::namedKeys())},
             {"key_help", "Printable ASCII keys and named_keys are supported. keys arrays represent simultaneous chords."}};

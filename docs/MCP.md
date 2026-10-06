@@ -106,6 +106,15 @@ The profile store uses atomic writes, SHA256 conflict checks, and preserved olde
 revisions. Generated legacy .amgp mappings have content-addressed filenames so an
 updated definition reloads through the existing mapping engine.
 
+From 0.1.11, a mouse-movement binding can optionally include `mouse_drag` with
+integer button 1 (left), 2 (middle), or 3 (right). Example:
+`{"input":"right_stick_up","mouse_move":"up","mouse_drag":3}`.
+The mouse button is held before movement and released with the input; it is not
+a persistent toggle. `mapper_status.profile_features` advertises this extension.
+The new app embeds/downloads catalog-v3 and uses a separate cache. Catalog-v2
+remains compatible with older apps; personal definitions and native files are
+not rewritten. Reapply/export to obtain revised mappings.
+
 Community templates are embedded for offline use. Starting with 0.1.3, compatible
 catalog updates also download at startup or through **Profile library > Update profiles**.
 Desktop and browser templates use the left stick for pointer movement and the right
