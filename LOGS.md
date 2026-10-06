@@ -193,3 +193,20 @@
   emitting finished, leaving mapping output ignored. Restore normal dialog reject
   completion, handle both normal result codes, avoid destroyed-device access, and
   explain the temporary pause in the dialog. Its legacy blue-only style is removed.
+
+## 2026-10-06 - 0.1.5 public Windows release and delivery
+
+Windows compile/package succeeded at 29cddd14cea52fbafeecd6f5f516111a240d01ae
+in Actions run 37428909955 (artifact 11396865666), with tests disabled.
+Published v0.1.5-preview contains the installer, portable app, exact corresponding
+source and checksums. Installer: 17,813,983 bytes, SHA256 4ea9164fc47ed9e14575be12700db7d2859af9f5adb00a72832e7f0235f1603b.
+Static package inspection confirmed SDL2/SDL3, Qt TLS, dependency imports and
+licenses; source archive contents match the build commit. Inherited AntiMicroX
+Release workflow was disabled on this fork to avoid unwanted legacy distribution.
+Website PR #103 merged at 79fcea2faf10e2c93cbd150b3bd60165f189b947. At 2026-10-06T07:36:43.501269+00:00,
+the live page reported 0.1.5 and TROA's public download endpoint delivered HTTP 200
+with the exact installer bytes/hash. This verifies distribution, not new native
+UI/controller/gameplay acceptance. Edward's installed 0.1.4 app was not replaced.
+
+- Native PR #1 remains a draft. No automated, visual, hardware or gameplay tests
+  were run. Owner manually upgrades from TROA, normally without uninstalling.
