@@ -20,8 +20,23 @@ and packaging passed with WITH_TESTS=OFF in run 37418863441 from
 5c9b689dc9669b29dd9b88b05dbcb3806700a726. Public release v0.1.3-preview contains
 the checksum-verified installer, portable package and matching source. Installer
 SHA256 is 0896eb8c8c92345af4f958f86f383710ff204d09c776bf5e21de5a23009a8fbc
-(16,883,255 bytes). The owner's Program Files installation still reports 0.1.2;
-no local installer upgrade is claimed. Gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
+(16,883,255 bytes). The owner was upgraded to 0.1.3 under Program Files;
+startup downloaded community-catalog.json and existing settings were preserved.
+A subsequent read-only library request returned no profiles: the two Qt resource
+files had the same basename. Version 0.1.4 fixes this packaging collision with
+a unique troa_resources.qrc and explicit initialization, and lets cache reads
+continue when embedded defaults are unavailable. Run 37420565778 succeeded at
+0413dc22e833a76c60982a98a0e998487df0a669 with WITH_TESTS=OFF. Published
+v0.1.4-preview contains the installer, portable app, matching source and checksums.
+Installer: 17,255,095 bytes, SHA256
+595bdb3c40c7e9ffc1709a79a9fc509454c19d00ca2cc25ee5d100944b2847dd.
+Owner's upgraded and reopened app reports 0.1.4; its read-only library lists
+Desktop, Browser and the STO template with three layouts. Existing data stayed
+in place. The temporary hidden 0.1.3 instance and stateless MCP companions were
+stopped solely for file replacement. No controller or application rule is present;
+no mapping was activated. Website PR #102 merged at 781d2fb; live readback pending.
+Do not describe 0.1.3 profile delivery as working.
+Gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
 for keyboard assumptions, camera/ability differences and the Create-button rule.
 Read-only metadata through the installed local companion confirmed assistant
 access and an empty application-rule list; no controller was detected during
@@ -33,7 +48,7 @@ that read. This is not a Codex-native tool connection or gameplay test.
 - Audience: TROA's community.
 - Initial platform: Windows. Preserve architectural room for Linux support later; Linux is not part of initial release acceptance.
 - Requested features: a modern interface, MCP access for collaboratively creating and editing profiles, and curated desktop/browser/game/controller profiles delivered through updates.
-- Planned distribution: branded installer/portable packages and corresponding source in GitHub Releases, consumed by a future TROA website product/download page. Website work and publishing have not begun.
+- Distribution: branded Windows preview installer/portable packages and corresponding source in GitHub Releases, consumed by the published TROA product/download page. Current corrected package is 0.1.4.
 - Ownership: Edward keeps the personal GitHub repository. Collaborator access stays unchanged at his request; TROA organization admins do not automatically have personal-repository access. TROA can distribute public release artifacts.
 - Initial implementation retains C++17/Qt Widgets/SDL2 and modernizes the workspace around the existing mapping controls. Profile management and local MCP are separate layers; a QML migration or Rust remake is deferred.
 - Preserve AntiMicroX attribution, existing copyright notices, and applicable GPL obligations in derived releases.
@@ -50,7 +65,7 @@ that read. This is not a Codex-native tool connection or gameplay test.
 
 ## Apps installed for inspection
 
-- Bifrost Controller preview 0.1.2 from successful GitHub Actions run 37411297952, built from c0a8d9837ebf743107ca52fa52cbbbe773855184.
+- Current Bifrost Controller preview 0.1.4 from successful run 37420565778, built from 0413dc22e833a76c60982a98a0e998487df0a669. Read-only metadata lists the three community templates. No controller is connected and no rule/profile activation was performed.
 - Executable: C:\Users\edwar\AppData\Local\Programs\Bifrost Controller\bin\bifrost-controller.exe
 - Current running copy, inspected at the owner's request on 2026-10-06: C:\Program Files\Bifrost Controller\bin\bifrost-controller.exe. Its MCP companion is C:\Program Files\Bifrost Controller\bin\bifrost-controller-mcp.exe. The user-level installation path above is historical.
 - Codex Desktop global stdio MCP server `bifrost-controller` is configured and enabled using the running copy's companion. The app's MCP setup screen shows local access enabled and one connected controller. Codex restart and a real MCP tool call remain pending; configuration is not evidence of a completed client connection.

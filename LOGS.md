@@ -1,5 +1,27 @@
 # Work log
 
+## 2026-10-06 - Profile resource packaging correction
+
+- Upgraded the owner's Program Files installation to 0.1.3 after normal app
+  Quit, preserving a private user-data backup. Installer exited 0; read-only
+  companion metadata reported 0.1.3 and startup saved community-catalog.json.
+- A read-only library request returned an empty list. Both resource files used
+  the basename resources.qrc; the generated resource identity collided.
+- Version 0.1.4 renames the TROA resource file, explicitly initializes it and
+  reads validated cached templates even if embedded defaults are unavailable.
+  Windows build run 37420565778 at 0413dc22 succeeded with WITH_TESTS=OFF.
+- Published v0.1.4-preview with verified installer/portable/source/checksums.
+  Installer is 17,255,095 bytes, SHA256
+  595bdb3c40c7e9ffc1709a79a9fc509454c19d00ca2cc25ee5d100944b2847dd.
+  Marked the superseded 0.1.3 release's known issue.
+- Stopped the temporary hidden app instance and stateless companions for file
+  replacement, installed 0.1.4 (installer exit 0), and reopened the visible app.
+  Read-only MCP metadata reports 0.1.4 and three community templates, including
+  STO with three layouts. Existing data is preserved; no controller or rule is
+  present, so no profile was activated. Codex-native tools still need restart.
+- Website PR #102 merged at 781d2fb; live download readback remains pending.
+  No gameplay, automated, visual or hardware tests ran.
+
 ## 2026-10-06 - STO template and independent community updates
 
 - Owner requested default game profiles and startup/manual update delivery.
