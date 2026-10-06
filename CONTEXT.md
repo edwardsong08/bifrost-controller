@@ -29,7 +29,8 @@ Build Bifrost Controller, TROA's modern desktop controller mapping app alongside
 
 - Bifrost Controller preview 0.1.2 from successful GitHub Actions run 37411297952, built from c0a8d9837ebf743107ca52fa52cbbbe773855184.
 - Executable: C:\Users\edwar\AppData\Local\Programs\Bifrost Controller\bin\bifrost-controller.exe
-- MCP companion: same bin directory, bifrost-controller-mcp.exe. A client connection has not been configured or exercised.
+- Current running copy, inspected at the owner's request on 2026-10-06: C:\Program Files\Bifrost Controller\bin\bifrost-controller.exe. Its MCP companion is C:\Program Files\Bifrost Controller\bin\bifrost-controller-mcp.exe. The user-level installation path above is historical.
+- Codex Desktop global stdio MCP server `bifrost-controller` is configured and enabled using the running copy's companion. The app's MCP setup screen shows local access enabled and one connected controller. Codex restart and a real MCP tool call remain pending; configuration is not evidence of a completed client connection.
 - Installer, portable ZIP, source ZIP, and checksums: distribution/bifrost-preview-0.1.2 (ignored local artifacts). All three hashes matched the manifest; installer SHA256 d38fd60c9e68fc820404b0e94cae4333e73b7027577d5b23ab810fce2b9d9b75.
 - Installer exit code 0; Windows uninstall registry lists version 0.1.2. The built-in --show command exposed the branded main window; process 48124 reports title Bifrost Controller and is responding.
 - Replaced the obsolete TROA 0.1.0 preview (uninstaller exit 0). Backed up shared user data under distribution/bifrost-preview-0.1.2/previous-user-data; existing settings matched exactly after install/uninstall. The compatibility data folder and settings filename remain unchanged. Historical 0.1.0 packages remain under distribution/preview.

@@ -1,5 +1,19 @@
 # Work log
 
+## 2026-10-06 - Codex Desktop MCP registration
+
+- Owner explicitly requested desktop inspection of the open app and connection
+  of its MCP integration with Codex Desktop, followed by their own restart.
+- Computer Use captured the running preview's MCP setup screen: local access
+  was already enabled, one controller was connected, and no MCP request had
+  been received in this app session. Current installation is under Program Files.
+- Registered `bifrost-controller` globally via `codex mcp add`, pointing to
+  `C:\Program Files\Bifrost Controller\bin\bifrost-controller-mcp.exe`.
+  `codex mcp get bifrost-controller` confirms enabled stdio configuration.
+  Preserved pre-registration config in the user's .codex folder, outside Git.
+- No mappings changed. No automated or hardware tests ran. A Codex restart
+  and an actual MCP request are pending; do not claim the app is connected yet.
+
 ## 2026-10-06 - Public Windows preview release
 
 - Owner explicitly authorized installer delivery from the live TROA site.
