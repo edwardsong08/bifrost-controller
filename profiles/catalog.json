@@ -679,8 +679,7 @@
           }
         ]
       }
-    ],
-    "controller_family": "playstation"
+    ]
   },
   {
     "schema_version": 1,
@@ -1128,7 +1127,6 @@
           }
         ]
       }
-    ],
-    "controller_family": "xbox"
+    ]
   }
 ]

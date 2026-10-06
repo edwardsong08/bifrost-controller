@@ -221,3 +221,5 @@ UI/controller/gameplay acceptance. Edward's installed 0.1.4 app was not replaced
   nothing persistence and hardware-model compatibility checks.
 - Bump to 0.1.6 for a corrected installer. Build/release/site delivery are pending.
   No tests or user mapping changes; current installation remains untouched.
+- Keep the older catalog.json endpoint compatible with 0.1.4 by omitting the
+  new optional family metadata there. The v2 catalog retains exact model checks.
