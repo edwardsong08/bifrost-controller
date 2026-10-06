@@ -1,5 +1,24 @@
 # Bifrost Controller context
 
+## 0.1.7 installation while Codex stays open - 2026-10-06
+
+Owner reported needing to close Bifrost and Codex for every installer update.
+Install Windows releases into immutable versions/<version>/bin and share payloads.
+Stable format-1 Win32 launchers select an atomically published current.txt marker;
+MCP host loads no Qt/MinGW DLLs and directly inherits only three duplicated stdio
+handles into a versioned companion. Existing pre-0.1.7 bin/MCP paths are retained,
+so migrating does not require closing Codex. Connected workers keep their existing
+version until the client reconnects. Format-1 launchers must never change in place.
+Finish-page launch offers an orderly mapper restart with Save/Discard/Cancel;
+0.1.7 bypasses Close to tray for that request, never forces termination. A legacy
+Close-to-tray mapper may require Bifrost > Quit once. Setup launches as the same
+non-elevated desktop user or directs the user to the Start menu; it never falls
+back to launching the mapper as the elevated installer. New startup links/profile
+associations use the stable GUI command. Personal data locations stay unchanged.
+Same-version reinstall skips existing payload files. Old payload cleanup deferred.
+Compilation, packaging, release and live distribution are pending. No automated,
+visual, hardware or gameplay tests. Do not restart/install the owner's app.
+
 ## Purpose
 
 Build Bifrost Controller, TROA's modern desktop controller mapping app alongside Bifrost Server Manager in the TROA gaming software ecosystem, based on Edward's AntiMicroX fork. Implementation of the Windows preview is authorized.

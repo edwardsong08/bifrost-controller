@@ -132,7 +132,7 @@ int main(int argc, char **argv)
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"},
                       {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
-                      {"serverInfo", QJsonObject{{"name", "bifrost-controller"}, {"version", "0.1.6"}}},
+                      {"serverInfo", QJsonObject{{"name", "bifrost-controller"}, {"version", "0.1.7"}}},
                       {"instructions",
                        "Manage controller profiles locally. Read before changing, save drafts before activation, "
                        "and use exact revision/controller ids. This server does not inject input or run scripts."}};

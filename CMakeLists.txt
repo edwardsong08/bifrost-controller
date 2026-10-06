@@ -61,7 +61,7 @@ endif(NOT COMPILER_IS_MSVC)
 # The version number.
 set(ANTIMICROX_MAJOR_VERSION 0)
 set(ANTIMICROX_MINOR_VERSION 1)
-set(ANTIMICROX_PATCH_VERSION 6)
+set(ANTIMICROX_PATCH_VERSION 7)
 
 if(UNIX)
     option(WITH_X11 "Compile with support for X11." ON)
@@ -74,6 +74,16 @@ endif(UNIX)
 if(WIN32)
     option(PORTABLE_WIN "Compile app for portability" OFF)
 endif(WIN32)
+
+# Installed Windows releases never replace binaries/DLLs loaded by the GUI or MCP.
+# Portable packages retain the existing bin/share layout.
+set(BIFROST_RELEASE "${ANTIMICROX_MAJOR_VERSION}.${ANTIMICROX_MINOR_VERSION}.${ANTIMICROX_PATCH_VERSION}")
+set(BIFROST_INSTALL_BIN "${CMAKE_INSTALL_BINDIR}")
+set(BIFROST_INSTALL_DATA "${CMAKE_INSTALL_DATAROOTDIR}")
+if(WIN32 AND NOT PORTABLE_WIN)
+    set(BIFROST_INSTALL_BIN "versions/${BIFROST_RELEASE}/bin")
+    set(BIFROST_INSTALL_DATA "versions/${BIFROST_RELEASE}/share")
+endif()
 
 option(USE_QT6_BY_DEFAULT "Use Qt6 if available (if not available fallback to QT5)" ON)
 option(UPDATE_TRANSLATIONS "Call lupdate to update translation files from source." OFF)
@@ -668,6 +678,22 @@ target_sources(antimicrox PRIVATE
 add_executable(bifrost-controller-mcp src/troa/mcp_main.cpp src/troa/identity.h)
 target_link_libraries(bifrost-controller-mcp PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
 
+if(WIN32 AND NOT PORTABLE_WIN)
+    add_executable(bifrost-launcher WIN32 src/troa/windows_launcher.cpp src/antimicrox_windows_icon.rc)
+    add_executable(bifrost-mcp-host src/troa/windows_launcher.cpp src/antimicrox_windows_icon.rc)
+    target_compile_definitions(bifrost-mcp-host PRIVATE BIFROST_MCP_HOST)
+    foreach(launcher bifrost-launcher bifrost-mcp-host)
+        target_link_libraries(${launcher} PRIVATE shell32 advapi32 user32)
+        set_target_properties(${launcher} PROPERTIES AUTOMOC OFF AUTOUIC OFF AUTORCC OFF)
+        if(MINGW)
+            target_link_options(${launcher} PRIVATE -static -static-libgcc -static-libstdc++)
+        elseif(MSVC)
+            set_property(TARGET ${launcher} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+        endif()
+        install(TARGETS ${launcher} RUNTIME DESTINATION ".")
+    endforeach()
+endif()
+
 target_include_directories(antimicrox PUBLIC
         ${SDL2_INCLUDE_DIRS}/SDL2
         )
@@ -677,9 +703,9 @@ target_include_directories(antimicrox PUBLIC
 ###############################
 
 # Specify out directory for final executable.
-install(TARGETS antimicrox RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-install(TARGETS bifrost-controller-mcp RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-install(FILES LICENSE NOTICE.md docs/MCP.md DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/bifrost-controller")
+install(TARGETS antimicrox RUNTIME DESTINATION "${BIFROST_INSTALL_BIN}")
+install(TARGETS bifrost-controller-mcp RUNTIME DESTINATION "${BIFROST_INSTALL_BIN}")
+install(FILES LICENSE NOTICE.md docs/MCP.md DESTINATION "${BIFROST_INSTALL_DATA}/bifrost-controller")
 
 if(UNIX)
     find_package(ECM REQUIRED NO_MODULE)
@@ -702,7 +728,7 @@ if(UNIX)
     install(FILES other/io.github.antimicrox.antimicrox.xml DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/mime/packages")
 
     # Copy current Changelog file to location that the resource file expects.
-    install(FILES CHANGELOG.md DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/antimicrox")
+    install(FILES CHANGELOG.md DESTINATION "${BIFROST_INSTALL_DATA}/antimicrox")
 endif(UNIX)
 
 # Add man page for *nix platforms.
@@ -741,9 +767,9 @@ if(WIN32)
         find_file(BIFROST_SDL3_DLL "SDL3.dll" HINTS "${SDL2_DLL_LOCATION_DIR}" REQUIRED)
         list(APPEND DLL_FILES "${BIFROST_SDL3_DLL}")
         install(FILES "${PROJECT_SOURCE_DIR}/.deps/SDL/LICENSE.txt"
-            DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/bifrost-controller/licenses" RENAME SDL3-LICENSE.txt)
+            DESTINATION "${BIFROST_INSTALL_DATA}/bifrost-controller/licenses" RENAME SDL3-LICENSE.txt)
         install(FILES "${PROJECT_SOURCE_DIR}/.deps/sdl2-compat/LICENSE.txt"
-            DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/bifrost-controller/licenses" RENAME SDL2-COMPAT-LICENSE.txt)
+            DESTINATION "${BIFROST_INSTALL_DATA}/bifrost-controller/licenses" RENAME SDL2-COMPAT-LICENSE.txt)
     endif()
 
     #these three lines assume SDL2 in standard location TODO do it better
@@ -793,17 +819,17 @@ if(WIN32)
         endif()
     endif(CHECK_FOR_UPDATES)
 
-    install(FILES ${DLL_FILES} TYPE BIN )
+    install(FILES ${DLL_FILES} DESTINATION "${BIFROST_INSTALL_BIN}")
 
     # Required platform plugin
     get_target_property(QtCore_LOCATION Qt${QT_VERSION_MAJOR}::Core LOCATION)
     get_filename_component(QT_DLL_DIR ${QtCore_LOCATION} PATH)
     install(FILES
         ${QT_DLL_DIR}/../plugins/platforms/qwindows.dll
-        DESTINATION ./bin/platforms/)
+        DESTINATION "${BIFROST_INSTALL_BIN}/platforms/")
     # Qt6 loads HTTPS support from a TLS plugin rather than QtNetwork alone.
     if(QT_VERSION_MAJOR EQUAL 6 AND EXISTS "${QT_DLL_DIR}/../plugins/tls")
-        install(DIRECTORY "${QT_DLL_DIR}/../plugins/tls/" DESTINATION ./bin/tls
+        install(DIRECTORY "${QT_DLL_DIR}/../plugins/tls/" DESTINATION "${BIFROST_INSTALL_BIN}/tls"
                 FILES_MATCHING PATTERN "*.dll")
     endif()
 endif(WIN32)
@@ -839,9 +865,9 @@ endif(WITH_TESTS)
 if(UNIX)
     install(FILES share/gamecontrollerdb_linux.txt DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/antimicrox/" RENAME gamecontrollerdb.txt)
 elseif(WIN32)
-    install(FILES share/gamecontrollerdb_windows.txt DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/antimicrox/" RENAME gamecontrollerdb.txt)
+    install(FILES share/gamecontrollerdb_windows.txt DESTINATION "${BIFROST_INSTALL_DATA}/antimicrox/" RENAME gamecontrollerdb.txt)
 endif(UNIX)
-install(FILES share/LICENSE_SDL_GameControllerDB DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/antimicrox/")
+install(FILES share/LICENSE_SDL_GameControllerDB DESTINATION "${BIFROST_INSTALL_DATA}/antimicrox/")
 
 ###############################
 # PACKAGES BUILDING WITH CPACK
@@ -926,6 +952,23 @@ if(WIN32 AND NOT UNIX)
         set(CPACK_NSIS_HELP_LINK "https://github.com/edwardsong08/bifrost-controller")
         set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/edwardsong08/bifrost-controller")
         set(CPACK_NSIS_MODIFY_PATH OFF)
+        set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL OFF)
+        set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "bifrost-launcher.exe")
+        set(CPACK_NSIS_MUI_FINISHPAGE_RUN "bifrost-launcher.exe")
+        # Format-1 launchers are immutable. Same-version reinstall skips loaded files.
+        set(CPACK_NSIS_EXTRA_PREINSTALL_COMMANDS "SetOverwrite off")
+        set(BIFROST_NSIS_REQUIRED_FILES "")
+        foreach(dll IN LISTS DLL_FILES)
+            get_filename_component(dll_name "${dll}" NAME)
+            string(APPEND BIFROST_NSIS_REQUIRED_FILES
+                "IfFileExists \"$INSTDIR\\versions\\${BIFROST_RELEASE}\\bin\\${dll_name}\" 0 bifrost_incomplete\n")
+        endforeach()
+        configure_file(cmake/modules/BifrostUpgrade.nsh.in
+                       "${CMAKE_CURRENT_BINARY_DIR}/BifrostUpgrade.nsh" @ONLY)
+        file(READ "${CMAKE_CURRENT_BINARY_DIR}/BifrostUpgrade.nsh" CPACK_NSIS_EXTRA_INSTALL_COMMANDS)
+        set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+            "Delete /REBOOTOK \"$INSTDIR\\current.txt\"\nRMDir /r /REBOOTOK \"$INSTDIR\\versions\"")
     else()
         set(CPACK_GENERATOR ZIP)
     endif()
@@ -933,6 +976,10 @@ endif()
 
 set(CPACK_PACKAGE_EXECUTABLES "bifrost-controller;Bifrost Controller")
 set(CPACK_CREATE_DESKTOP_LINKS "bifrost-controller")
+if(WIN32 AND NOT PORTABLE_WIN)
+    set(CPACK_PACKAGE_EXECUTABLES "bifrost-launcher;Bifrost Controller")
+    set(CPACK_CREATE_DESKTOP_LINKS "bifrost-launcher")
+endif()
 include(CPack)
 
 if(WIN32 AND NOT UNIX AND NOT PORTABLE_WIN)

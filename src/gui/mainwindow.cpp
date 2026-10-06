@@ -95,6 +95,7 @@
 #ifdef Q_OS_WIN
     #include "winextras.h"
     #include <QSysInfo>
+    #include <windows.h>
 #endif
 
 #define CHECK_BATTERIES_MSEC 600000
@@ -121,6 +122,10 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     m_cmdutility = cmdutility;
     m_graphical = graphical;
     m_settings = settings;
+#ifdef Q_OS_WIN
+    if (graphical && !cmdutility->shouldListControllers())
+        WinExtras::refreshInstalledLaunchPaths();
+#endif
 
     ui->actionStick_Pad_Assign->setVisible(false);
 
@@ -1437,6 +1442,31 @@ void MainWindow::openMainSettingsDialog()
  *     be minimized.
  * @param QCloseEvent
  */
+#ifdef Q_OS_WIN
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, qintptr *result)
+    #else
+bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+    #endif
+{
+    const auto windowsMessage = static_cast<MSG *>(message);
+    static const UINT restartMessage = RegisterWindowMessageW(L"Bifrost.Controller.RestartForUpdate.v1");
+    if (windowsMessage->message == restartMessage)
+    {
+        *result = 1;
+        // Respond before any Save/Discard/Cancel dialog; never force a process exit.
+        QTimer::singleShot(0, this, [this]() {
+            show();
+            raise();
+            activateWindow();
+            quitProgram();
+        });
+        return true;
+    }
+    return QMainWindow::nativeEvent(eventType, message, result);
+}
+#endif
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     bool closeToTray = m_settings->value("CloseToTray", false).toBool();

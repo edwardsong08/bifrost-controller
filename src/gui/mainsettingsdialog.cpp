@@ -18,6 +18,7 @@
  */
 
 #include "mainsettingsdialog.h"
+#include "troa/identity.h"
 
 #include "addeditautoprofiledialog.h"
 #include "antimicrosettings.h"
@@ -628,7 +629,7 @@ bool MainSettingsDialog::saveNewSettings()
 
     if (ui->launchAtWinStartupCheckBox->isChecked() && !tempFile.exists())
     {
-        QFile currentAppLocation(qApp->applicationFilePath());
+        QFile currentAppLocation(Troa::applicationCommand());
         if (!currentAppLocation.link(QFileInfo(tempFile).absoluteFilePath()))
             errors.append(tr("Windows startup could not be enabled: %1").arg(currentAppLocation.errorString()));
     } else if (!ui->launchAtWinStartupCheckBox->isChecked() && tempFile.exists())

@@ -116,6 +116,10 @@ QWidget *step(const QString &number, const QString &title, const QString &descri
 QString companionPath()
 {
 #ifdef Q_OS_WIN
+    const QDir installRoot(QDir(QCoreApplication::applicationDirPath()).filePath("../../.."));
+    if (QFileInfo::exists(installRoot.filePath("current.txt")) &&
+        QFileInfo::exists(installRoot.filePath("bifrost-mcp-host.exe")))
+        return QDir::toNativeSeparators(QDir::cleanPath(installRoot.filePath("bifrost-mcp-host.exe")));
     return QDir::toNativeSeparators(QDir(QCoreApplication::applicationDirPath()).filePath("bifrost-controller-mcp.exe"));
 #else
     return QDir(QCoreApplication::applicationDirPath()).filePath("bifrost-controller-mcp");

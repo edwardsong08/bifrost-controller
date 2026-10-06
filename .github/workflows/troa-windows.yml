@@ -58,6 +58,13 @@ jobs:
           CMAKE_PREFIX_PATH: "${{ env.QT_ROOT_DIR }}/lib/cmake"
       - name: Compile and package installer
         run: cmake --build build --parallel 4 --target package
+      - name: Preserve installer layout evidence
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path build/upgrade-evidence -Force | Out-Null
+          Get-ChildItem -Path build/_CPack_Packages -Filter '*.nsi' -Recurse | Copy-Item -Destination build/upgrade-evidence
+          Copy-Item build/CPackConfig.cmake, build/BifrostUpgrade.nsh, build/install_manifest.txt -Destination build/upgrade-evidence
+          Copy-Item build/bin/bifrost-launcher.exe, build/bin/bifrost-mcp-host.exe -Destination build/upgrade-evidence
       - name: Configure portable package
         run: cmake -S . -B build -DPORTABLE_WIN=ON
         env:
@@ -68,7 +75,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          git archive --format=zip --output=build/bifrost-controller-0.1.6-source.zip HEAD
+          git archive --format=zip --output=build/bifrost-controller-0.1.7-source.zip HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
           $checksums = Get-ChildItem build/bifrost-controller*.exe, build/bifrost-controller*.zip |
             Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }
@@ -81,4 +88,10 @@ jobs:
             build/bifrost-controller*.exe
             build/bifrost-controller*.zip
             build/SHA256SUMS.txt
+          if-no-files-found: error
+      - name: Save installer layout evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: bifrost-upgrade-build-evidence
+          path: build/upgrade-evidence
           if-no-files-found: error

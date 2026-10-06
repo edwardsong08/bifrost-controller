@@ -9,8 +9,10 @@
 #include <QDebug>
 #include <QDir>
 #include <QHashIterator>
+#include <QSaveFile>
 #include <QSettings>
 
+#include "troa/identity.h"
 #include "winextras.h"
 #include <shlobj.h>
 
@@ -306,7 +308,7 @@ bool WinExtras::writeFileAssocationToRegistry()
     programAssociationReg.setValue("Default", tr("Bifrost Controller profile"));
     programAssociationReg.setValue(
         "shell/open/command/Default",
-        QString("\"%1\" \"%2\"").arg(QDir::toNativeSeparators(qApp->applicationFilePath())).arg("%1"));
+        QString("\"%1\" \"%2\"").arg(QDir::toNativeSeparators(Troa::applicationCommand())).arg("%1"));
     programAssociationReg.setValue("DefaultIcon/Default",
                                    QString("\"%1\",0").arg(QDir::toNativeSeparators(qApp->applicationFilePath())));
     programAssociationReg.sync();
@@ -335,6 +337,58 @@ bool WinExtras::removeFileAssociationFromRegistry()
     // Required to refresh settings used in Windows Explorer
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
     return fileAssociationReg.status() == QSettings::NoError && programAssociationReg.status() == QSettings::NoError;
+}
+
+void WinExtras::refreshInstalledLaunchPaths()
+{
+    const QString command = Troa::applicationCommand();
+    if (command == qApp->applicationFilePath())
+        return; // Portable/legacy layout.
+    const QDir root(QFileInfo(command).absolutePath());
+    const auto owned = [&root](QString path) {
+        path = QDir::cleanPath(QDir::fromNativeSeparators(path));
+        return path.compare(root.filePath("bin/bifrost-controller.exe"), Qt::CaseInsensitive) == 0 ||
+               (path.startsWith(root.filePath("versions/"), Qt::CaseInsensitive) &&
+                path.endsWith("/bin/bifrost-controller.exe", Qt::CaseInsensitive));
+    };
+    // Migrate only commands belonging to this installation, preserving opt-outs.
+    QSettings association(PROGRAMASSOCIATIONKEY, QSettings::NativeFormat);
+    const QString existing = association.value("shell/open/command/Default").toString();
+    const int endQuote = existing.indexOf('"', 1);
+    if (existing.startsWith('"') && endQuote > 1 && owned(existing.mid(1, endQuote - 1)))
+    {
+        association.setValue("shell/open/command/Default",
+                             '"' + QDir::toNativeSeparators(command) + '"' + existing.mid(endQuote + 1));
+        association.setValue("DefaultIcon/Default", QString("\"%1\",0").arg(QDir::toNativeSeparators(command)));
+        association.sync();
+        if (association.status() != QSettings::NoError)
+            qWarning() << "Bifrost profile shortcut could not be updated.";
+    }
+    const QString appData = QString::fromUtf8(qgetenv("AppData"));
+    if (appData.isEmpty())
+        return;
+    const QString shortcut = QDir(appData).filePath("Microsoft/Windows/Start Menu/Programs/Startup/bifrost-controller.lnk");
+    if (!QFileInfo::exists(shortcut) || !owned(QFileInfo(shortcut).symLinkTarget()))
+        return;
+    const QString temporary = shortcut + QString(".%1.new.lnk").arg(QCoreApplication::applicationPid());
+    QFile source(command);
+    if (!source.link(temporary))
+    {
+        qWarning() << "Bifrost startup shortcut could not be prepared.";
+        return;
+    }
+    QFile replacement(temporary);
+    QSaveFile destination(shortcut);
+    bool saved = replacement.open(QIODevice::ReadOnly) && destination.open(QIODevice::WriteOnly);
+    if (saved)
+    {
+        const QByteArray bytes = replacement.readAll();
+        saved = replacement.error() == QFile::NoError && destination.write(bytes) == bytes.size() && destination.commit();
+    }
+    replacement.close();
+    QFile::remove(temporary); // Only the temporary shortcut created above.
+    if (!saved)
+        qWarning() << "Bifrost startup shortcut was kept because it could not be updated.";
 }
 
 // This functions works only with QT6 and newer C++

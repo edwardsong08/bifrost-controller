@@ -5,6 +5,32 @@ The Windows package includes two executables:
 - bifrost-controller.exe: the interface and existing native mapping engine.
 - bifrost-controller-mcp.exe: a local MCP stdio companion; no Python or Node installation is needed.
 
+Installed Windows packages from 0.1.7 also have two small, stable launchers at the
+installation root: `bifrost-launcher.exe` and `bifrost-mcp-host.exe`. The setup page
+copies the MCP host command. It selects the current versioned companion while
+passing stdin/stdout directly to it. Portable packages keep their existing command.
+These format-1 launchers have no Qt or MinGW DLL dependencies and are installed
+once. Future changes must use a new launcher filename/protocol rather than
+overwriting a connected host.
+
+Upgrades install into `versions/<version>/bin` with a matching `share` directory,
+then atomically select the completed release in `current.txt`. Codex and other MCP
+clients can remain open: a connected companion uses its existing payload until
+the client reconnects, and its requests still reach the running mapper. Existing
+pre-0.1.7 MCP paths are kept working by leaving their old `bin` runtime untouched.
+When convenient, copy the new host command from Assistant setup and reconnect the
+MCP client once; this is not required to install an update.
+
+The finish-page launch offers to restart an older mapper. Save/Discard/Cancel
+remains in effect; no process is killed. 0.1.7 and later handle this request even
+with Close to tray enabled. A legacy mapper set to Close to tray may need
+**Bifrost > Quit** once, then the updated Start menu shortcut. Setup never launches
+the mapper elevated just because setup required administrator permission. If
+normal-user launch fails, open it manually from the shortcut. Personal data keeps
+its existing location. Old payloads are retained; automatic disk cleanup is deferred.
+Same-version reinstalls skip existing files; this is an upgrade mechanism, not an
+in-place repair of a corrupt, running payload.
+
 Keep the mapper open. Choose **Assistant · MCP** in the header/sidebar,
 or **Assistant · MCP > Open MCP setup** in the menu (Ctrl+Shift+M). Enable **local MCP access** and copy
 JSON or Codex TOML settings into a compatible MCP client's configuration. The command is the absolute path

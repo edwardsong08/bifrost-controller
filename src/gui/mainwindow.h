@@ -79,6 +79,13 @@ class MainWindow : public QMainWindow
     void showEvent(QShowEvent *event) override;
     void changeEvent(QEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
+#ifdef Q_OS_WIN
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override;
+    #else
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+    #endif
+#endif
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 

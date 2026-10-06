@@ -20,6 +20,7 @@ class WinExtras : public QObject
     static bool containsFileAssociationinRegistry();
     static bool writeFileAssocationToRegistry();
     static bool removeFileAssociationFromRegistry();
+    static void refreshInstalledLaunchPaths();
     static bool IsRunningAsAdmin();
     static bool elevateAntiMicro();
     static void disablePointerPrecision();
