@@ -104,7 +104,7 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
     bool attachedNumKeypad = settings->value("AttachNumKeypad", false).toBool();
     QString defaultProfileDir = settings->value("DefaultProfileDir", "").toString();
     int numberRecentProfiles = settings->value("NumberRecentProfiles", 5).toInt();
-    bool closeToTray = settings->value("CloseToTray", false).toBool();
+    bool closeToTray = settings->value("CloseToTray", true).toBool();
 
     if (!defaultProfileDir.isEmpty() && QDir(defaultProfileDir).exists())
     {
@@ -602,13 +602,7 @@ bool MainSettingsDialog::saveNewSettings()
     int numRecentProfiles = ui->numberRecentProfileSpinBox->value();
     settings->setValue("NumberRecentProfiles", numRecentProfiles);
 
-    if (closeToTray)
-    {
-        settings->setValue("CloseToTray", closeToTray ? "1" : "0");
-    } else
-    {
-        settings->remove("CloseToTray");
-    }
+    settings->setValue("CloseToTray", closeToTray);
     settings->getLock()->unlock();
 
 
@@ -1877,7 +1871,7 @@ void MainSettingsDialog::resetGeneralSett()
         ui->gamepadPollRateComboBox->setCurrentIndex(gamepadPollIndex);
     }
 
-    ui->closeToTrayCheckBox->setChecked(false);
+    ui->closeToTrayCheckBox->setChecked(true);
     ui->attachNumKeypadCheckbox->setChecked(false);
     ui->launchAtWinStartupCheckBox->setChecked(false);
     ui->traySingleProfileListCheckBox->setChecked(false);

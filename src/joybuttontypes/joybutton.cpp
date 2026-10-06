@@ -175,6 +175,8 @@ void JoyButton::vdpadPassEvent(bool pressed, bool ignoresets)
  */
 void JoyButton::joyEvent(bool pressed, bool ignoresets)
 {
+    if (m_parentSet && m_parentSet->getInputDevice()->isMappingSuspended())
+        return;
     if (Logger::isDebugEnabled())
         DEBUG() << "Processing JoyButton::joyEvent for: " << getName() << " SDL index: " << m_index_sdl
                 << " className: " << metaObject()->className();

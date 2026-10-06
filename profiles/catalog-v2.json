@@ -3067,5 +3067,5113 @@
       }
     ],
     "controller_family": "steam-2026"
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-minecraft-java-dualsense",
+    "name": "Minecraft Java - PS5-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "playstation",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / swim up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to sneak / descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "E"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Q"
+            ],
+            "label": "Drop selected item"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Use / place block"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack / mine"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous hotbar slot"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next hotbar slot"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold to sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "F5"
+            ],
+            "label": "Change perspective"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "F"
+            ],
+            "label": "Swap offhand"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "T"
+            ],
+            "label": "Chat"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "1"
+            ],
+            "label": "Hotbar slot 1"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "9"
+            ],
+            "label": "Hotbar slot 9"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Inventory / Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Java Edition only. Bedrock already offers native controller support. Uses PC movement, mouse look, attack/use, hotbar scrolling and inventory shortcuts. In the inventory layout, the right stick moves the cursor; inventory navigation remains the Java mouse interface. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-minecraft-java-xbox",
+    "name": "Minecraft Java - Xbox-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "xbox",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / swim up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to sneak / descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "E"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Q"
+            ],
+            "label": "Drop selected item"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Use / place block"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack / mine"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous hotbar slot"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next hotbar slot"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold to sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "F5"
+            ],
+            "label": "Change perspective"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "F"
+            ],
+            "label": "Swap offhand"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "T"
+            ],
+            "label": "Chat"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "1"
+            ],
+            "label": "Hotbar slot 1"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "9"
+            ],
+            "label": "Hotbar slot 9"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Inventory / Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Java Edition only. Bedrock already offers native controller support. Uses PC movement, mouse look, attack/use, hotbar scrolling and inventory shortcuts. In the inventory layout, the right stick moves the cursor; inventory navigation remains the Java mouse interface. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-minecraft-java-steam-2015",
+    "name": "Minecraft Java - Steam Controller (2015) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2015",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / swim up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to sneak / descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "E"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Q"
+            ],
+            "label": "Drop selected item"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Use / place block"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack / mine"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous hotbar slot"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next hotbar slot"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold to sprint"
+          },
+          {
+            "input": "right_touchpad_click",
+            "keys": [
+              "F5"
+            ],
+            "label": "Change perspective"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "F"
+            ],
+            "label": "Swap offhand"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "T"
+            ],
+            "label": "Chat"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "1"
+            ],
+            "label": "Hotbar slot 1"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "9"
+            ],
+            "label": "Hotbar slot 9"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Inventory / Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Java Edition only. Bedrock already offers native controller support. Uses PC movement, mouse look, attack/use, hotbar scrolling and inventory shortcuts. In the inventory layout, the right stick moves the cursor; inventory navigation remains the Java mouse interface. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right touchpad provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-minecraft-java-steam-2026",
+    "name": "Minecraft Java - Steam Controller (2026) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2026",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / swim up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to sneak / descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "E"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Q"
+            ],
+            "label": "Drop selected item"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Use / place block"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack / mine"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous hotbar slot"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next hotbar slot"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold to sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "F5"
+            ],
+            "label": "Change perspective"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "F"
+            ],
+            "label": "Swap offhand"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "T"
+            ],
+            "label": "Chat"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "1"
+            ],
+            "label": "Hotbar slot 1"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "9"
+            ],
+            "label": "Hotbar slot 9"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Inventory / Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      }
+    ],
+    "description": "Java Edition only. Bedrock already offers native controller support. Uses PC movement, mouse look, attack/use, hotbar scrolling and inventory shortcuts. In the inventory layout, the right stick moves the cursor; inventory navigation remains the Java mouse interface. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-palworld-dualsense",
+    "name": "Palworld - PS5-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "playstation",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / climb"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Dodge roll"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Interact / hold work"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Reload"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Aim"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous weapon"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next weapon"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "E"
+            ],
+            "label": "Summon / return Pal"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Throw Pal sphere"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "4"
+            ],
+            "label": "Pal commands"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "B"
+            ],
+            "label": "Open build menu"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Rotate building piece"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Cancel placement"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / confirm"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "B"
+            ],
+            "label": "Build menu"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "C"
+            ],
+            "label": "Dismantle mode"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "M"
+            ],
+            "label": "Map"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Keyboard/mouse alternative. Prefer the game's native controller support for analog movement and contextual controller menus. Configure PC actions to the listed keys: interact/work F, jump Space, roll Ctrl, sprint Shift, crouch C, reload R, summon E, sphere Q, Pal commands 4, inventory Tab, build B, rotate R, dismantle C and map M. If your version does not allow these actions/keys, customize this template before using it. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-palworld-xbox",
+    "name": "Palworld - Xbox-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "xbox",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / climb"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Dodge roll"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Interact / hold work"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Reload"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Aim"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous weapon"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next weapon"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "E"
+            ],
+            "label": "Summon / return Pal"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Throw Pal sphere"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "4"
+            ],
+            "label": "Pal commands"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "B"
+            ],
+            "label": "Open build menu"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Rotate building piece"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Cancel placement"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / confirm"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "B"
+            ],
+            "label": "Build menu"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "C"
+            ],
+            "label": "Dismantle mode"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "M"
+            ],
+            "label": "Map"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Keyboard/mouse alternative. Prefer the game's native controller support for analog movement and contextual controller menus. Configure PC actions to the listed keys: interact/work F, jump Space, roll Ctrl, sprint Shift, crouch C, reload R, summon E, sphere Q, Pal commands 4, inventory Tab, build B, rotate R, dismantle C and map M. If your version does not allow these actions/keys, customize this template before using it. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-palworld-steam-2015",
+    "name": "Palworld - Steam Controller (2015) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2015",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / climb"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Dodge roll"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Interact / hold work"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Reload"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Aim"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous weapon"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next weapon"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Sprint"
+          },
+          {
+            "input": "right_touchpad_click",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "E"
+            ],
+            "label": "Summon / return Pal"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Throw Pal sphere"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "4"
+            ],
+            "label": "Pal commands"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "B"
+            ],
+            "label": "Open build menu"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Rotate building piece"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Cancel placement"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / confirm"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "B"
+            ],
+            "label": "Build menu"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "C"
+            ],
+            "label": "Dismantle mode"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "M"
+            ],
+            "label": "Map"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "Keyboard/mouse alternative. Prefer the game's native controller support for analog movement and contextual controller menus. Configure PC actions to the listed keys: interact/work F, jump Space, roll Ctrl, sprint Shift, crouch C, reload R, summon E, sphere Q, Pal commands 4, inventory Tab, build B, rotate R, dismantle C and map M. If your version does not allow these actions/keys, customize this template before using it. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right touchpad provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-palworld-steam-2026",
+    "name": "Palworld - Steam Controller (2026) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2026",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Gameplay",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / climb"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Dodge roll"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Interact / hold work"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Reload"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Aim"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Attack"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Previous weapon"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Next weapon"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Sprint"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "E"
+            ],
+            "label": "Summon / return Pal"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Throw Pal sphere"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "4"
+            ],
+            "label": "Pal commands"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "B"
+            ],
+            "label": "Open build menu"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "R"
+            ],
+            "label": "Rotate building piece"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Cancel placement"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / confirm"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "B"
+            ],
+            "label": "Build menu"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "C"
+            ],
+            "label": "Dismantle mode"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "M"
+            ],
+            "label": "Map"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      }
+    ],
+    "description": "Keyboard/mouse alternative. Prefer the game's native controller support for analog movement and contextual controller menus. Configure PC actions to the listed keys: interact/work F, jump Space, roll Ctrl, sprint Shift, crouch C, reload R, summon E, sphere Q, Pal commands 4, inventory Tab, build B, rotate R, dismantle C and map M. If your version does not allow these actions/keys, customize this template before using it. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-space-engineers-dualsense",
+    "name": "Space Engineers 1 - PS5-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "playstation",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Engineer",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / jetpack ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch / jetpack descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Use / enter cockpit"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / action"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll selection up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll selection down"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to run"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "X"
+            ],
+            "label": "Toggle jetpack"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "G"
+            ],
+            "label": "Block toolbar menu"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "K"
+            ],
+            "label": "Control panel"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Flight",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Thrust up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Thrust down"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Exit cockpit / use"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / fire"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / fire"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "P"
+            ],
+            "label": "Parking / connectors"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Y"
+            ],
+            "label": "Toggle ship power"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Roll left"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "E"
+            ],
+            "label": "Roll right"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "G"
+            ],
+            "label": "Block selection"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold for alternate build action"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Remove / secondary action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / primary action"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "Insert"
+            ],
+            "label": "Rotate block axis 1"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "Delete"
+            ],
+            "label": "Reverse block axis 1"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "PageUp"
+            ],
+            "label": "Rotate block axis 2"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "PageDown"
+            ],
+            "label": "Reverse block axis 2"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Home"
+            ],
+            "label": "Rotate block axis 3"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "End"
+            ],
+            "label": "Reverse block axis 3"
+          }
+        ]
+      },
+      {
+        "set": 4,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "For Space Engineers 1, not Space Engineers 2. Keyboard/mouse alternative; prefer native controller controls where compatible. Review PC bindings for movement WASD, ascend Space, descend/crouch C, use F, inventory I, panel K, block selection G, jetpack X, dampeners Z, parking P, ship power Y, camera V, roll Q/E and block rotation Insert/Delete/Home/End/PageUp/PageDown. These shortcuts may change function with game context. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-space-engineers-xbox",
+    "name": "Space Engineers 1 - Xbox-style (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "xbox",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Engineer",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / jetpack ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch / jetpack descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Use / enter cockpit"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / action"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll selection up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll selection down"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to run"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "X"
+            ],
+            "label": "Toggle jetpack"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "G"
+            ],
+            "label": "Block toolbar menu"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "K"
+            ],
+            "label": "Control panel"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Flight",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Thrust up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Thrust down"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Exit cockpit / use"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / fire"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / fire"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "P"
+            ],
+            "label": "Parking / connectors"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Y"
+            ],
+            "label": "Toggle ship power"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Roll left"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "E"
+            ],
+            "label": "Roll right"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "G"
+            ],
+            "label": "Block selection"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold for alternate build action"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Remove / secondary action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / primary action"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "Insert"
+            ],
+            "label": "Rotate block axis 1"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "Delete"
+            ],
+            "label": "Reverse block axis 1"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "PageUp"
+            ],
+            "label": "Rotate block axis 2"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "PageDown"
+            ],
+            "label": "Reverse block axis 2"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Home"
+            ],
+            "label": "Rotate block axis 3"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "End"
+            ],
+            "label": "Reverse block axis 3"
+          }
+        ]
+      },
+      {
+        "set": 4,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "For Space Engineers 1, not Space Engineers 2. Keyboard/mouse alternative; prefer native controller controls where compatible. Review PC bindings for movement WASD, ascend Space, descend/crouch C, use F, inventory I, panel K, block selection G, jetpack X, dampeners Z, parking P, ship power Y, camera V, roll Q/E and block rotation Insert/Delete/Home/End/PageUp/PageDown. These shortcuts may change function with game context. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-space-engineers-steam-2015",
+    "name": "Space Engineers 1 - Steam Controller (2015) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2015",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Engineer",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / jetpack ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch / jetpack descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Use / enter cockpit"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / action"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll selection up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll selection down"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to run"
+          },
+          {
+            "input": "right_touchpad_click",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "X"
+            ],
+            "label": "Toggle jetpack"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "G"
+            ],
+            "label": "Block toolbar menu"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "K"
+            ],
+            "label": "Control panel"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Flight",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Thrust up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Thrust down"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Exit cockpit / use"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / fire"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / fire"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "P"
+            ],
+            "label": "Parking / connectors"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Y"
+            ],
+            "label": "Toggle ship power"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Roll left"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "E"
+            ],
+            "label": "Roll right"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "G"
+            ],
+            "label": "Block selection"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold for alternate build action"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Remove / secondary action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / primary action"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "Insert"
+            ],
+            "label": "Rotate block axis 1"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "Delete"
+            ],
+            "label": "Reverse block axis 1"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "PageUp"
+            ],
+            "label": "Rotate block axis 2"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "PageDown"
+            ],
+            "label": "Reverse block axis 2"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Home"
+            ],
+            "label": "Rotate block axis 3"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "End"
+            ],
+            "label": "Reverse block axis 3"
+          }
+        ]
+      },
+      {
+        "set": 4,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "left_touchpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "left_touchpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          }
+        ]
+      }
+    ],
+    "description": "For Space Engineers 1, not Space Engineers 2. Keyboard/mouse alternative; prefer native controller controls where compatible. Review PC bindings for movement WASD, ascend Space, descend/crouch C, use F, inventory I, panel K, block selection G, jetpack X, dampeners Z, parking P, ship power Y, camera V, roll Q/E and block rotation Insert/Delete/Home/End/PageUp/PageDown. These shortcuts may change function with game context. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right touchpad provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-space-engineers-steam-2026",
+    "name": "Space Engineers 1 - Steam Controller (2026) (PC)",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "controller_family": "steam-2026",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Engineer",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / jetpack ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Crouch / jetpack descend"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Use / enter cockpit"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / action"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll selection up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll selection down"
+          },
+          {
+            "input": "left_stick_press",
+            "keys": [
+              "Shift"
+            ],
+            "label": "Hold to run"
+          },
+          {
+            "input": "right_stick_press",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "X"
+            ],
+            "label": "Toggle jetpack"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "G"
+            ],
+            "label": "Block toolbar menu"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "K"
+            ],
+            "label": "Control panel"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Flight",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Thrust up"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "C"
+            ],
+            "label": "Thrust down"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "F"
+            ],
+            "label": "Exit cockpit / use"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "I"
+            ],
+            "label": "Inventory"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Secondary tool / fire"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Primary tool / fire"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "P"
+            ],
+            "label": "Parking / connectors"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "V"
+            ],
+            "label": "Change camera"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Z"
+            ],
+            "label": "Toggle dampeners"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Y"
+            ],
+            "label": "Toggle ship power"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Q"
+            ],
+            "label": "Roll left"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "E"
+            ],
+            "label": "Roll right"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Building",
+        "bindings": [
+          {
+            "input": "left_stick_up",
+            "keys": [
+              "W"
+            ],
+            "label": "Move forward"
+          },
+          {
+            "input": "left_stick_right",
+            "keys": [
+              "D"
+            ],
+            "label": "Move right"
+          },
+          {
+            "input": "left_stick_down",
+            "keys": [
+              "S"
+            ],
+            "label": "Move backward"
+          },
+          {
+            "input": "left_stick_left",
+            "keys": [
+              "A"
+            ],
+            "label": "Move left"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Look / pointer"
+          },
+          {
+            "input": "a",
+            "keys": [
+              "Space"
+            ],
+            "label": "Jump / ascend"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel / close"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "G"
+            ],
+            "label": "Block selection"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Ctrl"
+            ],
+            "label": "Hold for alternate build action"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Pause / menu"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Remove / secondary action"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Place / primary action"
+          },
+          {
+            "input": "left_shoulder",
+            "keys": [
+              "Insert"
+            ],
+            "label": "Rotate block axis 1"
+          },
+          {
+            "input": "right_shoulder",
+            "keys": [
+              "Delete"
+            ],
+            "label": "Reverse block axis 1"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "PageUp"
+            ],
+            "label": "Rotate block axis 2"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "PageDown"
+            ],
+            "label": "Reverse block axis 2"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Home"
+            ],
+            "label": "Rotate block axis 3"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "End"
+            ],
+            "label": "Reverse block axis 3"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      },
+      {
+        "set": 4,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "b",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Cancel"
+          },
+          {
+            "input": "x",
+            "keys": [
+              "Enter"
+            ],
+            "label": "Confirm"
+          },
+          {
+            "input": "y",
+            "keys": [
+              "Tab"
+            ],
+            "label": "Next field"
+          },
+          {
+            "input": "start",
+            "keys": [
+              "Escape"
+            ],
+            "label": "Game menu"
+          },
+          {
+            "input": "left_shoulder",
+            "mouse_button": 4,
+            "label": "Scroll up"
+          },
+          {
+            "input": "right_shoulder",
+            "mouse_button": 5,
+            "label": "Scroll down"
+          },
+          {
+            "input": "left_trigger",
+            "mouse_button": 3,
+            "label": "Context menu"
+          },
+          {
+            "input": "right_trigger",
+            "mouse_button": 1,
+            "label": "Select"
+          },
+          {
+            "input": "right_stick_up",
+            "mouse_move": "up",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_right",
+            "mouse_move": "right",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_down",
+            "mouse_move": "down",
+            "label": "Move pointer"
+          },
+          {
+            "input": "right_stick_left",
+            "mouse_move": "left",
+            "label": "Move pointer"
+          },
+          {
+            "input": "dpad_up",
+            "keys": [
+              "Up"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_right",
+            "keys": [
+              "Right"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_down",
+            "keys": [
+              "Down"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "dpad_left",
+            "keys": [
+              "Left"
+            ],
+            "label": "Navigate"
+          },
+          {
+            "input": "right_touchpad_up",
+            "mouse_move": "up",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_right",
+            "mouse_move": "right",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_down",
+            "mouse_move": "down",
+            "label": "Touchpad look / pointer"
+          },
+          {
+            "input": "right_touchpad_left",
+            "mouse_move": "left",
+            "label": "Touchpad look / pointer"
+          }
+        ]
+      }
+    ],
+    "description": "For Space Engineers 1, not Space Engineers 2. Keyboard/mouse alternative; prefer native controller controls where compatible. Review PC bindings for movement WASD, ascend Space, descend/crouch C, use F, inventory I, panel K, block selection G, jetpack X, dampeners Z, parking P, ship power Y, camera V, roll Q/E and block rotation Insert/Delete/Home/End/PageUp/PageDown. These shortcuts may change function with game context. Console-inspired starting template, not exact console parity. Keyboard movement is digital; right stick provides mouse look/pointer. Disable competing keyboard/mouse mappings and use PC keyboard/mouse input for this alternative. Layouts switch manually: create an App rule for the actual game executable, select only these named sets and reserve Create / View / Back (SDL index 4). This button is unassigned in all layouts. No automatic in-game state detection. Hardware/gameplay untested."
   }
 ]

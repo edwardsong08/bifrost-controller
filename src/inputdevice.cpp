@@ -1688,6 +1688,29 @@ QString InputDevice::getRawUniqueIDString() const { return getUniqueIDString(); 
 
 void InputDevice::haltServices() { emit requestWait(); }
 
+void InputDevice::setMappingSuspended(bool suspended)
+{
+    if (m_mappingSuspended.load() == suspended)
+        return;
+    // Release held keys, mouse buttons, repeats and pending events without changing
+    // mappings or marking the profile edited. Run in the device's owning thread.
+    m_mappingSuspended.store(false);
+    for (auto set : joystick_sets)
+    {
+        set->release();
+        // Direction buttons can own mouse/repeat timers independently of the
+        // axes that feed them, including gyro and touchpad-backed sticks.
+        for (auto stick : set->getSticks())
+            for (auto button : *stick->getButtons())
+                button->eventReset();
+        for (auto sensor : set->getSensors())
+            for (auto button : *sensor->getButtons())
+                button->eventReset();
+    }
+    m_mappingSuspended.store(suspended);
+    emit mappingSuspensionChanged(suspended);
+}
+
 void InputDevice::finalRemoval()
 {
     this->closeSDLDevice();

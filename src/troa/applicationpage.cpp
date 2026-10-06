@@ -180,13 +180,16 @@ void ApplicationPage::refresh()
         QStringList modes;
         for (const auto &value : rule.value("modes").toArray())
             modes.append(value.toObject().value("name").toString());
-        cell(m_rules, i, 4, modes.join(" → "));
+        cell(m_rules, i, 4, rule.value("native_controls").toBool() ? "Native game controls" : modes.join(" → "));
         QStringList shortcuts;
         if (!rule.value("keyboard_shortcut").toString().isEmpty())
             shortcuts.append(rule.value("keyboard_shortcut").toString());
         if (!rule.value("controller_button_name").toString().isEmpty())
             shortcuts.append(rule.value("controller_button_name").toString());
-        cell(m_rules, i, 5, shortcuts.isEmpty() ? "Manual layout buttons" : shortcuts.join(" / "));
+        cell(m_rules, i, 5,
+             rule.value("native_controls").toBool() ? "Game handles input"
+             : shortcuts.isEmpty()                  ? "Manual layout buttons"
+                                                    : shortcuts.join(" / "));
     }
     if (selectedRow >= 0)
         m_rules->selectRow(selectedRow);
@@ -274,12 +277,25 @@ void ApplicationPage::editRule(bool existing)
     form->addRow("Application name", name);
     form->addRow("Application .exe", exeRow);
     form->addRow("Controller", controller);
-    form->addRow("Saved profile", pathRow);
-    root->addLayout(form);
-    root->addWidget(text("Layouts to cycle through", "heading"));
-    root->addWidget(text("Select the mapping sets you want and give them clear names. For example, set 1 = Space and set 2 "
-                         "= Ground. The actions are edited under Map controls.",
+    auto native = new QCheckBox("Use the game's native controller controls");
+    native->setChecked(original.value("native_controls").toBool());
+    root->addWidget(native);
+    root->addWidget(text("Native mode pauses Bifrost keyboard/mouse output only while this application is focused, then "
+                         "resumes the existing mapping. It keeps your saved and unsaved assignments. The game must support "
+                         "your controller; this does not emulate an Xbox controller.",
                          "muted"));
+    auto savedProfile = new QWidget;
+    savedProfile->setLayout(pathRow);
+    form->addRow("Saved profile", savedProfile);
+    root->addLayout(form);
+    auto mappingConfiguration = new QWidget;
+    auto mappingLayout = new QVBoxLayout(mappingConfiguration);
+    mappingLayout->setContentsMargins(0, 0, 0, 0);
+    mappingLayout->addWidget(text("Layouts to cycle through", "heading"));
+    mappingLayout->addWidget(
+        text("Select the mapping sets you want and give them clear names. For example, set 1 = Space and set 2 "
+             "= Ground. The actions are edited under Map controls.",
+             "muted"));
     auto modesGrid = new QGridLayout;
     QList<QCheckBox *> enabled;
     QList<QLineEdit *> names;
@@ -309,7 +325,7 @@ void ApplicationPage::editRule(bool existing)
             for (int i = 0; i < 8; ++i)
                 names.at(i)->setText(labels.at(i));
     });
-    root->addLayout(modesGrid);
+    mappingLayout->addLayout(modesGrid);
     auto shortcuts = new QFormLayout;
     auto keyboard = new QKeySequenceEdit(
         QKeySequence::fromString(original.value("keyboard_shortcut").toString(), QKeySequence::PortableText));
@@ -334,11 +350,27 @@ void ApplicationPage::editRule(bool existing)
             [updateButtons](int) { updateButtons(); });
     shortcuts->addRow("Keyboard shortcut", keyboard);
     shortcuts->addRow("Controller switch button", switchButton);
-    root->addLayout(shortcuts);
-    root->addWidget(
+    mappingLayout->addLayout(shortcuts);
+    mappingLayout->addWidget(
         text("Shortcuts work while this application is focused. Controller switching occurs on release; leave that button "
              "unmapped in all selected sets. A–Z, 0–9 and F1–F11 are supported, with optional Ctrl/Alt/Shift.",
              "muted"));
+    root->addWidget(mappingConfiguration);
+    auto nativeState = [=](bool on) {
+        savedProfile->setVisible(!on);
+        if (auto label = form->labelForField(savedProfile))
+            label->setVisible(!on);
+        mappingConfiguration->setVisible(!on);
+        keyboard->setEnabled(!on);
+        switchButton->setEnabled(!on);
+        for (int i = 0; i < enabled.size(); ++i)
+        {
+            enabled.at(i)->setEnabled(!on);
+            names.at(i)->setEnabled(!on && enabled.at(i)->isChecked());
+        }
+    };
+    connect(native, &QCheckBox::toggled, dialog, nativeState);
+    nativeState(native->isChecked());
     auto error = text("", "error");
     error->hide();
     root->addWidget(error);
@@ -353,6 +385,7 @@ void ApplicationPage::editRule(bool existing)
         QJsonObject rule{
             {"id", original.value("id").toString("app-" + QUuid::createUuid().toString(QUuid::WithoutBraces))},
             {"name", name->text().trimmed()},
+            {"native_controls", native->isChecked()},
             {"executable", exe->text()},
             {"controller_id", controller->currentData().toString()},
             {"controller_name", controller->currentText()},

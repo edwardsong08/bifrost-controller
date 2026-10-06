@@ -194,7 +194,8 @@ ApplicationContext::ApplicationContext(AntiMicroSettings *settings, std::functio
         const auto rule = value.toObject();
         const auto modes = rule.value("modes").toArray();
         bool valid = !rule.value("id").toString().isEmpty() && !rule.value("executable").toString().isEmpty() &&
-                     !rule.value("controller_id").toString().isEmpty() && !modes.isEmpty() && modes.size() <= 8;
+                     !rule.value("controller_id").toString().isEmpty() &&
+                     (rule.value("native_controls").toBool() || (!modes.isEmpty() && modes.size() <= 8));
         for (const auto &mode : modes)
             valid = valid && mode.toObject().value("set").toInt() >= 1 && mode.toObject().value("set").toInt() <= 8;
         if (valid)
@@ -312,13 +313,24 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
             target = tab;
     if (!target)
         return failure("Connect and choose the controller for this application.");
+    const bool native = rule.value("native_controls").toBool();
+    if (!native && target->getJoystick()->isDeviceEdited())
+        return failure("Save or revert your controller edits before assigning a profile.");
+    if (native)
+    {
+        rule["profile_path"] = "";
+        rule["modes"] = QJsonArray{};
+        rule["keyboard_shortcut"] = "";
+        rule["controller_button"] = -1;
+    }
     QString error;
-    profileModes(rule.value("profile_path").toString(), &error);
+    if (!native)
+        profileModes(rule.value("profile_path").toString(), &error);
     if (!error.isEmpty())
         return failure(error);
     const auto modes = rule.value("modes").toArray();
     QSet<int> sets;
-    if (modes.isEmpty() || modes.size() > 8)
+    if ((!native && modes.isEmpty()) || modes.size() > 8)
         return failure("Choose between one and eight layouts.");
     for (const auto &value : modes)
     {
@@ -349,8 +361,9 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
             return failure("This controller already has a rule for this application. Edit that rule instead.");
     }
     rule["executable"] = exe.absoluteFilePath();
-    rule["profile_path"] = QFileInfo(rule.value("profile_path").toString()).absoluteFilePath();
-    rule["profile_name"] = nativeProfileName(rule.value("profile_path").toString());
+    rule["profile_path"] = native ? "" : QFileInfo(rule.value("profile_path").toString()).absoluteFilePath();
+    rule["profile_name"] =
+        native ? "Game's native controller controls" : nativeProfileName(rule.value("profile_path").toString());
     rule["controller_name"] = target->getJoystick()->getSDLName();
     rule["controller_button_name"] = button < 0 ? "" : controllerButtonName(target->getJoystick(), button);
     rule["keyboard_shortcut"] =
@@ -510,7 +523,8 @@ void ApplicationContext::watch(JoyTabWidget *tab)
 }
 QString ApplicationContext::cycle(InputDevice *device, const QJsonObject &rule, bool controllerButton)
 {
-    if (m_loading || rule.isEmpty() || m_mapperFocused || !ownsController(device->getStringIdentifier()))
+    if (m_loading || rule.isEmpty() || rule.value("native_controls").toBool() || m_mapperFocused ||
+        !ownsController(device->getStringIdentifier()))
         return {};
     JoyTabWidget *tab = nullptr;
     for (auto candidate : m_tabs())
@@ -569,7 +583,19 @@ void ApplicationContext::poll()
         const auto rule = matchingRule(controller);
         const auto id = rule.value("id").toString();
         const auto path = rule.value("profile_path").toString();
-        if (!m_mapperFocused && !rule.isEmpty() && m_lastApplied.value(controller) != id)
+        const bool native = rule.value("native_controls").toBool();
+        const bool suspend = !m_mapperFocused && native;
+        if (device->isMappingSuspended() != suspend)
+        {
+            QMetaObject::invokeMethod(device, "setMappingSuspended",
+                                      device->thread() == QThread::currentThread() ? Qt::DirectConnection
+                                                                                   : Qt::BlockingQueuedConnection,
+                                      Q_ARG(bool, suspend));
+            m_messages.remove(controller);
+            if (suspend)
+                notice(rule.value("name").toString() + " · Native controls", "Bifrost keyboard/mouse mappings paused");
+        }
+        if (!m_mapperFocused && !rule.isEmpty() && !native && m_lastApplied.value(controller) != id)
         {
             if (device->isDeviceEdited())
                 m_messages[controller] = "Switch paused: save or revert your controller edits.";
@@ -606,7 +632,7 @@ void ApplicationContext::poll()
         }
         const int set = device->getActiveSetNumber();
         const auto observed = id + ":" + tab->currentProfilePath() + ":" + QString::number(set);
-        if (!rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(path))
+        if (!rule.isEmpty() && !native && canonical(tab->currentProfilePath()) == canonical(path))
         {
             if (!m_mapperFocused && m_observed.value(controller) != observed)
                 notice(rule.value("name").toString() + " · " + modeName(device, rule, set),
@@ -634,10 +660,15 @@ QJsonObject ApplicationContext::state() const
                         continue;
                 buttons.append(QJsonObject{{"index", index}, {"name", controllerButtonName(device, index)}});
             }
-        const bool matches =
-            !rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(rule.value("profile_path").toString());
+        const bool native = rule.value("native_controls").toBool();
+        const bool matches = !rule.isEmpty() && (native ? device->isMappingSuspended()
+                                                        : canonical(tab->currentProfilePath()) ==
+                                                              canonical(rule.value("profile_path").toString()));
         QString message =
             rule.isEmpty() ? "No application rule; the current controller profile continues." : m_messages.value(controller);
+        if (native)
+            message = device->isMappingSuspended() ? "Native controls: Bifrost keyboard/mouse mappings are paused."
+                                                   : "Bifrost is focused; mapping tools are available.";
         if (matches && rule.value("controller_button").toInt(-1) >= 0 && !unusedButton(device, rule))
             message = "Controller shortcut paused: its button has an action in a selected layout. Clear those actions to "
                       "reserve it.";
@@ -659,6 +690,7 @@ QJsonObject ApplicationContext::state() const
             {"active_set", device->getActiveSetNumber() + 1},
             {"unsaved_changes", device->isDeviceEdited()},
             {"assignment_active", matches},
+            {"mapping_suspended", device->isMappingSuspended()},
             {"message", message.trimmed()}});
     }
     for (const auto &value : m_rules)

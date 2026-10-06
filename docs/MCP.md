@@ -114,9 +114,27 @@ single left stick for the pointer and right touchpad for scrolling. After a cata
 refresh, choose **Use this profile** to apply the revised template; existing saved
 and active mappings are preserved until you deliberately apply it.
 Downloads never activate profiles, replace personal copies or rewrite existing
-application-rule mapping files. The v2 catalog includes ten templates with separate STO Space/Ground/Menus
+application-rule mapping files. The v2 catalog includes twenty-two templates with separate STO Space/Ground/Menus
 starting layouts for DualSense, Xbox, and Steam Controller 2015/2026 hardware. See
 [its setup notes](profiles/star-trek-online-dualsense.md); gameplay is untested.
+Minecraft Java, Palworld and Space Engineers 1 also have controller variants;
+see [game template setup](profiles/game-library.md). The library groups variants
+under their game/application. Controller compatibility filtering checks the device's
+available inputs, not just its label. Favorites and personal collections are local
+preferences; profile files and revision hashes stay unchanged by organization.
+Files & backup exports definitions, personal-library/collection backups or native
+`.amgp` mappings. Import validates the entire document before saving, skips existing
+IDs and never activates mappings. Backups cover definitions and collections, not
+native editor files, application rules or hardware calibration.
+
+For an application with native controller support, `save_application_rule` accepts
+`native_controls: true`. Supply the usual id/name/executable/persistent controller
+id and current rules revision. Profile path, mapping modes and switching shortcuts
+are cleared in this mode. Foreground activation pauses all Bifrost mapped output
+and releases held actions; leaving the app resumes the preserved mapping. This
+does not hide the physical controller or emulate an XInput/virtual controller.
+The GUI exposes the same option in App rules. `application_context` and
+`list_controllers` report `mapping_suspended`.
 
 ## Current boundaries
 

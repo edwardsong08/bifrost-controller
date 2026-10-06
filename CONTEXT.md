@@ -351,3 +351,23 @@ committed JSON definitions. Current v2 feed SHA256:
 26295eb501f76ba044af518b9214d3c060288760c93958c62bc61c6cfca87b9d.
 The owner can use Profile library > Update profiles, then Use this profile for
 the selected desktop/browser template. No running controller profile was changed.
+
+## 2026-10-06 - 0.1.9 tray, organized library and game templates
+
+Owner authorized the discussed recommendations and close-to-tray. Close now
+hides by default where a tray is available; explicit Quit retains save/discard/
+cancel handling. Settings preserve an explicit opt-out and reset to the new default.
+Library groups variants by game/application, filters by controller inputs/type and
+section, and supports favorites, personal collections, definition import/export,
+native .amgp export and personal-definition/collection backups. Imports validate
+before saving and skip conflicts; they do not activate. Preview revision, selected
+variant and actual applied profile remain separate. Bedrock has a native setup guide.
+Added 12 console-inspired keyboard/mouse starting profiles across Minecraft Java,
+Palworld and Space Engineers 1 for DualSense/Xbox/Steam 2015/Steam 2026. Modes are
+manual, PC actions/key contracts are documented and console parity is not claimed.
+Native-controller App rules release held actions and temporarily gate Bifrost
+output without clearing mappings or edits; output resumes when the game loses
+focus. The native mode does not emulate or hide a physical controller. MCP accepts
+native_controls and reports mapping_suspended. Existing STO rule remains untouched.
+Version bumped to 0.1.9. Compile/package and delivery pending; no automated,
+visual, installer execution, hardware or gameplay tests authorized or performed.

@@ -39,7 +39,9 @@ QJsonArray tools()
              "SDL index, -1 disables). Optional controller_name/button_name are display labels. Profile actions remain in "
              "the native file. Saving enables automatic activation when that app is focused; refuses unsaved controller "
              "edits. "
-             "Controller switch buttons must be unassigned in every selected set.",
+             "Controller switch buttons must be unassigned in every selected set. Alternatively set native_controls:true "
+             "to pause Bifrost keyboard/mouse output only while the app is focused, preserving mappings. In native mode "
+             "profile_path, modes and switch shortcuts are unused. This does not emulate a virtual controller.",
              {{"rule", QJsonObject{{"type", "object"}}}, {"expected_revision", text}}, {"rule", "expected_revision"}, false),
         tool("remove_application_rule",
              "Remove an application rule without deleting its profile file. Requires the current rules revision.",
@@ -132,7 +134,7 @@ int main(int argc, char **argv)
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"},
                       {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
-                      {"serverInfo", QJsonObject{{"name", "bifrost-controller"}, {"version", "0.1.8"}}},
+                      {"serverInfo", QJsonObject{{"name", "bifrost-controller"}, {"version", "0.1.9"}}},
                       {"instructions",
                        "Manage controller profiles locally. Read before changing, save drafts before activation, "
                        "and use exact revision/controller ids. This server does not inject input or run scripts."}};

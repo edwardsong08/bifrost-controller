@@ -548,6 +548,8 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     connect(this, &JoyTabWidget::joystickConfigChanged, this, &JoyTabWidget::refreshCopySetActions);
     connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::displayProfileEditNotification);
     connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
+    connect(joystick, &InputDevice::mappingSuspensionChanged, this, &JoyTabWidget::refreshMappingSummary,
+            Qt::QueuedConnection);
     connect(joystick, &InputDevice::profileNameEdited, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
 
     connect(joystick, &InputDevice::requestProfileLoad, this, &JoyTabWidget::loadConfigFile, Qt::QueuedConnection);
@@ -1623,6 +1625,8 @@ void JoyTabWidget::refreshMappingSummary()
         return;
     const auto profile = m_joystick->getProfileName();
     QStringList lines;
+    if (m_joystick->isMappingSuspended())
+        lines.append(tr("Native controller mode · Keyboard/mouse output paused; assignments are preserved."));
     lines.append(tr("Active mapping: %1 · Layout: %2")
                      .arg(profile.isEmpty() ? tr("Unsaved mapping") : profile)
                      .arg(set->getName().isEmpty() ? QString::number(set->getIndex() + 1) : set->getName()));

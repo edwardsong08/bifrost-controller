@@ -25,6 +25,7 @@
 #include "setjoystick.h"
 
 #include <SDL2/SDL_joystick.h>
+#include <atomic>
 
 class AntiMicroSettings;
 class SetJoystick;
@@ -121,6 +122,7 @@ class InputDevice : public QObject
 
     void setIndex(int index);
     bool isDeviceEdited();
+    bool isMappingSuspended() const { return m_mappingSuspended.load(); }
     void revertProfileEdited();
 
     void setKeyRepeatStatus(bool enabled);
@@ -184,6 +186,7 @@ class InputDevice : public QObject
     InputDeviceCalibration m_calibrations;
 
   signals:
+    void mappingSuspensionChanged(bool suspended);
     void setChangeActivated(int index);
     void setAxisThrottleActivated(int index); // InputDeviceAxis class
     void clicked(int index);
@@ -205,6 +208,7 @@ class InputDevice : public QObject
     void requestWait();
 
   public slots:
+    void setMappingSuspended(bool suspended);
     void reset();
     void transferReset();
     void reInitButtons();
@@ -284,6 +288,7 @@ class InputDevice : public QObject
     int buttonDownCount;
     SDL_JoystickID joystickID;
     bool deviceEdited;
+    std::atomic_bool m_mappingSuspended{false};
 
     bool keyRepeatEnabled;
     int keyRepeatDelay;

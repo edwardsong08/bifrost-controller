@@ -242,7 +242,7 @@ before using AntiMicroX unattended.</string>
 clicked instead of quitting the program.</string>
            </property>
            <property name="text">
-            <string>Close To Tray</string>
+            <string>Keep running in the system tray when closing the window</string>
            </property>
           </widget>
          </item>

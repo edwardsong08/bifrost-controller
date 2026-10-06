@@ -329,7 +329,8 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
                                        {"sticks", device->getNumberSticks()},
                                        {"active_profile_name", device->getProfileName()},
                                        {"active_set", device->getActiveSetNumber() + 1},
-                                       {"unsaved_changes", device->isDeviceEdited()}});
+                                       {"unsaved_changes", device->isDeviceEdited()},
+                                       {"mapping_suspended", device->isMappingSuspended()}});
         }
         return {{"controllers", devices}};
     }
@@ -1470,7 +1471,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    bool closeToTray = m_settings->value("CloseToTray", false).toBool();
+    bool closeToTray = m_settings->value("CloseToTray", true).toBool();
     if (closeToTray && QSystemTrayIcon::isSystemTrayAvailable() && showTrayIcon)
     {
         this->hideWindow();

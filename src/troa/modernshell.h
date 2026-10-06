@@ -45,6 +45,10 @@ class ModernShell : public QWidget
     void navigate(int index);
     void chooseTemplate(const QString &id);
     void filterProfiles();
+    void syncVariants();
+    bool visibleVariant(const QJsonObject &profile) const;
+    void manageProfileFiles();
+    void organizeProfile();
     void updateProfileActions();
     void refreshAssistantStatus();
     void updateConnectionSettings();
@@ -61,6 +65,12 @@ class ModernShell : public QWidget
     QStackedWidget *m_pages = nullptr;
     QList<QPushButton *> m_navigation;
     QLineEdit *m_search = nullptr;
+    QComboBox *m_libraryFilter = nullptr;
+    QComboBox *m_familyFilter = nullptr;
+    QComboBox *m_variant = nullptr;
+    QPushButton *m_favorite = nullptr;
+    QLabel *m_appliedProfile = nullptr;
+    QPushButton *m_nativeHelp = nullptr;
     QLabel *m_profileName = nullptr;
     QLabel *m_profileDescription = nullptr;
     QLabel *m_profileMeta = nullptr;

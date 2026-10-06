@@ -15,8 +15,11 @@
 #include <QClipboard>
 #include <QComboBox>
 #include <QCoreApplication>
+#include <QCursor>
 #include <QDesktopServices>
 #include <QDir>
+#include <QFile>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QFont>
 #include <QFrame>
@@ -43,7 +46,9 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QResizeEvent>
+#include <QSaveFile>
 #include <QScrollArea>
+#include <QSet>
 #include <QStackedWidget>
 #include <QStyle>
 #include <QStyleFactory>
@@ -156,6 +161,43 @@ void feedback(QLabel *widget, const QString &text, bool error = false)
     widget->style()->polish(widget);
     widget->setText(text);
     widget->setVisible(!text.isEmpty());
+}
+QString libraryGroup(const QJsonObject &profile)
+{
+    if (!profile.value("bundled").toBool())
+        return profile.value("name").toString();
+    const auto id = profile.value("id").toString();
+    if (id.startsWith("builtin-sto-"))
+        return "Star Trek Online";
+    if (id.startsWith("builtin-minecraft-java-"))
+        return "Minecraft · Java Edition";
+    if (id.startsWith("builtin-palworld-"))
+        return "Palworld";
+    if (id.startsWith("builtin-space-engineers-"))
+        return "Space Engineers 1";
+    if (profile.value("category").toString() == "desktop")
+        return "Desktop";
+    if (profile.value("category").toString() == "browser")
+        return "Browser";
+    return profile.value("name").toString();
+}
+QString familyName(const QString &family)
+{
+    if (family == "playstation")
+        return "PlayStation · DualSense";
+    if (family == "xbox")
+        return "Xbox";
+    if (family == "steam-2015")
+        return "Steam Controller · 2015";
+    if (family == "steam-2026")
+        return "Steam Controller · 2026";
+    return "Standard controller · Xbox / PlayStation";
+}
+bool writeJson(const QString &path, const QJsonDocument &document)
+{
+    QSaveFile file(path);
+    const auto bytes = document.toJson(QJsonDocument::Indented);
+    return file.open(QIODevice::WriteOnly) && file.write(bytes) == bytes.size() && file.commit();
 }
 } // namespace
 
@@ -625,6 +667,26 @@ QWidget *ModernShell::libraryPage()
     m_search->setPlaceholderText("Search profiles");
     m_search->setAccessibleName("Search profiles by name or category");
     root->addWidget(m_search);
+    auto filters = new QHBoxLayout;
+    m_libraryFilter = new QComboBox;
+    m_libraryFilter->setAccessibleName("Library section or collection");
+    m_familyFilter = new QComboBox;
+    m_familyFilter->setAccessibleName("Controller filter");
+    for (const auto &entry : QList<QPair<QString, QString>>{{"Compatible with my controller", "compatible"},
+                                                            {"All controllers", "all"},
+                                                            {"PlayStation / DualSense", "playstation"},
+                                                            {"Xbox", "xbox"},
+                                                            {"Steam Controller 2015", "steam-2015"},
+                                                            {"Steam Controller 2026", "steam-2026"}})
+        m_familyFilter->addItem(entry.first, entry.second);
+    auto files = button("Files & backup…");
+    connect(files, &QPushButton::clicked, this, &ModernShell::manageProfileFiles);
+    filters->addWidget(m_libraryFilter, 1);
+    filters->addWidget(m_familyFilter, 1);
+    filters->addWidget(files);
+    root->addLayout(filters);
+    connect(m_libraryFilter, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) { filterProfiles(); });
+    connect(m_familyFilter, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) { filterProfiles(); });
     auto split = new QBoxLayout(QBoxLayout::LeftToRight);
     m_librarySplit = split;
     split->setSpacing(14);
@@ -642,6 +704,13 @@ QWidget *ModernShell::libraryPage()
     layout->addWidget(m_profileName);
     layout->addWidget(m_profileDescription);
     layout->addWidget(m_profileMeta);
+    m_variant = new QComboBox;
+    m_variant->setAccessibleName("Controller variant for this game or application");
+    layout->addWidget(m_variant);
+    connect(m_variant, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) { previewProfile(); });
+    m_nativeHelp = button("Set up native controls in App rules");
+    connect(m_nativeHelp, &QPushButton::clicked, this, [this]() { navigate(4); });
+    layout->addWidget(m_nativeHelp);
     m_layout = new QComboBox;
     m_layout->setAccessibleName("Layout to preview and apply");
     m_layout->setToolTip("This layout is selected when you press Use this profile.");
@@ -668,6 +737,8 @@ QWidget *ModernShell::libraryPage()
     connect(m_search, &QLineEdit::textChanged, this, [this]() { filterProfiles(); });
     m_controllerHelp = label("", "muted");
     root->addWidget(m_controllerHelp);
+    m_appliedProfile = label("", "muted");
+    root->addWidget(m_appliedProfile);
     auto actions = new QVBoxLayout;
     m_controller = new QComboBox;
     m_controller->setAccessibleName("Controller to receive profile");
@@ -681,6 +752,26 @@ QWidget *ModernShell::libraryPage()
     auto actionButtons = new QHBoxLayout;
     actionButtons->addWidget(m_apply);
     actionButtons->addWidget(m_copy);
+    m_favorite = button("Favorite");
+    m_favorite->setCheckable(true);
+    connect(m_favorite, &QPushButton::clicked, this, [this](bool checked) {
+        const auto id = selectedId();
+        if (id.isEmpty())
+            return;
+        QMutexLocker lock(m_settings->getLock());
+        auto favorites = m_settings->value("TROA/ProfileFavorites").toStringList();
+        favorites.removeAll(id);
+        if (checked)
+            favorites.append(id);
+        m_settings->setValue("TROA/ProfileFavorites", favorites);
+        m_settings->sync();
+        lock.unlock();
+        filterProfiles();
+    });
+    actionButtons->addWidget(m_favorite);
+    auto organize = button("Collection…");
+    connect(organize, &QPushButton::clicked, this, &ModernShell::organizeProfile);
+    actionButtons->addWidget(organize);
     actionButtons->addStretch();
     actions->addLayout(actionButtons);
     root->addLayout(actions);
@@ -890,25 +981,93 @@ void ModernShell::updateCommunityProfiles()
         reply->deleteLater();
     });
 }
+bool ModernShell::visibleVariant(const QJsonObject &profile) const
+{
+    const auto id = profile.value("id").toString();
+    const auto section = m_libraryFilter->currentData().toString();
+    const bool personal = !profile.value("bundled").toBool();
+    if (section == "personal" && !personal)
+        return false;
+    if (section == "favorites" && !m_settings->value("TROA/ProfileFavorites").toStringList().contains(id))
+        return false;
+    if (QStringList{"game", "desktop", "browser"}.contains(section) && profile.value("category").toString() != section)
+        return false;
+    if (section.startsWith("collection:") && m_settings->value("TROA/ProfileCollection/" + id).toString() != section.mid(11))
+        return false;
+    const auto search = m_search->text().trimmed();
+    if (!(libraryGroup(profile) + " " + profile.value("name").toString() + " " + profile.value("description").toString())
+             .contains(search, Qt::CaseInsensitive))
+        return false;
+    const auto filter = m_familyFilter->currentData().toString();
+    const auto family = profile.value("controller_family").toString("generic");
+    if (filter != "all" && filter != "compatible")
+        return family == "generic" || family == filter;
+    if (filter == "all" || !m_controller || m_controller->currentData().toString().isEmpty())
+        return true;
+    const auto device = m_controller->currentData(Qt::UserRole + 2).toJsonObject();
+    if (family != "generic" && family != device.value("controller_family").toString())
+        return false;
+    const auto full = ProfileStore().read(id).value("profile").toObject();
+    auto layouts = full.value("layouts").toArray();
+    if (layouts.isEmpty())
+        layouts.append(QJsonObject{{"bindings", full.value("bindings")}});
+    const auto available = device.value("available_inputs").toArray();
+    for (const auto &layout : layouts)
+        for (const auto &binding : layout.toObject().value("bindings").toArray())
+            if (!available.contains(binding.toObject().value("input")))
+                return false;
+    return true;
+}
 void ModernShell::refreshProfiles()
 {
     const auto selected = selectedId();
-    m_profiles->blockSignals(true);
-    m_profiles->clear();
-    int selectedRow = -1;
+    const auto section = m_libraryFilter->currentData().toString();
+    m_libraryFilter->blockSignals(true);
+    m_libraryFilter->clear();
+    for (const auto &entry : QList<QPair<QString, QString>>{{"All profiles", "all"},
+                                                            {"Games", "game"},
+                                                            {"Desktop", "desktop"},
+                                                            {"Browser", "browser"},
+                                                            {"My profiles", "personal"},
+                                                            {"Favorites", "favorites"}})
+        m_libraryFilter->addItem(entry.first, entry.second);
+    for (const auto &collection : m_settings->value("TROA/ProfileCollections").toStringList())
+        m_libraryFilter->addItem("Collection · " + collection, "collection:" + collection);
+    m_libraryFilter->setCurrentIndex(qMax(0, m_libraryFilter->findData(section)));
+    m_libraryFilter->blockSignals(false);
+    QMap<QString, QJsonArray> groups;
     for (const auto &value : ProfileStore().list())
     {
         const auto profile = value.toObject();
-        QString category = profile.value("category").toString();
-        if (!category.isEmpty())
-            category[0] = category.at(0).toUpper();
-        auto item = new QListWidgetItem(profile.value("name").toString() + "\n" + category +
-                                            (profile.value("bundled").toBool() ? " · Community" : " · Personal"),
-                                        m_profiles);
-        item->setData(Qt::UserRole, profile.value("id"));
-        if (profile.value("id").toString() == selected)
-            selectedRow = m_profiles->count() - 1;
+        const auto key = profile.value("category").toString() + ":" + libraryGroup(profile) +
+                         (profile.value("bundled").toBool() ? "" : ":" + profile.value("id").toString());
+        groups[key].append(profile);
     }
+    m_profiles->blockSignals(true);
+    m_profiles->clear();
+    int selectedRow = -1;
+    for (auto it = groups.cbegin(); it != groups.cend(); ++it)
+    {
+        const auto profile = it.value().first().toObject();
+        const auto title = libraryGroup(profile);
+        const auto subtitle = profile.value("bundled").toBool() ? QString("%1 · %2 controller variant%3")
+                                                                      .arg(profile.value("category").toString())
+                                                                      .arg(it.value().size())
+                                                                      .arg(it.value().size() == 1 ? "" : "s")
+                                                                : "My profile";
+        auto item = new QListWidgetItem(title + "\n" + subtitle, m_profiles);
+        item->setData(Qt::UserRole, profile.value("id"));
+        item->setData(Qt::UserRole + 1, it.value());
+        item->setData(Qt::UserRole + 2, it.key());
+        for (const auto &variant : it.value())
+            if (variant.toObject().value("id").toString() == selected)
+            {
+                item->setData(Qt::UserRole, selected);
+                selectedRow = m_profiles->count() - 1;
+            }
+    }
+    auto guide = new QListWidgetItem("Minecraft · Bedrock Edition\nNative controller setup", m_profiles);
+    guide->setData(Qt::UserRole + 2, "guide-bedrock");
     m_profiles->setCurrentRow(selectedRow);
     m_profiles->blockSignals(false);
     filterProfiles();
@@ -920,25 +1079,75 @@ void ModernShell::filterProfiles()
     for (int row = 0; row < m_profiles->count(); ++row)
     {
         auto item = m_profiles->item(row);
-        item->setHidden(!item->text().contains(m_search->text(), Qt::CaseInsensitive));
-        if (!item->isHidden() && firstVisible < 0)
+        bool visible = false;
+        for (const auto &value : item->data(Qt::UserRole + 1).toJsonArray())
+            visible = visible || visibleVariant(value.toObject());
+        if (item->data(Qt::UserRole + 2).toString() == "guide-bedrock")
+            visible = QStringList{"all", "game"}.contains(m_libraryFilter->currentData().toString()) &&
+                      item->text().contains(m_search->text().trimmed(), Qt::CaseInsensitive);
+        item->setHidden(!visible);
+        if (visible && firstVisible < 0)
             firstVisible = row;
     }
-    if (selectedId().isEmpty())
+    if (!m_profiles->currentItem() || m_profiles->currentItem()->isHidden())
         m_profiles->setCurrentRow(firstVisible);
     m_profiles->blockSignals(false);
+    m_variant->setProperty("group", QString{});
     previewProfile();
+}
+void ModernShell::syncVariants()
+{
+    auto current = m_profiles->currentItem();
+    const auto group = current && !current->isHidden() ? current->data(Qt::UserRole + 2).toString() : QString{};
+    if (m_variant->property("group").toString() == group)
+        return;
+    const auto selected = selectedId();
+    m_variant->blockSignals(true);
+    m_variant->clear();
+    if (current && !current->isHidden())
+        for (const auto &value : current->data(Qt::UserRole + 1).toJsonArray())
+        {
+            const auto profile = value.toObject();
+            if (visibleVariant(profile))
+                m_variant->addItem(familyName(profile.value("controller_family").toString("generic")), profile.value("id"));
+        }
+    m_variant->setCurrentIndex(qMax(0, m_variant->findData(selected)));
+    m_variant->setProperty("group", group);
+    m_variant->setVisible(m_variant->count() > 1);
+    m_variant->blockSignals(false);
+    if (current)
+        current->setData(Qt::UserRole, m_variant->currentData());
 }
 void ModernShell::chooseTemplate(const QString &id)
 {
     m_search->clear();
+    m_libraryFilter->setCurrentIndex(0);
+    m_familyFilter->setCurrentIndex(m_familyFilter->findData("all"));
     navigate(2);
     for (int row = 0; row < m_profiles->count(); ++row)
-        if (m_profiles->item(row)->data(Qt::UserRole).toString() == id)
-            m_profiles->setCurrentRow(row);
+        for (const auto &value : m_profiles->item(row)->data(Qt::UserRole + 1).toJsonArray())
+            if (value.toObject().value("id").toString() == id)
+            {
+                m_profiles->item(row)->setData(Qt::UserRole, id);
+                m_variant->setProperty("group", QString{});
+                m_profiles->setCurrentRow(row);
+                previewProfile();
+            }
 }
 void ModernShell::previewProfile()
 {
+    syncVariants();
+    if (auto current = m_profiles->currentItem())
+        current->setData(Qt::UserRole, m_variant->currentData());
+    const auto id = selectedId();
+    const bool bedrock = m_profiles->currentItem() && !m_profiles->currentItem()->isHidden() &&
+                         m_profiles->currentItem()->data(Qt::UserRole + 2).toString() == "guide-bedrock";
+    const bool nativeRecommended =
+        bedrock || id.startsWith("builtin-palworld-") || id.startsWith("builtin-space-engineers-");
+    m_nativeHelp->setVisible(nativeRecommended);
+    m_bindings->setVisible(!bedrock);
+    m_favorite->setEnabled(!id.isEmpty());
+    m_favorite->setChecked(m_settings->value("TROA/ProfileFavorites").toStringList().contains(id));
     const auto item = ProfileStore().read(selectedId());
     const auto profile = item.value("profile").toObject();
     m_bindings->setRowCount(0);
@@ -948,6 +1157,18 @@ void ModernShell::previewProfile()
         m_profileDescription->setText(m_search->text().isEmpty() ? "Select a profile to see its assignments."
                                                                  : "No profiles match this search.");
         m_profileMeta->clear();
+        m_layout->clear();
+        m_layout->hide();
+        if (bedrock)
+        {
+            m_profileName->setText("Minecraft · Bedrock Edition");
+            m_profileDescription->setText(
+                "Use the game's built-in controller controls for analog movement and controller menus. In App rules, assign "
+                "its running application and choose Native controller controls to pause Bifrost mappings while it is "
+                "focused. Bifrost does not emulate an Xbox controller; your controller must be supported by the game or "
+                "Steam Input. Java Edition has separate keyboard/mouse templates.");
+            m_profileMeta->setText("Native setup guide · No keyboard/mouse template is applied");
+        }
     } else
     {
         m_profileName->setText(profile.value("name").toString());
@@ -976,9 +1197,10 @@ void ModernShell::previewProfile()
         const auto family = m_controller && !m_controller->currentData().toString().isEmpty()
                                 ? m_controller->currentData(Qt::UserRole + 1).toString()
                                 : profile.value("controller_family").toString("generic");
-        m_profileMeta->setText(QString("%1 assignments · %2")
-                                   .arg(bindings.size())
-                                   .arg(item.value("bundled").toBool() ? "Community template" : "Personal profile"));
+        m_profileMeta->setText(
+            QString("Preview · %1 assignments · %2 · revision " + item.value("revision").toString().left(8))
+                .arg(bindings.size())
+                .arg(item.value("bundled").toBool() ? "Community template" : "Personal profile"));
         for (const auto &value : bindings)
         {
             const auto binding = value.toObject();
@@ -1027,6 +1249,13 @@ void ModernShell::updateProfileActions()
     }
     m_apply->setEnabled(selected && reason.isEmpty());
     m_apply->setToolTip(reason);
+    const auto active = device.value("active_profile_name").toString();
+    m_appliedProfile->setText(
+        device.isEmpty() ? "Currently applied: connect a controller to view its mapping."
+                         : "Currently applied: " + (active.isEmpty() ? "No profile" : active) + " · Layout " +
+                               QString::number(device.value("active_set").toInt()) +
+                               (device.value("mapping_suspended").toBool() ? " · Output paused for native controls" : "") +
+                               (device.value("unsaved_changes").toBool() ? " · Unsaved edits" : ""));
     m_controllerHelp->setText(reason.isEmpty() ? "Use this profile applies the selected layout to the controller below."
                                                : reason);
 }
@@ -1078,7 +1307,7 @@ void ModernShell::refreshControllers()
         if (!m_controller->count())
             m_controller->addItem("No compatible controller connected", QString{});
         m_controller->blockSignals(false);
-        previewProfile();
+        filterProfiles();
     }
     m_controllerHelp->setText(
         !m_controller->currentData().toString().isEmpty() ? "Choose which controller will use this profile."
@@ -1104,9 +1333,9 @@ void ModernShell::applyProfile()
     if (result.contains("error"))
         libraryFeedback(result.value("error").toString(), true);
     else
-        libraryFeedback("Profile applied to " + m_controller->currentText() + " · " + m_layout->currentText() +
-                        ". Open Map controls to view or customize its assignments. Use its layout buttons to view Space, "
-                        "Ground, or Menus; the library layout selector previews a template until you apply it.");
+        libraryFeedback(
+            "Profile applied to " + m_controller->currentText() + " · " + m_layout->currentText() +
+            ". Open Map controls to view or customize its assignments. The library shows a preview until you apply it.");
 }
 void ModernShell::copyProfile()
 {
@@ -1142,11 +1371,215 @@ void ModernShell::copyProfile()
         return;
     }
     m_search->clear();
+    m_libraryFilter->setCurrentIndex(m_libraryFilter->findData("personal"));
     refreshProfiles();
     for (int row = 0; row < m_profiles->count(); ++row)
-        if (m_profiles->item(row)->data(Qt::UserRole).toString() == id)
-            m_profiles->setCurrentRow(row);
+        for (const auto &value : m_profiles->item(row)->data(Qt::UserRole + 1).toJsonArray())
+            if (value.toObject().value("id").toString() == id)
+            {
+                m_profiles->item(row)->setData(Qt::UserRole, id);
+                m_variant->setProperty("group", QString{});
+                m_profiles->setCurrentRow(row);
+                previewProfile();
+            }
     libraryFeedback("Personal copy created. Use this profile, then open Controllers to customize and save a mapping file. "
                     "To update this library definition, use your connected AI app.");
+}
+void ModernShell::organizeProfile()
+{
+    const auto id = selectedId();
+    if (id.isEmpty())
+        return;
+    if (id.startsWith("builtin-"))
+    {
+        libraryFeedback("Copy this template to My profiles before putting it in a personal collection.");
+        return;
+    }
+    auto names = m_settings->value("TROA/ProfileCollections").toStringList();
+    names.prepend("None");
+    bool ok = false;
+    const auto name = QInputDialog::getItem(this, "Organize personal profile",
+                                            "Choose a collection or type a new name:", names, 0, true, &ok)
+                          .trimmed();
+    if (!ok || name.isEmpty())
+        return;
+    if (name.size() > 60)
+    {
+        libraryFeedback("Use a collection name of at most 60 characters.", true);
+        return;
+    }
+    QMutexLocker lock(m_settings->getLock());
+    if (name == "None")
+        m_settings->remove("TROA/ProfileCollection/" + id);
+    else
+    {
+        names.removeAll("None");
+        if (!names.contains(name))
+            names.append(name);
+        names.sort(Qt::CaseInsensitive);
+        m_settings->setValue("TROA/ProfileCollections", names);
+        m_settings->setValue("TROA/ProfileCollection/" + id, name);
+    }
+    m_settings->sync();
+    lock.unlock();
+    refreshProfiles();
+    libraryFeedback("Collection saved. Profile files and active mappings are unchanged.");
+}
+void ModernShell::manageProfileFiles()
+{
+    QMenu menu(this);
+    auto import = menu.addAction("Import profile or library backup…");
+    auto exportJson = menu.addAction("Export selected profile definition…");
+    auto exportNative = menu.addAction("Export selected controller mapping (.amgp)…");
+    exportJson->setEnabled(!selectedId().isEmpty());
+    exportNative->setEnabled(!selectedId().isEmpty());
+    auto backup = menu.addAction("Back up My profiles and collections…");
+    menu.addSeparator();
+    auto folder = menu.addAction("Open profile folder");
+    const auto action = menu.exec(QCursor::pos());
+    if (!action)
+        return;
+    if (action == folder)
+    {
+        if (!QDir().mkpath(profileDirectory()) || !QDesktopServices::openUrl(QUrl::fromLocalFile(profileDirectory())))
+            libraryFeedback("Could not open the profile folder.", true);
+        return;
+    }
+    if (action == import)
+    {
+        const auto path =
+            QFileDialog::getOpenFileName(this, "Import profile definitions", {}, "Profile definitions / backups (*.json)");
+        if (path.isEmpty())
+            return;
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly) || file.size() > 2 * 1024 * 1024)
+        {
+            libraryFeedback("Cannot read this file, or it exceeds 2 MB.", true);
+            return;
+        }
+        QJsonParseError error;
+        const auto document = QJsonDocument::fromJson(file.readAll(), &error);
+        if (error.error != QJsonParseError::NoError || !document.isObject())
+        {
+            libraryFeedback("Choose a valid JSON profile or Bifrost library backup.", true);
+            return;
+        }
+        const auto object = document.object();
+        const bool isBackup = object.value("format").toString() == "bifrost-profile-backup-v1";
+        QJsonArray profiles;
+        if (isBackup)
+            profiles = object.value("profiles").toArray();
+        else
+            profiles.append(object);
+        if (profiles.isEmpty() || profiles.size() > 100)
+        {
+            libraryFeedback("Choose between 1 and 100 profile definitions.", true);
+            return;
+        }
+        // Validate the complete import before any profile is saved. Conflicts are
+        // skipped so a backup cannot silently replace somebody's personal work.
+        QJsonArray ready;
+        QSet<QString> ids;
+        for (const auto &value : profiles)
+        {
+            auto profile = value.toObject();
+            auto id = profile.value("id").toString();
+            if (id.startsWith("builtin-"))
+            {
+                id = "imported-" + id.mid(8);
+                profile["id"] = id;
+            }
+            const auto validation = ProfileStore::validate(profile);
+            if (!validation.isEmpty() || ids.contains(id))
+            {
+                libraryFeedback(
+                    "Import stopped before saving: " + (validation.isEmpty() ? "duplicate profile id" : validation), true);
+                return;
+            }
+            ids.insert(id);
+            ready.append(profile);
+        }
+        int saved = 0, skipped = 0;
+        for (const auto &value : ready)
+        {
+            const auto profile = value.toObject();
+            const auto id = profile.value("id").toString();
+            if (!ProfileStore().read(id).contains("error"))
+            {
+                ++skipped;
+                continue;
+            }
+            const auto result = ProfileStore().save(profile, {});
+            if (result.contains("error"))
+            {
+                libraryFeedback(QString("Imported %1 profiles before a save failed: ").arg(saved) +
+                                    result.value("error").toString(),
+                                true);
+                refreshProfiles();
+                return;
+            }
+            ++saved;
+            if (isBackup)
+            {
+                const auto collection = object.value("collections").toObject().value(id).toString().trimmed();
+                if (!collection.isEmpty() && collection.size() <= 60)
+                {
+                    QMutexLocker lock(m_settings->getLock());
+                    auto names = m_settings->value("TROA/ProfileCollections").toStringList();
+                    if (!names.contains(collection))
+                        names.append(collection);
+                    m_settings->setValue("TROA/ProfileCollections", names);
+                    m_settings->setValue("TROA/ProfileCollection/" + id, collection);
+                    m_settings->sync();
+                }
+            }
+        }
+        m_search->clear();
+        m_familyFilter->setCurrentIndex(m_familyFilter->findData("all"));
+        refreshProfiles();
+        m_libraryFilter->setCurrentIndex(m_libraryFilter->findData("personal"));
+        libraryFeedback(QString("Imported %1 profiles; skipped %2 existing profiles. No controller mapping was activated.")
+                            .arg(saved)
+                            .arg(skipped));
+        return;
+    }
+    const bool native = action == exportNative;
+    const auto path = QFileDialog::getSaveFileName(this, action == backup ? "Back up personal library" : "Export profile",
+                                                   action == backup ? "bifrost-profiles-backup.json"
+                                                                    : selectedId() + (native ? ".amgp" : ".json"),
+                                                   native ? "Controller mapping (*.amgp)" : "JSON (*.json)");
+    if (path.isEmpty())
+        return;
+    bool success = false;
+    if (native)
+    {
+        QFile input(ProfileStore().exportMapping(selectedId()));
+        if (input.open(QIODevice::ReadOnly))
+        {
+            const auto bytes = input.readAll();
+            QSaveFile output(path);
+            success = output.open(QIODevice::WriteOnly) && output.write(bytes) == bytes.size() && output.commit();
+        }
+    } else if (action == backup)
+    {
+        QJsonArray profiles;
+        QJsonObject collections;
+        for (const auto &value : ProfileStore().list())
+        {
+            const auto summary = value.toObject();
+            if (summary.value("bundled").toBool())
+                continue;
+            const auto id = summary.value("id").toString();
+            profiles.append(ProfileStore().read(id).value("profile"));
+            collections[id] = m_settings->value("TROA/ProfileCollection/" + id).toString();
+        }
+        success = writeJson(path, QJsonDocument(QJsonObject{{"format", "bifrost-profile-backup-v1"},
+                                                            {"profiles", profiles},
+                                                            {"collections", collections}}));
+    } else
+        success = writeJson(path, QJsonDocument(ProfileStore().read(selectedId()).value("profile").toObject()));
+    libraryFeedback(success ? "Saved to " + QDir::toNativeSeparators(path)
+                            : "Could not save this file. Check folder permissions.",
+                    !success);
 }
 } // namespace Troa

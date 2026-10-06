@@ -11,7 +11,10 @@ with a compatible assistant. Linux remains a future product target.
 
 - Controller mappings, calibration, profiles, and advanced assignments inherited from AntiMicroX.
 - A new workspace with clear navigation, light/dark appearance, and live controller status.
-- Ten desktop/browser/game templates, including console-inspired STO Space, Ground and Menus layouts for DualSense, Xbox and both Steam Controller hardware generations.
+- Twenty-two desktop/browser/game templates, including console-inspired STO, Minecraft Java, Palworld and Space Engineers 1 layouts for DualSense, Xbox and both Steam Controller hardware generations. Gameplay remains untested.
+- A library grouped by game/application with controller filters, favorites, personal collections, JSON import/export and backups, and native `.amgp` export.
+- Closing the window keeps the app in the tray by default; use **Bifrost > Quit** or the tray's **Quit** action to exit. Settings can change this behavior.
+- Application rules can pause keyboard/mouse output for a game's native controller controls without clearing the saved mapping.
 - Community templates download at startup or through **Profile library > Update profiles**, with a local cache for offline use.
 - Personal profile copies with atomic saving, revision conflict checks, and preserved history.
 - Local MCP tools to inspect controllers and create, read, validate, save, restore, activate, or unload profiles.
