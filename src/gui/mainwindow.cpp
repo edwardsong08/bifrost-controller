@@ -220,7 +220,7 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     ui->updateButton->setVisible(false);
 #ifdef CHECK_FOR_UPDATES
     connect(&m_network_manager, &QNetworkAccessManager::finished, this, &MainWindow::networkManagerFinished);
-    QNetworkRequest request(QUrl("https://api.github.com/repos/edwardsong08/troa-pc-controller-mapper/releases/latest"));
+    QNetworkRequest request(QUrl("https://api.github.com/repos/edwardsong08/bifrost-controller/releases/latest"));
     m_network_manager.get(request);
 #endif
 

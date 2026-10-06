@@ -1,12 +1,12 @@
-# TROA PC Controller Mapper context
+# Bifrost Controller context
 
 ## Purpose
 
-Build toward TROA PC Controller Mapper, a modern controller mapping app for TROA's community based on Edward's AntiMicroX fork. Implementation of the first Windows preview is authorized.
+Build Bifrost Controller, TROA's modern desktop controller mapping app alongside Bifrost Server Manager in the TROA gaming software ecosystem, based on Edward's AntiMicroX fork. Implementation of the Windows preview is authorized.
 
 ## Product direction - 2026-10-05
 
-- Working product name: TROA PC Controller Mapper.
+- Current product name: Bifrost Controller (renamed from the temporary TROA PC Controller Mapper name).
 - Audience: TROA's community.
 - Initial platform: Windows. Preserve architectural room for Linux support later; Linux is not part of initial release acceptance.
 - Requested features: a modern interface, MCP access for collaboratively creating and editing profiles, and curated desktop/browser/game/controller profiles delivered through updates.
@@ -17,7 +17,7 @@ Build toward TROA PC Controller Mapper, a modern controller mapping app for TROA
 
 ## Repository
 
-- Fork: https://github.com/edwardsong08/troa-pc-controller-mapper
+- Fork: https://github.com/edwardsong08/bifrost-controller
 - Upstream: https://github.com/AntiMicroX/antimicrox
 - Default branch: master
 - Initial checkout: dbb6349603e6ee2426d300eee9570e1ed44fb9f5
@@ -94,4 +94,12 @@ Windows compilation and packaging succeeded in GitHub Actions run 37406545582. D
 - Managed JSON schema 1 remains compatible and now accepts optional named layouts. MCP exposes context/rule management and exact-revision native export for assigning managed multi-layout profiles.
 - Source palette comes from current deployed main-site CSS (ivory #f4f0e8, charcoal #0d0e0f, gold #d4a84f), with Bifrost navy surfaces and compact navigation. No other TROA repository is modified.
 - UI/branding-only 0.1.1 compiled and packaged successfully in run 37408876833 on 8285def9c4e551ee6682c7b1469f286b7bc3bc16. It has not been installed; the expanded 0.1.2 build is pending. No test runs are performed.
+
+## Bifrost ecosystem identity - 2026-10-05
+
+- Edward renamed the app Bifrost Controller so it belongs to the Bifrost/TROA gaming software ecosystem.
+- App title, desktop/installer identity, binaries, update URLs, MCP server/config, README, and repository name use Bifrost Controller / bifrost-controller.
+- Preview settings filename, data folder, and internal TROA settings keys remain compatible with 0.1.0, preserving existing profiles/history/settings. The code folder and codex/troa-controller-mapper branch remain in place for continuity.
+- Personal ownership and collaborator permissions stay unchanged. TROA logo and main-site/Bifrost styling stay in use. This branding does not claim a new Server Manager API integration.
+- The renamed 0.1.2 package is pending compilation and local installation. No tests, public release, or website deployment are performed.
 

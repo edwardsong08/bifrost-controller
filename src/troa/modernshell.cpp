@@ -106,15 +106,15 @@ QWidget *step(const QString &number, const QString &title, const QString &descri
 QString companionPath()
 {
 #ifdef Q_OS_WIN
-    return QDir::toNativeSeparators(QDir(QCoreApplication::applicationDirPath()).filePath("troa-controller-mcp.exe"));
+    return QDir::toNativeSeparators(QDir(QCoreApplication::applicationDirPath()).filePath("bifrost-controller-mcp.exe"));
 #else
-    return QDir(QCoreApplication::applicationDirPath()).filePath("troa-controller-mcp");
+    return QDir(QCoreApplication::applicationDirPath()).filePath("bifrost-controller-mcp");
 #endif
 }
 QString connectionJson()
 {
-    const QJsonObject config{{"mcpServers", QJsonObject{{"troa-controller-mapper", QJsonObject{{"command", companionPath()},
-                                                                                               {"args", QJsonArray{}}}}}}};
+    const QJsonObject config{{"mcpServers", QJsonObject{{"bifrost-controller", QJsonObject{{"command", companionPath()},
+                                                                                           {"args", QJsonArray{}}}}}}};
     return QString::fromUtf8(QJsonDocument(config).toJson(QJsonDocument::Indented));
 }
 QString inputName(QString input, bool playStation)
@@ -318,8 +318,8 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     header->addWidget(logo);
     auto titles = new QVBoxLayout;
     titles->setSpacing(2);
-    titles->addWidget(label("TROA", "eyebrow"));
-    titles->addWidget(label("PC Controller Mapper", "title"));
+    titles->addWidget(label("TROA GAMING SOFTWARE", "eyebrow"));
+    titles->addWidget(label("Bifrost Controller", "title"));
     header->addLayout(titles);
     header->addStretch();
     m_status = label("No controller connected", "status");
@@ -692,7 +692,7 @@ void ModernShell::updateConnectionSettings()
         QString escaped = companionPath();
         escaped.replace("\\", "\\\\");
         escaped.replace("\"", "\\\"");
-        m_configText->setPlainText("[mcp_servers.troa-controller-mapper]\ncommand = \"" + escaped + "\"\nargs = []\n");
+        m_configText->setPlainText("[mcp_servers.bifrost-controller]\ncommand = \"" + escaped + "\"\nargs = []\n");
     }
 }
 void ModernShell::copyConnectionSettings()

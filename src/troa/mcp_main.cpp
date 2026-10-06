@@ -64,7 +64,7 @@ QJsonObject forward(const QString &name, const QJsonObject &arguments)
 {
     QLocalSocket socket;
     socket.connectToServer(Troa::socketName());
-    if (!socket.waitForConnected(2000)) return {{"error", "Open TROA PC Controller Mapper and enable Assistant access."}};
+    if (!socket.waitForConnected(2000)) return {{"error", "Open Bifrost Controller and enable Assistant access."}};
     socket.write(QJsonDocument(QJsonObject{{"method", name}, {"arguments", arguments}}).toJson(QJsonDocument::Compact) + '\n');
     if (socket.bytesToWrite() > 0 && !socket.waitForBytesWritten(2000)) return {{"error", "The request could not be delivered to the mapper."}};
     QByteArray response;
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         if (method == "initialize") {
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"}, {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
-                {"serverInfo", QJsonObject{{"name", "troa-pc-controller-mapper"}, {"version", "0.1.2"}}},
+                {"serverInfo", QJsonObject{{"name", "bifrost-controller"}, {"version", "0.1.2"}}},
                 {"instructions", "Manage controller profiles locally. Read before changing, save drafts before activation, "
                  "and use exact revision/controller ids. This server does not inject input or run scripts."}};
         } else if (method == "ping") result = {};

@@ -1,4 +1,4 @@
-name: TROA Windows preview
+name: Bifrost Controller Windows preview
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
           arch: win64_mingw
           cache: true
       - name: Configure installer
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHECK_FOR_UPDATES=ON -DWITH_TESTS=OFF -DANTIMICROX_PKG_VERSION="TROA Windows preview"
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHECK_FOR_UPDATES=ON -DWITH_TESTS=OFF -DANTIMICROX_PKG_VERSION="Bifrost Controller Windows preview"
         env:
           CMAKE_PREFIX_PATH: "${{ env.QT_ROOT_DIR }}/lib/cmake"
       - name: Compile and package installer
@@ -59,17 +59,17 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          git archive --format=zip --output=build/troa-pc-controller-mapper-0.1.2-source.zip HEAD
+          git archive --format=zip --output=build/bifrost-controller-0.1.2-source.zip HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
-          $checksums = Get-ChildItem build/troa-pc-controller-mapper*.exe, build/troa-pc-controller-mapper*.zip |
+          $checksums = Get-ChildItem build/bifrost-controller*.exe, build/bifrost-controller*.zip |
             Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }
           $checksums | Set-Content -LiteralPath build/SHA256SUMS.txt -Encoding utf8
       - name: Save preview artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: troa-windows-preview
+          name: bifrost-controller-windows-preview
           path: |
-            build/troa-pc-controller-mapper*.exe
-            build/troa-pc-controller-mapper*.zip
+            build/bifrost-controller*.exe
+            build/bifrost-controller*.zip
             build/SHA256SUMS.txt
           if-no-files-found: error

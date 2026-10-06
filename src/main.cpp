@@ -230,9 +230,9 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(Logger::loggerMessageHandler);
 
     QApplication antimicrox(argc, argv);
-    QCoreApplication::setApplicationName("troa-pc-controller-mapper");
+    QCoreApplication::setApplicationName("bifrost-controller");
     QCoreApplication::setOrganizationName("TROA");
-    QGuiApplication::setApplicationDisplayName("TROA PC Controller Mapper");
+    QGuiApplication::setApplicationDisplayName("Bifrost Controller");
     QCoreApplication::setApplicationVersion(PadderCommon::programVersion);
 
     QTextStream outstream(stdout);
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
     {
         // An instance of this program is already running.
         // Save app config and exit.
-        PRINT_STDOUT() << "TROA PC Controller Mapper is already running.\n";
+        PRINT_STDOUT() << "Bifrost Controller is already running.\n";
         QPointer<InputDaemon> joypad_worker = new InputDaemon(joysticks, &settings, false);
         MainWindow mainWindow(joysticks, &cmdutility, &settings, false);
         mainWindow.fillButtons();

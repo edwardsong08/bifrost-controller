@@ -1,6 +1,6 @@
-# TROA PC Controller Mapper
+# Bifrost Controller
 
-TROA PC Controller Mapper is an independently maintained derivative of AntiMicroX,
+Bifrost Controller is an independently maintained derivative of AntiMicroX,
 initially based on commit dbb6349603e6ee2426d300eee9570e1ed44fb9f5.
 
 Upstream: https://github.com/AntiMicroX/antimicrox

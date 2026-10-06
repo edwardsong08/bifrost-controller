@@ -66,3 +66,10 @@
 - 0.1.1 compilation/packaging succeeded in run 37408876833. Expanded preview 0.1.2 compilation/installation is pending; no automated, visual, or controller tests are run.
 - Source review found that native combo selection queues profile loading. Added an explicit synchronous GUI-thread load for application/API requests, preserving the inherited interactive flow and reporting actual reader success before selecting a layout. Rule display now uses native profile names rather than content hashes, with readable normalized DualSense switch-button names.
 - Application detection uses bounded Win32 executable queries with limited process-query permissions, and new persisted settings use the existing settings mutex. No privilege elevation or application-input hook is added.
+
+## 2026-10-05 - Bifrost Controller product identity
+
+- Edward selected Bifrost Controller as the final working name, alongside Bifrost Server Manager in TROA's gaming software ecosystem.
+- Updated visible app/installer identity, executable/MCP names, repository/update URLs, README, and current context. Historical records retain the earlier temporary name.
+- Kept preview settings/data locations and TROA setting keys compatible so existing personal profiles and revisions remain intact. TROA artwork and the site/Bifrost palette remain.
+- Renamed personal fork / new Windows package compilation and installation are pending. Repository ownership/access and upstream attribution remain unchanged; no Server Manager integration or site release is claimed.

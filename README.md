@@ -1,6 +1,7 @@
-# TROA PC Controller Mapper
+# Bifrost Controller
 
-A Windows-first controller mapping app for TROA's community, based on AntiMicroX.
+Bifrost Controller is TROA's Windows-first desktop controller mapping app, alongside
+Bifrost Server Manager in the TROA gaming software ecosystem. It is based on AntiMicroX.
 
 This initial preview keeps the native C++/Qt/SDL input engine and introduces a refreshed
 workspace, a managed profile library, and a local MCP companion for creating profiles
@@ -19,18 +20,18 @@ with a compatible assistant. Linux remains a future product target.
 
 ## Downloads
 
-Windows installer and portable ZIP are built by **TROA Windows preview** in GitHub Actions.
+Windows installer and portable ZIP are built by **Bifrost Controller Windows preview** in GitHub Actions.
 They are preview artifacts until a release is published. Corresponding source and SHA256
 checksums are included. A TROA website product/download page is planned; no site deployment
 is claimed by this repository.
 
-Install the branded Windows package and open **TROA PC Controller Mapper**. Use the sidebar
+Install the branded Windows package and open **Bifrost Controller**. Use the sidebar
 for Get started, Controllers, Profiles, Applications, and MCP & AI setup. The desktop/browser catalog
 is a starting point to customize, rather than a claim of controller or game compatibility.
 
 ## MCP & AI setup
 
-The package includes `troa-controller-mcp.exe`; no Python or Node runtime is required.
+The package includes `bifrost-controller-mcp.exe`; no Python or Node runtime is required.
 Choose **MCP setup** in the header, **MCP & AI setup** in the sidebar, or **MCP & AI > Open MCP setup**
 in the menu (Ctrl+Shift+M). Enable local access and copy JSON or Codex TOML connection settings
 into a compatible MCP client. The page distinguishes an available server from requests actually
@@ -41,6 +42,9 @@ require an AI service or internet connection. Bundled templates update with app 
 personal copies are stored separately. GUI edits to generated mappings remain legacy .amgp
 files and are not automatically converted back to managed JSON definitions.
 
+The initial TROA preview's settings and user-data folder names are intentionally retained
+for upgrade compatibility. Rebranding preserves personal profiles, revisions, and settings.
+
 ## Development
 
 The application uses C++17, Qt Widgets, SDL2, and CMake. The refreshed interface deliberately
@@ -49,8 +53,8 @@ Qt6 is the first preview build target; inherited Qt5 and Linux build paths remai
 
 See [build instructions](BUILDING.md), [repository context](CONTEXT.md), and
 [upstream contribution guidance](CONTRIBUTING.md). The CMake application target remains
-`antimicrox` internally but produces `troa-pc-controller-mapper.exe`. The companion target
-is `troa-controller-mcp`.
+`antimicrox` internally but produces `bifrost-controller.exe`. The companion target
+is `bifrost-controller-mcp`.
 
 No automated, visual, or hardware tests are run for this preview, at the project owner's
 request. Compilation and packaging results are recorded separately from runtime acceptance.

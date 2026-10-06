@@ -75,6 +75,7 @@ inline QString configPath()
 #endif
 }
 
+// Retain the preview settings identity so rebranding does not reset existing user profiles.
 const QString configFileName = "troa_controller_mapper_settings.ini";
 inline QString configFilePath()
 {
@@ -119,13 +120,13 @@ const int LATESTCONFIGFILEVERSION = 19;
 const int LATESTCONFIGMIGRATIONVERSION = 5;
 const QString localSocketKey = "troaControllerMapperSignalListener";
 const QString unhideCommand = "unhideWindow";
-const QString githubProjectPage = "https://github.com/edwardsong08/troa-pc-controller-mapper";
+const QString githubProjectPage = "https://github.com/edwardsong08/bifrost-controller";
 const QString githubIssuesPage = githubProjectPage + "/issues";
 const QString wikiPage = "https://github.com/AntiMicroX/antimicrox/wiki";
 
-const QString mouseDeviceName("TROA Controller Mapper Mouse");
-const QString keyboardDeviceName("TROA Controller Mapper Keyboard");
-const QString springMouseDeviceName("TROA Controller Mapper Absolute Mouse");
+const QString mouseDeviceName("Bifrost Controller Mouse");
+const QString keyboardDeviceName("Bifrost Controller Keyboard");
+const QString springMouseDeviceName("Bifrost Controller Absolute Mouse");
 
 const int ANTIMICROX_MAJOR_VERSION = PROJECT_MAJOR_VERSION;
 const int ANTIMICROX_MINOR_VERSION = PROJECT_MINOR_VERSION;

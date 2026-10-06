@@ -2,8 +2,8 @@
 
 - Read CONTEXT.md and the latest LOGS.md entry before working here.
 - This is Edward's fork of AntiMicroX. Keep upstream attribution and the existing GPL license intact.
-- Working product name: TROA PC Controller Mapper, for TROA's community. Target Windows first and keep platform boundaries suitable for possible Linux support later.
-- Current phase: implement the authorized TROA Windows preview with modern UI, local MCP profile management, and branded packages. Preserve the existing C++/Qt input engine while separating new profile and assistant responsibilities.
+- Working product name: Bifrost Controller, for TROA's community. Target Windows first and keep platform boundaries suitable for possible Linux support later.
+- Current phase: implement the authorized Bifrost Controller Windows preview with modern UI, local MCP profile management, and branded packages. Preserve the existing C++/Qt input engine while separating new profile and assistant responsibilities.
 - Edward explicitly requested no test runs. Do not add or run automated, visual, or hardware tests; compile/package the app and report behavior as untested.
 - Keep personal GitHub ownership and collaborator access unchanged. Organization admins do not automatically receive permissions on a personal repository.
 - Follow CONTRIBUTING.md and .clang-format when code changes are authorized.
