@@ -22,7 +22,7 @@
 #include "inputdevice.h"
 #include "xml/inputdevicexml.h"
 
-#include "troa/profilestore.h"
+#include "troa/identity.h"
 #include <QDebug>
 #include <QDir>
 #include <QSaveFile>
