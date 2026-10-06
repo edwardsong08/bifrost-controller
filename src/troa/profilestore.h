@@ -20,6 +20,7 @@ class ProfileStore
     static QString revision(const QJsonObject &profile);
     static QStringList inputs();
     static QStringList namedKeys();
+    static QJsonObject installCatalog(const QByteArray &bytes);
 
   private:
     static QString path(const QString &id);

@@ -11,7 +11,8 @@ with a compatible assistant. Linux remains a future product target.
 
 - Controller mappings, calibration, profiles, and advanced assignments inherited from AntiMicroX.
 - A new workspace with clear navigation, light/dark appearance, and live controller status.
-- Desktop and browser starter templates using SDL's standard controller layout.
+- Desktop/browser starter templates and a console-inspired Star Trek Online DualSense template with Space, Ground and Menus layouts.
+- Community templates download at startup or through **Profiles > Update profiles**, with a local cache for offline use.
 - Personal profile copies with atomic saving, revision conflict checks, and preserved history.
 - Local MCP tools to inspect controllers and create, read, validate, save, restore, activate, or unload profiles.
 - Per-application profile rules, named layouts (such as Space/Ground), keyboard/controller switching, and monitor-aware switch notices.
@@ -22,8 +23,8 @@ with a compatible assistant. Linux remains a future product target.
 
 Windows installer and portable ZIP are built by **Bifrost Controller Windows preview** in GitHub Actions.
 They are preview artifacts until a release is published. Corresponding source and SHA256
-checksums are included. A TROA website product/download page is planned; no site deployment
-is claimed by this repository.
+checksums are included. Published previews are linked from
+[TROA's Controller page](https://therealmsofasgard.com/gaming-hub/bifrost-controller).
 
 Install the branded Windows package and open **Bifrost Controller**. Use the sidebar
 for Get started, Controllers, Profiles, Applications, and MCP & AI setup. The desktop/browser catalog
@@ -38,8 +39,14 @@ into a compatible MCP client. The page distinguishes an available server from re
 received; enabling access does not automatically connect an AI app. See [MCP tools and profile workflow](docs/MCP.md).
 
 MCP configuration remains separate from the input loop. Normal controller mapping does not
-require an AI service or internet connection. Bundled templates update with app releases;
-personal copies are stored separately. GUI edits to generated mappings remain legacy .amgp
+require an AI service or internet connection. Version 0.1.3 adds independent community
+template downloads; the 0.1.2 app needs upgrading once to gain this feature. Disable
+startup downloads in Profiles if desired, or use **Update profiles** manually. Downloads
+are validated before atomic caching, never activate mappings or replace personal copies,
+and retain existing templates on failure. The preview catalog is maintained at
+`profiles/catalog.json` on `codex/troa-controller-mapper`; future catalog revisions must
+remain compatible or require an app upgrade. Personal copies are stored separately.
+GUI edits to generated mappings remain legacy .amgp
 files and are not automatically converted back to managed JSON definitions.
 
 The initial TROA preview's settings and user-data folder names are intentionally retained
@@ -58,8 +65,12 @@ is `bifrost-controller-mcp`.
 
 No automated, visual, or hardware tests are run for this preview, at the project owner's
 request. Compilation and packaging results are recorded separately from runtime acceptance.
-Triggers, gyro, timed macros, and legacy import remain outside
-this first MCP profile schema and can be configured through the inherited interface.
+Left/right triggers are supported in managed profiles from 0.1.3. Gyro, timed macros,
+and legacy import remain outside this MCP profile schema.
+
+See [Star Trek Online setup and control differences](docs/profiles/star-trek-online-dualsense.md)
+before using its starting template. This does not reproduce the console UI or ability
+automation, and gameplay has not been tested.
 
 ## Attribution and license
 

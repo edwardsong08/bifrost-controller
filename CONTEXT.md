@@ -4,6 +4,21 @@
 
 Build Bifrost Controller, TROA's modern desktop controller mapping app alongside Bifrost Server Manager in the TROA gaming software ecosystem, based on Edward's AntiMicroX fork. Implementation of the Windows preview is authorized.
 
+## Community profile updates - 2026-10-06
+
+Owner requested game-specific defaults delivered at startup or through an update
+button. After discussing console-only UI/automation, they approved the closest
+PS5-style STO profile and confirmed default PC keyboard bindings.
+Version 0.1.3 adds left/right triggers, a Space/Ground/Menus STO template, and
+independent community catalog downloads at startup or Profiles > Update profiles.
+Personal copies, active mappings and application-rule files are not replaced.
+Validated catalogs are atomically cached; offline/error paths keep the last
+download and compiled defaults. The fixed HTTPS catalog is profiles/catalog.json
+on codex/troa-controller-mapper. The startup option can be disabled.
+0.1.2 needs one installer upgrade to obtain this feature. Build/public release
+are pending; gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
+for keyboard assumptions, camera/ability differences and the Create-button rule.
+
 ## Product direction - 2026-10-05
 
 - Current product name: Bifrost Controller (renamed from the temporary TROA PC Controller Mapper name).

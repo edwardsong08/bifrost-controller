@@ -28,6 +28,9 @@
 #include <QListWidget>
 #include <QMap>
 #include <QMenu>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPalette>
@@ -122,9 +125,10 @@ QString inputName(QString input, bool playStation)
     if (playStation)
     {
         const QMap<QString, QString> names = {
-            {"a", "Cross (×)"},         {"b", "Circle (○)"},        {"x", "Square (□)"},        {"y", "Triangle (△)"},
-            {"back", "Create / Share"}, {"start", "Options"},       {"guide", "PS button"},     {"left_shoulder", "L1"},
-            {"right_shoulder", "R1"},   {"left_stick_press", "L3"}, {"right_stick_press", "R3"}};
+            {"a", "Cross (×)"},         {"b", "Circle (○)"},        {"x", "Square (□)"},         {"y", "Triangle (△)"},
+            {"back", "Create / Share"}, {"start", "Options"},       {"guide", "PS button"},      {"left_shoulder", "L1"},
+            {"right_shoulder", "R1"},   {"left_stick_press", "L3"}, {"right_stick_press", "R3"}, {"left_trigger", "L2"},
+            {"right_trigger", "R2"}};
         if (names.contains(input))
             return names.value(input);
     }
@@ -442,6 +446,9 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     refreshControllers();
     refreshAssistantStatus();
     navigate(0);
+    m_catalogNetwork = new QNetworkAccessManager(this);
+    if (m_settings->value("TROA/UpdateCommunityProfiles", true).toBool())
+        QTimer::singleShot(0, this, [this]() { updateCommunityProfiles(); });
 }
 void ModernShell::navigate(int index)
 {
@@ -529,6 +536,20 @@ QWidget *ModernShell::libraryPage()
     root->addWidget(label("Profiles", "section"));
     root->addWidget(
         label("Start with a community template. Make a personal copy when you want to keep your own version.", "muted"));
+    auto updates = new QHBoxLayout;
+    m_updateProfiles = button("Update profiles");
+    connect(m_updateProfiles, &QPushButton::clicked, this, &ModernShell::updateCommunityProfiles);
+    updates->addWidget(m_updateProfiles);
+    auto startup = new QCheckBox("Download community templates at startup");
+    startup->setChecked(m_settings->value("TROA/UpdateCommunityProfiles", true).toBool());
+    connect(startup, &QCheckBox::toggled, this,
+            [this](bool on) { m_settings->setValue("TROA/UpdateCommunityProfiles", on); });
+    updates->addWidget(startup);
+    updates->addStretch();
+    root->addLayout(updates);
+    m_catalogStatus =
+        label("Templates update independently of the app. Personal copies and active mappings are kept.", "muted");
+    root->addWidget(m_catalogStatus);
     m_search = new QLineEdit;
     m_search->setPlaceholderText("Search profiles");
     m_search->setAccessibleName("Search profiles by name or category");
@@ -729,6 +750,60 @@ QString ModernShell::selectedId() const
 {
     auto item = m_profiles ? m_profiles->currentItem() : nullptr;
     return item && !item->isHidden() ? item->data(Qt::UserRole).toString() : QString{};
+}
+void ModernShell::updateCommunityProfiles()
+{
+    if (!m_catalogNetwork || m_catalogReply)
+        return;
+    m_updateProfiles->setEnabled(false);
+    m_catalogStatus->setText("Checking for community profiles…");
+    const QUrl url("https://raw.githubusercontent.com/edwardsong08/bifrost-controller/"
+                   "codex/troa-controller-mapper/profiles/catalog.json");
+    QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+    request.setRawHeader("User-Agent", "Bifrost-Controller-Community-Profiles");
+    request.setRawHeader("Cache-Control", "no-cache");
+    auto reply = m_catalogNetwork->get(request);
+    m_catalogReply = reply;
+    reply->setReadBufferSize(256 * 1024 + 1);
+    auto timeout = new QTimer(reply);
+    timeout->setSingleShot(true);
+    connect(timeout, &QTimer::timeout, reply, &QNetworkReply::abort);
+    timeout->start(15000);
+    connect(reply, &QNetworkReply::readyRead, this, [reply]() {
+        auto bytes = reply->property("catalog_bytes").toByteArray();
+        bytes += reply->readAll();
+        reply->setProperty("catalog_bytes", bytes);
+        if (bytes.size() > 256 * 1024)
+            reply->abort();
+    });
+    connect(reply, &QNetworkReply::finished, this, [this, reply, timeout, url]() {
+        timeout->stop();
+        auto bytes = reply->property("catalog_bytes").toByteArray();
+        bytes += reply->readAll();
+        const bool delivered = reply->error() == QNetworkReply::NoError && reply->url() == url &&
+                               reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 200;
+        if (!delivered)
+            m_catalogStatus->setText(
+                "Could not reach community updates. Saved templates remain available; try Update profiles later.");
+        else
+        {
+            const auto result = ProfileStore::installCatalog(bytes);
+            if (result.contains("error"))
+                m_catalogStatus->setText(result.value("error").toString());
+            else
+            {
+                refreshProfiles();
+                m_catalogStatus->setText(
+                    QString("%1 community templates %2. Your personal profiles and active mappings were kept.")
+                        .arg(result.value("count").toInt())
+                        .arg(result.value("changed").toBool() ? "downloaded" : "are up to date"));
+            }
+        }
+        m_catalogReply = nullptr;
+        m_updateProfiles->setEnabled(true);
+        reply->deleteLater();
+    });
 }
 void ModernShell::refreshProfiles()
 {

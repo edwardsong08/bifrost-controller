@@ -145,11 +145,64 @@ QJsonArray ProfileStore::catalog()
     QFile file(":/troa/catalog.json");
     if (!file.open(QIODevice::ReadOnly))
         return {};
-    return QJsonDocument::fromJson(file.readAll()).array();
+    auto result = QJsonDocument::fromJson(file.readAll()).array();
+    QFile cache(QDir(dataDirectory()).filePath("community-catalog.json"));
+    if (!cache.open(QIODevice::ReadOnly) || cache.size() > 256 * 1024)
+        return result;
+    const auto downloaded = QJsonDocument::fromJson(cache.readAll()).array();
+    for (const auto &value : downloaded)
+    {
+        const auto profile = value.toObject();
+        if (!profile.value("id").toString().startsWith("builtin-") || !validate(profile).isEmpty())
+            continue;
+        int index = -1;
+        for (int i = 0; i < result.size(); ++i)
+            if (result.at(i).toObject().value("id") == profile.value("id"))
+                index = i;
+        if (index >= 0)
+            result.replace(index, profile);
+        else
+            result.append(profile);
+    }
+    return result;
+}
+QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
+{
+    if (bytes.size() > 256 * 1024)
+        return failure("Community download is too large. Existing profiles were kept.");
+    QJsonParseError error;
+    const auto document = QJsonDocument::fromJson(bytes, &error);
+    if (error.error != QJsonParseError::NoError || !document.isArray() || document.array().isEmpty() ||
+        document.array().size() > 100)
+        return failure("Invalid community download. Existing profiles were kept.");
+    QSet<QString> ids;
+    for (const auto &value : document.array())
+    {
+        const auto profile = value.toObject();
+        const auto id = profile.value("id").toString();
+        const auto validation = validate(profile);
+        if (!id.startsWith("builtin-") || ids.contains(id) || !validation.isEmpty())
+            return failure("These templates need a newer app or contain invalid data. Existing profiles were kept.");
+        ids.insert(id);
+    }
+    if (!QDir().mkpath(dataDirectory()))
+        return failure("Could not create the community cache folder.");
+    const auto path = QDir(dataDirectory()).filePath("community-catalog.json");
+    QFile existing(path);
+    const auto normalized = document.toJson(QJsonDocument::Indented);
+    if (normalized.size() > 256 * 1024)
+        return failure("Community download is too large. Existing profiles were kept.");
+    const bool unchanged = existing.open(QIODevice::ReadOnly) && existing.readAll() == normalized;
+    existing.close();
+    QSaveFile cache(path);
+    if (!unchanged && (!cache.open(QIODevice::WriteOnly) || cache.write(normalized) != normalized.size() || !cache.commit()))
+        return failure("Could not save community templates. Existing profiles were kept.");
+    return {{"count", document.array().size()}, {"changed", !unchanged}};
 }
 QStringList ProfileStore::inputs()
 {
     auto result = buttons;
+    result.append({"left_trigger", "right_trigger"});
     for (const auto &stick : {QString("left_stick"), QString("right_stick")})
         for (const auto &direction : directions)
             result.append(stick + "_" + direction);
@@ -409,6 +462,20 @@ QString ProfileStore::exportMapping(const QString &id) const
                     bindingXml(xml, value.toObject(), "dpadbutton", 1 << direction);
         }
         xml.writeEndElement();
+        for (int trigger = 0; trigger < 2; ++trigger)
+        {
+            const auto input = QString(trigger == 0 ? "left_trigger" : "right_trigger");
+            for (const auto &value : bindings)
+                if (value.toObject().value("input").toString() == input)
+                {
+                    xml.writeStartElement("trigger");
+                    xml.writeAttribute("index", QString::number(trigger + 5));
+                    xml.writeTextElement("deadZone", "8000");
+                    xml.writeTextElement("throttle", "positivehalf");
+                    bindingXml(xml, value.toObject(), "triggerbutton", 2);
+                    xml.writeEndElement();
+                }
+        }
         for (int stick = 0; stick < 2; ++stick)
         {
             xml.writeStartElement("stick");

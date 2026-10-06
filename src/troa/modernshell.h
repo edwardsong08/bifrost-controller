@@ -14,6 +14,8 @@ class QListWidget;
 class QLineEdit;
 class QPushButton;
 class QPlainTextEdit;
+class QNetworkAccessManager;
+class QNetworkReply;
 class QStackedWidget;
 class QTableWidget;
 
@@ -47,6 +49,7 @@ class ModernShell : public QWidget
     void previewProfile();
     void applyProfile();
     void copyProfile();
+    void updateCommunityProfiles();
     QString selectedId() const;
     LocalApi *m_api;
     AntiMicroSettings *m_settings;
@@ -73,5 +76,9 @@ class ModernShell : public QWidget
     QLabel *m_setupFeedback = nullptr;
     QComboBox *m_configFormat = nullptr;
     QPlainTextEdit *m_configText = nullptr;
+    QNetworkAccessManager *m_catalogNetwork = nullptr;
+    QNetworkReply *m_catalogReply = nullptr;
+    QPushButton *m_updateProfiles = nullptr;
+    QLabel *m_catalogStatus = nullptr;
 };
 } // namespace Troa

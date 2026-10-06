@@ -1,5 +1,22 @@
 # Work log
 
+## 2026-10-06 - STO template and independent community updates
+
+- Owner requested default game profiles and startup/manual update delivery.
+  They approved the closest PS5-style STO mapping after exact console parity
+  was ruled out, and confirmed default PC keybindings.
+- Added the DualSense Space/Ground/Menus community template, managed L2/R2
+  trigger support and PS5 button labels. Create remains free for an application
+  rule; no game files, Steam settings or active controller bindings were changed.
+- Added Profiles > Update profiles and an optional startup download (enabled
+  by default). Fixed HTTPS preview-branch catalog, bounded size/time, schema
+  validation, atomic cache and offline fallback preserve personal profiles and
+  active native mappings. New templates never activate themselves.
+- Bumped preview package/companion version to 0.1.3. Formatting/diff review
+  performed; Windows compilation/packaging pending. No automated, visual or
+  hardware tests ran. Game-control assumptions and setup differences are
+  documented in docs/profiles/star-trek-online-dualsense.md.
+
 ## 2026-10-06 - Codex Desktop MCP registration
 
 - Owner explicitly requested desktop inspection of the open app and connection

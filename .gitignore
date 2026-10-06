@@ -8,6 +8,9 @@ Build/
 repo/
 docs/*
 !docs/MCP.md
+!docs/profiles/
+docs/profiles/*
+!docs/profiles/star-trek-online-dualsense.md
 
 # Local tooling and artifacts
 .tools/
