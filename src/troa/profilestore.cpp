@@ -143,9 +143,9 @@ QString ProfileStore::revision(const QJsonObject &profile)
 QJsonArray ProfileStore::catalog()
 {
     QFile file(":/troa/catalog.json");
-    if (!file.open(QIODevice::ReadOnly))
-        return {};
-    auto result = QJsonDocument::fromJson(file.readAll()).array();
+    QJsonArray result;
+    if (file.open(QIODevice::ReadOnly))
+        result = QJsonDocument::fromJson(file.readAll()).array();
     QFile cache(QDir(dataDirectory()).filePath("community-catalog.json"));
     if (!cache.open(QIODevice::ReadOnly) || cache.size() > 256 * 1024)
         return result;

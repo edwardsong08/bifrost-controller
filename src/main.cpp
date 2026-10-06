@@ -273,6 +273,7 @@ int main(int argc, char *argv[])
     settings.applySettingsToLogger(cmdutility, appLogger);
 
     Q_INIT_RESOURCE(resources);
+    Q_INIT_RESOURCE(troa_resources);
 
     QDir configDir(PadderCommon::configPath());
 

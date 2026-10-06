@@ -39,8 +39,9 @@ into a compatible MCP client. The page distinguishes an available server from re
 received; enabling access does not automatically connect an AI app. See [MCP tools and profile workflow](docs/MCP.md).
 
 MCP configuration remains separate from the input loop. Normal controller mapping does not
-require an AI service or internet connection. Version 0.1.3 adds independent community
-template downloads; the 0.1.2 app needs upgrading once to gain this feature. Disable
+require an AI service or internet connection. Version 0.1.4 includes independent community
+template downloads and fixes a bundled-resource issue in 0.1.3. Older apps need
+upgrading once to gain working template delivery. Disable
 startup downloads in Profiles if desired, or use **Update profiles** manually. Downloads
 are validated before atomic caching, never activate mappings or replace personal copies,
 and retain existing templates on failure. The preview catalog is maintained at

@@ -8,8 +8,9 @@ No game or hardware-input tests have been performed.
 
 ## Install and select
 
-1. Install Bifrost Controller 0.1.3 or newer. Version 0.1.2 cannot download
-   catalogs or use triggers in managed profiles.
+1. Install Bifrost Controller 0.1.4 or newer. Version 0.1.2 cannot download
+   catalogs or use triggers in managed profiles; 0.1.3 has a bundled-resource
+   packaging issue and must also be upgraded.
 2. In **Profiles**, press **Update profiles** or leave startup downloads enabled.
 3. Choose **Star Trek Online - PS5-style (PC)** and your DualSense. Review the
    Space, Ground and Menus assignments, then **Make a personal copy** if you
