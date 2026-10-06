@@ -1099,7 +1099,7 @@ void ModernShell::syncVariants()
 {
     auto current = m_profiles->currentItem();
     const auto group = current && !current->isHidden() ? current->data(Qt::UserRole + 2).toString() : QString{};
-    if (m_variant->property("group").toString() == group)
+    if (!group.isEmpty() && m_variant->property("group").toString() == group)
         return;
     const auto selected = selectedId();
     m_variant->blockSignals(true);
