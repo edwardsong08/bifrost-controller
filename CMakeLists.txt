@@ -976,6 +976,9 @@ endif()
 
 set(CPACK_PACKAGE_EXECUTABLES "bifrost-controller;Bifrost Controller")
 set(CPACK_CREATE_DESKTOP_LINKS "bifrost-controller")
+# NSIS commands contain quotes and Windows separators; preserve them through
+# CPackConfig.cmake serialization instead of parsing them as CMake escapes.
+set(CPACK_VERBATIM_VARIABLES ON)
 if(WIN32 AND NOT PORTABLE_WIN)
     set(CPACK_PACKAGE_EXECUTABLES "bifrost-launcher;Bifrost Controller")
     set(CPACK_CREATE_DESKTOP_LINKS "bifrost-launcher")
