@@ -12,8 +12,16 @@
   by default). Fixed HTTPS preview-branch catalog, bounded size/time, schema
   validation, atomic cache and offline fallback preserve personal profiles and
   active native mappings. New templates never activate themselves.
-- Bumped preview package/companion version to 0.1.3. Formatting/diff review
-  performed; Windows compilation/packaging pending. No automated, visual or
+- Bumped preview package/companion version to 0.1.3. Windows compilation and
+  installer/portable/source packaging passed in run 37418863441 at 5c9b689d
+  with WITH_TESTS=OFF. Published v0.1.3-preview with all four assets; GitHub
+  digests match the build manifest. Public installer readback also matches
+  SHA256 0896eb8c8c92345af4f958f86f383710ff204d09c776bf5e21de5a23009a8fbc
+  (16,883,255 bytes). Owner's installed 0.1.2 has not been upgraded locally.
+- Read-only companion metadata reported 0.1.2, assistant access enabled, no
+  connected controllers and no saved application rules. No mappings changed.
+  This was a metadata read, not a Codex-native integration acceptance test.
+- Formatting/diff review performed. No automated, visual or
   hardware tests ran. Game-control assumptions and setup differences are
   documented in docs/profiles/star-trek-online-dualsense.md.
 

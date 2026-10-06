@@ -15,9 +15,17 @@ Personal copies, active mappings and application-rule files are not replaced.
 Validated catalogs are atomically cached; offline/error paths keep the last
 download and compiled defaults. The fixed HTTPS catalog is profiles/catalog.json
 on codex/troa-controller-mapper. The startup option can be disabled.
-0.1.2 needs one installer upgrade to obtain this feature. Build/public release
-are pending; gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
+0.1.2 needs one installer upgrade to obtain this feature. Windows compilation
+and packaging passed with WITH_TESTS=OFF in run 37418863441 from
+5c9b689dc9669b29dd9b88b05dbcb3806700a726. Public release v0.1.3-preview contains
+the checksum-verified installer, portable package and matching source. Installer
+SHA256 is 0896eb8c8c92345af4f958f86f383710ff204d09c776bf5e21de5a23009a8fbc
+(16,883,255 bytes). The owner's Program Files installation still reports 0.1.2;
+no local installer upgrade is claimed. Gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
 for keyboard assumptions, camera/ability differences and the Create-button rule.
+Read-only metadata through the installed local companion confirmed assistant
+access and an empty application-rule list; no controller was detected during
+that read. This is not a Codex-native tool connection or gameplay test.
 
 ## Product direction - 2026-10-05
 

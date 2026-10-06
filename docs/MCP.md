@@ -78,15 +78,17 @@ The profile store uses atomic writes, SHA256 conflict checks, and preserved olde
 revisions. Generated legacy .amgp mappings have content-addressed filenames so an
 updated definition reloads through the existing mapping engine.
 
-Community templates are embedded in the application and updated with app releases.
-Personal profiles are stored separately and are not overwritten by template updates.
-The first catalog contains desktop and browser starters. Game profiles will be authored
-with Edward; no game-specific bindings or hardware acceptance are claimed yet.
+Community templates are embedded for offline use. Starting with 0.1.3, compatible
+catalog updates also download at startup or through **Profiles > Update profiles**.
+Downloads never activate profiles, replace personal copies or rewrite existing
+application-rule mapping files. Templates currently include desktop, browser and
+the console-inspired STO DualSense Space/Ground/Menus starting layout. See
+[its setup notes](profiles/star-trek-online-dualsense.md); gameplay is untested.
 
 ## Current boundaries
 
-MCP profile definitions cover standard buttons, D-pad, and both sticks. Triggers,
-gyro, complex timed macros, and legacy profile import are still
+MCP profile definitions cover standard buttons, D-pad, both sticks and, from 0.1.3,
+`left_trigger` / `right_trigger`. Gyro, complex timed macros, and legacy profile import are still
 managed through the inherited interface. MCP does not expose script execution,
 arbitrary file access, or direct keyboard/mouse injection. GUI edits to a generated
 mapping should be saved as a legacy .amgp file; they do not automatically rewrite its
