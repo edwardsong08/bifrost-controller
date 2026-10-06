@@ -775,7 +775,7 @@ QWidget *ModernShell::libraryPage()
     actionButtons->addStretch();
     actions->addLayout(actionButtons);
     root->addLayout(actions);
-    connect(m_controller, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { previewProfile(); });
+    connect(m_controller, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { filterProfiles(); });
     connect(m_apply, &QPushButton::clicked, this, &ModernShell::applyProfile);
     connect(m_copy, &QPushButton::clicked, this, &ModernShell::copyProfile);
     m_libraryFeedback = label("");
