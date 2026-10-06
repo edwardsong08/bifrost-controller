@@ -3,6 +3,7 @@
 #include "antimicrosettings.h"
 #include "applicationcontext.h"
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
@@ -18,6 +19,7 @@
 #include <QLineEdit>
 #include <QMutexLocker>
 #include <QPushButton>
+#include <QScreen>
 #include <QScrollArea>
 #include <QTableWidget>
 #include <QUuid>
@@ -211,7 +213,14 @@ void ApplicationPage::editRule(bool existing)
     dialog->setWindowTitle(existing ? "Edit application rule" : "Add application rule");
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setMinimumWidth(570);
-    auto root = new QVBoxLayout(dialog);
+    auto outer = new QVBoxLayout(dialog);
+    auto content = new QWidget;
+    auto scroll = new QScrollArea;
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setWidget(content);
+    outer->addWidget(scroll, 1);
+    auto root = new QVBoxLayout(content);
     root->setSpacing(12);
     auto form = new QFormLayout;
     auto name = new QLineEdit(original.value("name").toString());
@@ -326,7 +335,7 @@ void ApplicationPage::editRule(bool existing)
     error->hide();
     root->addWidget(error);
     auto buttons = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
-    root->addWidget(buttons);
+    outer->addWidget(buttons);
     connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
     connect(buttons, &QDialogButtonBox::accepted, dialog, [=]() {
         QJsonArray modes;
@@ -355,6 +364,8 @@ void ApplicationPage::editRule(bool existing)
         m_feedback->show();
         dialog->accept();
     });
+    const auto available = qApp->primaryScreen()->availableGeometry();
+    dialog->resize(qMin(760, available.width() - 48), qMin(750, available.height() - 64));
     dialog->open();
 }
 } // namespace Troa
