@@ -256,3 +256,24 @@ Windows 0.1.2 compilation and packaging succeeded in GitHub Actions run 37411297
 - Bifrost Controller 0.1.2 compiled, packaged, installed, and opened as detailed above. Earlier pending-build notes describe their historical state.
 - Edward authorized two new main-site pages and a final Gaming > Bifrost Downloads submenu for local review before pushing. Server Manager is a coming-soon overview; Controller is Windows-only with installer setup and GitHub access. This website work is separate and does not authorize a public release or site deployment.
 
+## 2026-10-06 - 0.1.7 compiled, published and delivered
+
+Windows Actions 37437099049 compiled/packaged 95f19be285a141d749d6cff14272938ee804b620
+successfully with tests disabled. Run duration: 11m53s (dependencies about 3m,
+installer 4m26s, portable rebuild/package 3m44s). Earlier header-order and CPack
+serialization failures required rebuilds; those attempts were not published.
+Preview artifact 11400066962; installer layout artifact 11400296218.
+Published v0.1.7-preview contains installer, portable app, exact source and hashes.
+Installer: 18,386,680 bytes; SHA256 d4b5275d9d97d37601a725495585707d93440cbfc8bed7a0f353332049bc3ed5.
+Exact source bytes and portable runtime imports/licenses inspected; no unresolved
+dependencies. Generated NSIS layout confirms immutable versioned payloads,
+atomic marker, stable launchers and no pre-upgrade uninstall. Both launchers import
+only Windows system DLLs. These static checks do not prove installer execution.
+Website PR #105 merged at bb84b98aa195d3e90e20a3acbbe749a651243298. At 2026-10-06T08:53:14.065508+00:00,
+live product page and TROA download endpoint returned the exact 0.1.7 installer.
+Owner requested simple public setup copy without one-user migration details.
+Owner's installed app, personal profiles and Codex configuration remain untouched;
+no automated, visual, installer execution, hardware or gameplay tests ran.
+Native PR #1 remains a draft and unmerged. Manual upgrade normally requires no
+uninstall; Codex may stay open. Legacy Close-to-tray may need Bifrost > Quit once.
+Old payloads remain retained; stable launchers must never be overwritten in place.
