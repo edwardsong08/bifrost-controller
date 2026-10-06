@@ -33,6 +33,11 @@ received an MCP request. Availability is not proof that a particular AI app is c
 | restore_profile_revision | Restore an older definition without activating it |
 | activate_profile | Apply a specific revision to one connected controller |
 | unload_profile | Unload one controller's mapping |
+| export_profile | Compile an exact managed revision into a native .amgp without activating it |
+| application_context | Focused app, assigned/actual profile and named layout for each controller |
+| list_application_rules | Per-controller application rules and their revision |
+| save_application_rule | Save an executable/profile/layout/shortcut rule with a revision check |
+| remove_application_rule | Remove a rule without deleting its profile |
 
 ## Profile workflow
 
@@ -81,10 +86,59 @@ with Edward; no game-specific bindings or hardware acceptance are claimed yet.
 ## Current boundaries
 
 MCP profile definitions cover standard buttons, D-pad, and both sticks. Triggers,
-gyro, complex timed macros, auto-profile rules, and legacy profile import are still
+gyro, complex timed macros, and legacy profile import are still
 managed through the inherited interface. MCP does not expose script execution,
 arbitrary file access, or direct keyboard/mouse injection. GUI edits to a generated
 mapping should be saved as a legacy .amgp file; they do not automatically rewrite its
 managed JSON definition. Website-specific browser switching is not implemented.
 
 No automated or hardware tests were run for this preview, per Edward's request.
+
+## Applications and named layouts
+
+Use **Applications** in the mapper to assign a saved native profile to an application executable
+and controller. The rule shows Open/Focused/Closed, and the live controller table distinguishes
+the assigned profile from the mapping and layout actually active. Applications without a rule
+keep the current mapping; the status says so. Modern rules take precedence over inherited automatic
+rules for their matching controller/application. Unsaved controller changes pause automatic loading.
+
+Layouts correspond to the existing eight mapping sets. For Star Trek Online, configure the actual
+game .exe (not just its launcher), choose its saved profile, and name sets 1 and 2 **Space** and
+**Ground**. Assign actions under Controllers and save. Choose a keyboard shortcut, a controller
+button, or both to cycle the selected layouts. These labels do not invent game bindings. The
+controller button must be unused in every selected layout; existing actions are never erased.
+The notice appears for the actual profile/layout change, without taking focus or intercepting clicks.
+Choose the focused app's display (default), primary display, or all displays. Exclusive fullscreen
+games may hide desktop overlays; borderless/windowed mode is required in that case.
+
+MCP can also author named layouts. Schema 1 now accepts optional `layouts`, with empty top-level
+`bindings`, containing 1–8 objects `{ "set": 1, "name": "Space", "bindings": [...] }`.
+Use unique set numbers 1–8 and include set 1. Each layout's bindings use the same supported input
+and action schema as single-layout profiles. Existing schema 1 profiles continue unchanged.
+
+After saving a managed profile, call `export_profile` with its id and exact revision. Use the
+returned `profile_path` in `save_application_rule`. This does not activate the profile by itself.
+`list_application_rules` supplies the expected revision for rule changes; `application_context`
+supplies persistent controller identifiers and normalized SDL button indices (unlike the live
+instance ids used by `activate_profile`). A rule has:
+
+```json
+{
+  "id": "sto-dualsense",
+  "name": "Star Trek Online",
+  "executable": "C:/path/to/the/actual/GameClient.exe",
+  "controller_id": "persistent-id-from-application_context",
+  "profile_path": "native-path-from-export_profile",
+  "modes": [{"set": 1, "name": "Space"}, {"set": 2, "name": "Ground"}],
+  "keyboard_shortcut": "Ctrl+Alt+G",
+  "controller_button": -1
+}
+```
+
+Paths above are examples; use actual existing local files. Saving a rule enables it when its app
+is focused, including immediately if that app is already focused. Keyboard chords use A–Z, 0–9
+or F1–F11, optionally with Ctrl/Alt/Shift; conflicting registrations show a warning. Shortcuts
+are registered only for the focused application and are removed on focus changes. Application
+focus is polled every 500 ms. Layout selection is remembered during the running session.
+Application rules and global keyboard shortcuts currently target Windows; native mapping remains
+cross-platform. Website/tab-specific browser matching is still future work.

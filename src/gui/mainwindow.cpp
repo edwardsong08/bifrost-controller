@@ -23,6 +23,7 @@
 #include "troa/localapi.h"
 #include "troa/modernshell.h"
 #include "troa/profilestore.h"
+#include "troa/applicationcontext.h"
 #include <QJsonArray>
 #include <QGuiApplication>
 #include <QKeySequence>
@@ -237,7 +238,13 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     {
         m_troaApi = new Troa::LocalApi([this](const QJsonObject &request) { return handleTroaRequest(request); }, this);
         m_troaApi->setEnabled(settings->value("TROA/AssistantAccess", true).toBool());
-        m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings,
+        m_troaContext = new Troa::ApplicationContext(settings, [this]() {
+            QList<JoyTabWidget *> tabs;
+            for (int i = 0; i < ui->tabWidget->count(); ++i)
+                if (auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(i))) tabs.append(tab);
+            return tabs;
+        }, this);
+        m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings, m_troaContext,
             [this](const QJsonObject &request) { return handleTroaRequest(request); });
         setCentralWidget(m_troaShell);
         auto mcpMenu = new QMenu(tr("MCP & AI"), this);
@@ -268,6 +275,12 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
     const auto method = request.value("method").toString();
     const auto arguments = request.value("arguments").toObject();
     const Troa::ProfileStore store;
+    if (m_troaContext) {
+        if (method == "application_context") return m_troaContext->state();
+        if (method == "list_application_rules") return m_troaContext->rules();
+        if (method == "save_application_rule") return m_troaContext->saveRule(arguments.value("rule").toObject(), arguments.value("expected_revision").toString());
+        if (method == "remove_application_rule") return m_troaContext->removeRule(arguments.value("id").toString(), arguments.value("expected_revision").toString());
+    }
     if (method == "mapper_status")
         return {{"name", Troa::name()}, {"version", PadderCommon::programVersion},
             {"assistant_access", m_troaApi && m_troaApi->isEnabled()}, {"profile_directory", Troa::profileDirectory()},
@@ -292,6 +305,15 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
     }
     if (method == "list_profiles") return {{"profiles", store.list()}};
     if (method == "read_profile") return store.read(arguments.value("id").toString());
+    if (method == "export_profile") {
+        const auto item = store.read(arguments.value("id").toString());
+        if (item.contains("error")) return item;
+        if (arguments.value("expected_revision").toString() != item.value("revision").toString())
+            return Troa::failure("Profile changed. Read it again before exporting.");
+        const auto path = store.exportMapping(arguments.value("id").toString());
+        return path.isEmpty() ? Troa::failure("Could not export this native controller profile.") :
+            QJsonObject{{"profile_path", path}, {"revision", item.value("revision")}};
+    }
     if (method == "validate_profile") {
         const auto error = Troa::ProfileStore::validate(arguments.value("profile").toObject());
         return error.isEmpty() ? QJsonObject{{"valid", true}} : Troa::failure(error);
@@ -1678,6 +1700,8 @@ void MainWindow::autoprofileLoad(AutoProfileInfo *info)
         if (widget != nullptr)
         {
             // if (info->getGUID() == "all")
+            if (m_troaContext && m_troaContext->ownsController(widget->getJoystick()->getStringIdentifier()))
+                continue; // Modern application rules own this controller while their app is focused.
             if (info->getUniqueID() == "all")
             {
                 // If the all option for a Default profile was found,

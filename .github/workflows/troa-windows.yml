@@ -59,7 +59,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          git archive --format=zip --output=build/troa-pc-controller-mapper-0.1.1-source.zip HEAD
+          git archive --format=zip --output=build/troa-pc-controller-mapper-0.1.2-source.zip HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
           $checksums = Get-ChildItem build/troa-pc-controller-mapper*.exe, build/troa-pc-controller-mapper*.zip |
             Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }

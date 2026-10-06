@@ -61,7 +61,7 @@ endif(NOT COMPILER_IS_MSVC)
 # The version number.
 set(ANTIMICROX_MAJOR_VERSION 0)
 set(ANTIMICROX_MINOR_VERSION 1)
-set(ANTIMICROX_PATCH_VERSION 1)
+set(ANTIMICROX_PATCH_VERSION 2)
 
 if(UNIX)
     option(WITH_X11 "Compile with support for X11." ON)
@@ -658,7 +658,9 @@ target_sources(antimicrox PRIVATE
     src/troa/identity.h
     src/troa/profilestore.h src/troa/profilestore.cpp
     src/troa/localapi.h src/troa/localapi.cpp
-    src/troa/modernshell.h src/troa/modernshell.cpp)
+    src/troa/modernshell.h src/troa/modernshell.cpp
+    src/troa/applicationcontext.h src/troa/applicationcontext.cpp
+    src/troa/applicationpage.h src/troa/applicationpage.cpp)
 
 # A console stdio companion avoids exposing a network port or requiring Python/Node.
 add_executable(troa-controller-mcp src/troa/mcp_main.cpp src/troa/identity.h)

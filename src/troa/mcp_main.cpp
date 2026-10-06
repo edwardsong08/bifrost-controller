@@ -28,12 +28,26 @@ QJsonArray tools()
     return {
         tool("mapper_status", "Read mapper status, supported profile inputs and keys, and managed profile location."),
         tool("list_controllers", "List connected controllers, capabilities, active profile, and stable/live identifiers."),
+        tool("application_context", "Read the focused app, actual active profile/layout per controller, application-rule matches and switch warnings."),
+        tool("list_application_rules", "Read saved application rules and the revision needed to change them."),
+        tool("save_application_rule", "Create/update a Windows application rule. Read rules and context first. rule has id, name, "
+             "executable (existing .exe), controller_id (persistent id from application_context), profile_path (existing native "
+             ".amgp/.xml), modes [{set:1..8,name}], optional keyboard_shortcut and controller_button (zero-based normalized "
+             "SDL index, -1 disables). Optional controller_name/button_name are display labels. Profile actions remain in "
+             "the native file. Saving enables automatic activation when that app is focused; refuses unsaved controller edits. "
+             "Controller switch buttons must be unassigned in every selected set.",
+             {{"rule", QJsonObject{{"type", "object"}}}, {"expected_revision", text}}, {"rule", "expected_revision"}, false),
+        tool("remove_application_rule", "Remove an application rule without deleting its profile file. Requires the current rules revision.",
+             {{"id", text}, {"expected_revision", text}}, {"id", "expected_revision"}, false),
         tool("list_profiles", "List bundled templates and personal profiles, including revision hashes."),
         tool("read_profile", "Read a profile definition and its revision. Bundled templates are read-only.", {{"id", text}}, {"id"}),
+        tool("export_profile", "Export an exact managed revision to a native .amgp file for application rules, without activating it.",
+             {{"id", text}, {"expected_revision", text}}, {"id", "expected_revision"}, false),
         tool("validate_profile", "Validate a structured profile without saving or activating it.",
              {{"profile", QJsonObject{{"type", "object"}}}}, {"profile"}),
         tool("save_profile", "Create or update a personal profile. Use read_profile first, preserve its fields, and supply "
-             "expected_revision for updates. To copy a template, change its id and name. Saving does not activate.",
+             "expected_revision for updates. To copy a template, change its id and name. For multiple layouts, keep top-level "
+             "bindings empty and add layouts [{set:1..8,name,bindings}]; include set 1. Saving does not activate.",
              {{"profile", QJsonObject{{"type", "object"}}}, {"expected_revision", text}}, {"profile"}, false),
         tool("list_profile_revisions", "List preserved older revisions of a personal profile.", {{"id", text}}, {"id"}),
         tool("restore_profile_revision", "Restore an older personal profile revision, preserving the current revision. "
@@ -99,7 +113,7 @@ int main(int argc, char **argv)
         if (method == "initialize") {
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"}, {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
-                {"serverInfo", QJsonObject{{"name", "troa-pc-controller-mapper"}, {"version", "0.1.1"}}},
+                {"serverInfo", QJsonObject{{"name", "troa-pc-controller-mapper"}, {"version", "0.1.2"}}},
                 {"instructions", "Manage controller profiles locally. Read before changing, save drafts before activation, "
                  "and use exact revision/controller ids. This server does not inject input or run scripts."}};
         } else if (method == "ping") result = {};

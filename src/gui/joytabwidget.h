@@ -71,6 +71,7 @@ class JoyTabWidget : public QWidget
     QHash<int, QString> *recentConfigs(); // JoyTabSettings class
 
     QString getCurrentConfigName(); // JoyTabSettings class
+    QString currentProfilePath(); // Only report successfully loaded native mappings.
     QString getConfigName(int index);
 
     InputDevice *getJoystick();

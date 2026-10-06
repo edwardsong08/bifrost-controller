@@ -19,10 +19,11 @@ class QTableWidget;
 
 namespace Troa {
 class LocalApi;
+class ApplicationContext;
 class ModernShell : public QWidget
 {
   public:
-    ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMicroSettings *settings,
+    ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMicroSettings *settings, ApplicationContext *context,
                 std::function<QJsonObject(const QJsonObject &)> handler);
     void refreshProfiles();
     void refreshControllers();
@@ -63,6 +64,7 @@ class ModernShell : public QWidget
     QLabel *m_libraryFeedback = nullptr;
     QLabel *m_controllerHelp = nullptr;
     QComboBox *m_controller = nullptr;
+    QComboBox *m_layout = nullptr;
     QLabel *m_status = nullptr;
     QLabel *m_startStatus = nullptr;
     QLabel *m_startDetail = nullptr;

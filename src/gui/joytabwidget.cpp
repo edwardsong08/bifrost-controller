@@ -1236,6 +1236,15 @@ int JoyTabWidget::getCurrentConfigIndex() { return configBox->currentIndex(); }
 
 QString JoyTabWidget::getCurrentConfigName() { return configBox->currentText(); }
 
+QString JoyTabWidget::currentProfilePath()
+{
+    auto reader = tabHelper.getReader();
+    const auto path = configBox->currentData().toString();
+    return configBox->currentIndex() > 0 && reader && !reader->hasError() &&
+        QFileInfo(reader->getFileName()).absoluteFilePath().compare(QFileInfo(path).absoluteFilePath(), Qt::CaseInsensitive) == 0
+        ? path : QString();
+}
+
 QString JoyTabWidget::getConfigName(int index) { return configBox->itemText(index); }
 
 // Switch widget to currently selected Set

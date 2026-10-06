@@ -54,3 +54,13 @@
 - Used the exact deployed TROA favicon artwork for app/tray/installer branding. The site favicon is PNG content; preserve its bytes in troa-logo.png and package a genuine Windows ICO. Controller art remains on controller navigation/guidance.
 - Fixed title-bar close to use the existing save/discard/cancel flow instead of quitting directly.
 - Preview version is 0.1.1. Build and installation are pending; source remains in draft PR #1 and repository access is unchanged.
+
+## 2026-10-05 - Focused application profiles and named layouts
+
+- Edward added per-application profile clarity, keyboard/controller switching between modes within a game, and visible notices on the focused game's monitor (with display options). He requested TROA main-site and Bifrost visual inspiration.
+- Added a Windows application-context manager and modern rule editor, focused/open/closed rule state, actual profile/layout status, exact executable/controller matching, and native profile loading without discarding edits.
+- Reused the native eight-set mapping engine for named modes. Keyboard shortcuts are focus-scoped; unused normalized controller buttons cycle on release. Existing assignments are not cleared or overwritten. Switching uses the device thread's existing set transition handling.
+- Added topmost, non-activating, click-through switch notices, focused/primary/all monitor selection, and explicit exclusive-fullscreen limitations.
+- Extended managed schema 1 compatibly with optional named layouts and added MCP context/rule/export tools. No game-specific bindings are fabricated.
+- Read the actual deployed TROA CSS and Bifrost source styles: ivory/charcoal/gold, quiet navy surfaces, compact navigation. Other TROA repos remain untouched.
+- 0.1.1 compilation/packaging succeeded in run 37408876833. Expanded preview 0.1.2 compilation/installation is pending; no automated, visual, or controller tests are run.

@@ -26,7 +26,7 @@
 #include <QSystemTrayIcon>
 #include <QJsonObject>
 
-namespace Troa { class LocalApi; class ModernShell; }
+namespace Troa { class LocalApi; class ModernShell; class ApplicationContext; }
 
 #ifdef CHECK_FOR_UPDATES
     #include <QNetworkAccessManager>
@@ -180,6 +180,7 @@ class MainWindow : public QMainWindow
     bool m_graphical;
     Troa::LocalApi *m_troaApi = nullptr;
     Troa::ModernShell *m_troaShell = nullptr;
+    Troa::ApplicationContext *m_troaContext = nullptr;
 
 #ifdef CHECK_FOR_UPDATES
     QNetworkAccessManager m_network_manager; // Used for checking updates

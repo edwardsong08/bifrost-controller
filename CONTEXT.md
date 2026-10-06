@@ -85,3 +85,13 @@ Windows compilation and packaging succeeded in GitHub Actions run 37406545582. D
 - A read-only diagnostic of the installed 0.1.0 app returned MCP status and a DualSense controller with no unsaved edits. No mappings were changed. Desktop inspection still timed out; no test suites or hardware-input tests are run.
 - Updated preview compilation/installation is pending.
 
+## Application context and TROA styling - 2026-10-05
+
+- Edward requested clear per-controller app/profile state, Space/Ground-style layout switching by keyboard/controller, and a visible monitor-aware notice. He also requested color/style inspiration from the deployed TROA main site and Bifrost.
+- Version 0.1.2 adds Applications rules with exact executable matching and stable controller identifiers, native profile selection, named mapping sets, focus-scoped keyboard shortcuts, and unused normalized SDL controller buttons to cycle layouts on release.
+- Controller and Applications views distinguish assigned versus active profile/layout and show blocked switches. Existing native mapping sets/input release handling are retained. Modern rules take priority over legacy auto profiles only for their matching app/controller.
+- Switch notices are non-activating, click-through, and topmost. Default display is the focused app's monitor with primary fallback; primary/all display options exist. Exclusive fullscreen desktop-overlay visibility is not guaranteed.
+- Managed JSON schema 1 remains compatible and now accepts optional named layouts. MCP exposes context/rule management and exact-revision native export for assigning managed multi-layout profiles.
+- Source palette comes from current deployed main-site CSS (ivory #f4f0e8, charcoal #0d0e0f, gold #d4a84f), with Bifrost navy surfaces and compact navigation. No other TROA repository is modified.
+- UI/branding-only 0.1.1 compiled and packaged successfully in run 37408876833 on 8285def9c4e551ee6682c7b1469f286b7bc3bc16. It has not been installed; the expanded 0.1.2 build is pending. No test runs are performed.
+

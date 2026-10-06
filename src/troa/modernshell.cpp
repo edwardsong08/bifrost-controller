@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "modernshell.h"
 #include "antimicrosettings.h"
+#include "applicationcontext.h"
+#include "applicationpage.h"
 #include "identity.h"
 #include "localapi.h"
 #include "profilestore.h"
@@ -208,14 +210,18 @@ QIcon ModernShell::controllerIcon()
 
 void ModernShell::applyAppearance(bool dark)
 {
-    const QString background = dark ? "#171719" : "#f5f5f7";
-    const QString surface = dark ? "#242426" : "#ffffff";
-    const QString text = dark ? "#f5f5f7" : "#1d1d1f";
-    const QString muted = dark ? "#b0b0b7" : "#63636b";
-    const QString border = dark ? "#3b3b40" : "#dedee3";
-    const QString hover = dark ? "#323236" : "#ececf1";
-    const QString selection = dark ? "#23384e" : "#e8f1fc";
-    const QString accentText = dark ? "#8cc6ff" : "#005eb8";
+    // TROA's deployed ivory/charcoal/gold palette, with Bifrost's quiet navy surfaces.
+    const QString background = dark ? "#0d0e0f" : "#f4f0e8";
+    const QString surface = dark ? "#171c25" : "#fffaf1";
+    const QString text = dark ? "#f4f0e8" : "#252019";
+    const QString muted = dark ? "#bfb8ad" : "#665c50";
+    const QString border = dark ? "#3f3c31" : "#d4c5a8";
+    const QString hover = dark ? "#242c39" : "#eee4d1";
+    const QString selection = dark ? "#342c1c" : "#f2e3bc";
+    const QString accentText = dark ? "#ffda83" : "#775606";
+    const QString primary = dark ? "#d4a84f" : "#e3b545";
+    const QString primaryText = "#241a09";
+    const QString primaryHover = dark ? "#eac477" : "#efc464";
     auto palette = qApp->palette();
     palette.setColor(QPalette::Window, QColor(background));
     palette.setColor(QPalette::WindowText, QColor(text));
@@ -224,8 +230,8 @@ void ModernShell::applyAppearance(bool dark)
     palette.setColor(QPalette::Text, QColor(text));
     palette.setColor(QPalette::Button, QColor(surface));
     palette.setColor(QPalette::ButtonText, QColor(text));
-    palette.setColor(QPalette::Highlight, QColor("#0071e3"));
-    palette.setColor(QPalette::HighlightedText, Qt::white);
+    palette.setColor(QPalette::Highlight, QColor(primary));
+    palette.setColor(QPalette::HighlightedText, QColor(primaryText));
     palette.setColor(QPalette::ToolTipBase, QColor(surface));
     palette.setColor(QPalette::ToolTipText, QColor(text));
     palette.setColor(QPalette::Disabled, QPalette::Text, QColor(muted));
@@ -250,11 +256,11 @@ void ModernShell::applyAppearance(bool dark)
         QPushButton, QToolButton { background: %4; border: 1px solid %5; border-radius: 8px; padding: 8px 12px; min-height: 18px; }
         QPushButton:hover, QToolButton:hover { background: %6; }
         QPushButton:focus, QToolButton:focus, QLineEdit:focus, QComboBox:focus, QCheckBox:focus {
-            border: 2px solid #0071e3;
+            border: 2px solid %9;
         }
-        QPushButton:checked { background: %7; border-color: #0071e3; }
-        QPushButton[role="primary"] { background: #0071e3; color: white; border-color: #0071e3; }
-        QPushButton[role="primary"]:hover { background: #0062c5; }
+        QPushButton:checked { background: %7; border-color: %9; }
+        QPushButton[role="primary"] { background: %9; color: %10; border-color: %9; }
+        QPushButton[role="primary"]:hover { background: %11; }
         QPushButton[role="nav"] { text-align: left; border: none; padding: 10px; background: transparent; }
         QPushButton[role="nav"]:checked { color: %8; background: %7; font-weight: 600; }
         QPushButton:disabled { color: %3; background: %2; border-color: %5; }
@@ -267,7 +273,7 @@ void ModernShell::applyAppearance(bool dark)
         QTableWidget::item { padding: 6px; border-bottom: 1px solid %5; }
         QTabWidget::pane { background: %4; border: 1px solid %5; border-radius: 9px; }
         QTabBar::tab { background: %2; border: none; padding: 9px 14px; color: %3; }
-        QTabBar::tab:selected { background: %4; color: %1; border-bottom: 2px solid #0071e3; }
+        QTabBar::tab:selected { background: %4; color: %1; border-bottom: 2px solid %9; }
         QGroupBox { border: 1px solid %5; border-radius: 9px; margin-top: 13px; padding-top: 15px; }
         QGroupBox::title { subcontrol-origin: margin; padding: 0 8px; }
         QMenu, QMenuBar { background: %4; }
@@ -276,18 +282,21 @@ void ModernShell::applyAppearance(bool dark)
         QScrollBar:vertical { background: transparent; width: 10px; }
         QScrollBar::handle:vertical { background: %5; border-radius: 5px; min-height: 24px; }
         QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-        FlashButtonWidget[isflashing="true"] { background: #0071e3; color: white; border-color: #0071e3; }
-        QPushButton[setActive="true"] { background: #0071e3; color: white; }
-        QPushButton[isDisplayingNames="true"] { border-color: #0071e3; }
+        FlashButtonWidget[isflashing="true"] { background: %9; color: %10; border-color: %9; }
+        QPushButton[setActive="true"] { background: %9; color: %10; }
+        QPushButton[isDisplayingNames="true"] { border-color: %9; }
         QPushButton#setPushButton1, QPushButton#setPushButton2, QPushButton#setPushButton3, QPushButton#setPushButton4,
         QPushButton#setPushButton5, QPushButton#setPushButton6, QPushButton#setPushButton7, QPushButton#setPushButton8 {
             padding: 5px 7px; min-width: 18px;
         }
     )")
-                            .arg(text, background, muted, surface, border, hover, selection, accentText));
+                            .arg(text, background, muted, surface, border, hover, selection, accentText)
+                            .arg(primary)
+                            .arg(primaryText)
+                            .arg(primaryHover));
 }
 ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMicroSettings *settings,
-                         std::function<QJsonObject(const QJsonObject &)> handler)
+                         ApplicationContext *context, std::function<QJsonObject(const QJsonObject &)> handler)
     : QWidget(owner)
     , m_api(api)
     , m_settings(settings)
@@ -340,10 +349,29 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     mappingLayout->addWidget(label("Controllers", "section"));
     mappingLayout->addWidget(label(
         "Choose a controller tab, then click an input to assign an action. Save your profile when you're done.", "muted"));
+    auto applicationStatus = label("Application context", "heading");
+    mappingLayout->addWidget(applicationStatus);
+    connect(context, &ApplicationContext::changed, this, [context, applicationStatus]() {
+        const auto state = context->state();
+        QStringList lines;
+        const auto app = QFileInfo(state.value("executable").toString()).fileName();
+        lines.append((state.value("mapper_focused").toBool() ? "Last focused: " : "Focused: ") +
+                     (app.isEmpty() ? "No application detected" : app));
+        for (const auto &value : state.value("controllers").toArray())
+        {
+            const auto device = value.toObject();
+            lines.append(device.value("controller").toString() + " · " + device.value("active_profile").toString() + " · " +
+                         device.value("active_mode").toString());
+        }
+        applicationStatus->setText(lines.join("\n"));
+    });
     auto shortcuts = new QHBoxLayout;
     auto profiles = button("Browse profiles", true);
     connect(profiles, &QPushButton::clicked, this, [this]() { navigate(2); });
     shortcuts->addWidget(profiles);
+    auto applications = button("Application rules");
+    connect(applications, &QPushButton::clicked, this, [this]() { navigate(4); });
+    shortcuts->addWidget(applications);
     auto rescan = button("Rescan");
     connect(rescan, &QPushButton::clicked, owner, [owner]() {
         if (auto action = owner->findChild<QAction *>("actionUpdate_Joysticks"))
@@ -366,8 +394,9 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     m_pages->addWidget(mappingPage);
     m_pages->addWidget(scrollPage(libraryPage()));
     m_pages->addWidget(scrollPage(assistantPage()));
+    m_pages->addWidget(scrollPage(new ApplicationPage(context, settings)));
 
-    const QStringList names = {"Get started", "Controllers", "Profiles", "MCP & AI setup"};
+    const QStringList names = {"Get started", "Controllers", "Profiles", "MCP & AI setup", "Applications"};
     for (int index = 0; index < names.size(); ++index)
     {
         auto control = button(names.at(index));
@@ -519,6 +548,10 @@ QWidget *ModernShell::libraryPage()
     layout->addWidget(m_profileName);
     layout->addWidget(m_profileDescription);
     layout->addWidget(m_profileMeta);
+    m_layout = new QComboBox;
+    m_layout->setAccessibleName("Profile layout to preview");
+    layout->addWidget(m_layout);
+    connect(m_layout, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) { previewProfile(); });
     m_bindings = new QTableWidget(0, 3);
     m_bindings->setHorizontalHeaderLabels({"Control", "Action", "Purpose"});
     m_bindings->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -759,7 +792,27 @@ void ModernShell::previewProfile()
     {
         m_profileName->setText(profile.value("name").toString());
         m_profileDescription->setText(profile.value("description").toString());
-        const auto bindings = profile.value("bindings").toArray();
+        auto bindings = profile.value("bindings").toArray();
+        const auto layouts = profile.value("layouts").toArray();
+        const int selectedSet =
+            m_layout->property("profile_id").toString() == selectedId() ? m_layout->currentData().toInt() : 1;
+        m_layout->blockSignals(true);
+        m_layout->clear();
+        if (layouts.isEmpty())
+            m_layout->addItem("Layout 1", 1);
+        else
+            for (const auto &value : layouts)
+            {
+                const auto entry = value.toObject();
+                m_layout->addItem(entry.value("name").toString(), entry.value("set").toInt());
+            }
+        m_layout->setCurrentIndex(qMax(0, m_layout->findData(selectedSet)));
+        m_layout->setProperty("profile_id", selectedId());
+        m_layout->setVisible(!layouts.isEmpty());
+        m_layout->blockSignals(false);
+        for (const auto &value : layouts)
+            if (value.toObject().value("set").toInt() == m_layout->currentData().toInt())
+                bindings = value.toObject().value("bindings").toArray();
         const bool playStation = m_controller && (m_controller->currentText().contains("DualSense", Qt::CaseInsensitive) ||
                                                   m_controller->currentText().contains("DualShock", Qt::CaseInsensitive) ||
                                                   m_controller->currentText().contains("PS4", Qt::CaseInsensitive) ||
