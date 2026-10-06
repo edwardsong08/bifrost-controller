@@ -108,6 +108,11 @@ updated definition reloads through the existing mapping engine.
 
 Community templates are embedded for offline use. Starting with 0.1.3, compatible
 catalog updates also download at startup or through **Profile library > Update profiles**.
+Desktop and browser templates use the left stick for pointer movement and the right
+stick for vertical/horizontal scrolling. The original Steam Controller uses its
+single left stick for the pointer and right touchpad for scrolling. After a catalog
+refresh, choose **Use this profile** to apply the revised template; existing saved
+and active mappings are preserved until you deliberately apply it.
 Downloads never activate profiles, replace personal copies or rewrite existing
 application-rule mapping files. The v2 catalog includes ten templates with separate STO Space/Ground/Menus
 starting layouts for DualSense, Xbox, and Steam Controller 2015/2026 hardware. See

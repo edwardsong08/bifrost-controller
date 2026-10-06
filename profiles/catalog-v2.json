@@ -3,7 +3,7 @@
     "schema_version": 1,
     "id": "builtin-desktop",
     "name": "Desktop Essentials",
-    "description": "A starting layout for desktop navigation: right stick for the pointer, left stick for arrow keys, face buttons for clicks and shortcuts, and shoulders for scrolling. See the assignments below for your controller's button names.",
+    "description": "A starting layout for desktop navigation: left stick moves the pointer, right stick scrolls vertically and horizontally, D-pad provides arrow keys, face buttons provide clicks and shortcuts, and shoulders also scroll. See the assignments below for your controller's button names.",
     "category": "desktop",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -59,43 +59,43 @@
       },
       {
         "input": "left_stick_up",
-        "keys": [
-          "Up"
-        ]
-      },
-      {
-        "input": "left_stick_right",
-        "keys": [
-          "Right"
-        ]
-      },
-      {
-        "input": "left_stick_down",
-        "keys": [
-          "Down"
-        ]
-      },
-      {
-        "input": "left_stick_left",
-        "keys": [
-          "Left"
-        ]
-      },
-      {
-        "input": "right_stick_up",
+        "label": "Move pointer",
         "mouse_move": "up"
       },
       {
-        "input": "right_stick_right",
+        "input": "left_stick_right",
+        "label": "Move pointer",
         "mouse_move": "right"
       },
       {
-        "input": "right_stick_down",
+        "input": "left_stick_down",
+        "label": "Move pointer",
         "mouse_move": "down"
       },
       {
-        "input": "right_stick_left",
+        "input": "left_stick_left",
+        "label": "Move pointer",
         "mouse_move": "left"
+      },
+      {
+        "input": "right_stick_up",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_stick_right",
+        "label": "Scroll right",
+        "mouse_button": 7
+      },
+      {
+        "input": "right_stick_down",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
       },
       {
         "input": "dpad_up",
@@ -127,7 +127,7 @@
     "schema_version": 1,
     "id": "builtin-browser",
     "name": "Browser Essentials",
-    "description": "A starting browser layout: right stick for the pointer, face buttons for clicks, the address bar and find, shoulders for scrolling, and the D-pad for history and tab navigation. See the assignments below for your controller's button names. Works at the browser application level.",
+    "description": "A starting browser layout: left stick moves the pointer, right stick scrolls vertically and horizontally, face buttons provide clicks, the address bar and find, shoulders also scroll, and the D-pad provides history and tab navigation. See the assignments below for your controller's button names. Works at the browser application level.",
     "category": "browser",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -217,18 +217,42 @@
       },
       {
         "input": "right_stick_up",
-        "mouse_move": "up"
+        "label": "Scroll up",
+        "mouse_button": 4
       },
       {
         "input": "right_stick_right",
-        "mouse_move": "right"
+        "label": "Scroll right",
+        "mouse_button": 7
       },
       {
         "input": "right_stick_down",
-        "mouse_move": "down"
+        "label": "Scroll down",
+        "mouse_button": 5
       },
       {
         "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
+      },
+      {
+        "input": "left_stick_up",
+        "label": "Move pointer",
+        "mouse_move": "up"
+      },
+      {
+        "input": "left_stick_right",
+        "label": "Move pointer",
+        "mouse_move": "right"
+      },
+      {
+        "input": "left_stick_down",
+        "label": "Move pointer",
+        "mouse_move": "down"
+      },
+      {
+        "input": "left_stick_left",
+        "label": "Move pointer",
         "mouse_move": "left"
       }
     ]
@@ -1630,7 +1654,7 @@
     "schema_version": 1,
     "id": "builtin-desktop-steam-2015",
     "name": "Desktop - Steam Controller (2015)",
-    "description": "Physical Steam Controller (2015) navigation. Right touchpad moves the pointer; click it to select. Left touchpad scrolls, stick and face buttons keep keyboard shortcuts. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
+    "description": "Physical Steam Controller (2015) desktop navigation. Left stick moves the pointer; right touchpad scrolls because this model has no right stick. Touchpad clicks, left touchpad scrolling, face buttons, shoulders and grip shortcuts remain available. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
     "category": "desktop",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -1686,47 +1710,43 @@
       },
       {
         "input": "left_stick_up",
-        "keys": [
-          "Up"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "up"
       },
       {
         "input": "left_stick_right",
-        "keys": [
-          "Right"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "right"
       },
       {
         "input": "left_stick_down",
-        "keys": [
-          "Down"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "down"
       },
       {
         "input": "left_stick_left",
-        "keys": [
-          "Left"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "left"
       },
       {
         "input": "right_touchpad_up",
-        "mouse_move": "up",
-        "label": "Move pointer"
+        "label": "Scroll up",
+        "mouse_button": 4
       },
       {
         "input": "right_touchpad_right",
-        "mouse_move": "right",
-        "label": "Move pointer"
+        "label": "Scroll right",
+        "mouse_button": 7
       },
       {
         "input": "right_touchpad_down",
-        "mouse_move": "down",
-        "label": "Move pointer"
+        "label": "Scroll down",
+        "mouse_button": 5
       },
       {
         "input": "right_touchpad_left",
-        "mouse_move": "left",
-        "label": "Move pointer"
+        "label": "Scroll left",
+        "mouse_button": 6
       },
       {
         "input": "left_touchpad_up",
@@ -1779,7 +1799,7 @@
     "schema_version": 1,
     "id": "builtin-browser-steam-2015",
     "name": "Browser - Steam Controller (2015)",
-    "description": "Physical Steam Controller (2015) navigation. Right touchpad moves the pointer; click it to select. Left touchpad scrolls, stick and face buttons keep keyboard shortcuts. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
+    "description": "Physical Steam Controller (2015) browser navigation. Left stick moves the pointer; right touchpad scrolls because this model has no right stick. Touchpad clicks, left touchpad scrolling, face buttons, shoulders and grip shortcuts remain available. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
     "category": "browser",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -1836,23 +1856,23 @@
       },
       {
         "input": "right_touchpad_up",
-        "mouse_move": "up",
-        "label": "Move pointer"
+        "label": "Scroll up",
+        "mouse_button": 4
       },
       {
         "input": "right_touchpad_right",
-        "mouse_move": "right",
-        "label": "Move pointer"
+        "label": "Scroll right",
+        "mouse_button": 7
       },
       {
         "input": "right_touchpad_down",
-        "mouse_move": "down",
-        "label": "Move pointer"
+        "label": "Scroll down",
+        "mouse_button": 5
       },
       {
         "input": "right_touchpad_left",
-        "mouse_move": "left",
-        "label": "Move pointer"
+        "label": "Scroll left",
+        "mouse_button": 6
       },
       {
         "input": "left_touchpad_up",
@@ -1897,6 +1917,26 @@
           "Escape"
         ],
         "label": "Cancel"
+      },
+      {
+        "input": "left_stick_up",
+        "label": "Move pointer",
+        "mouse_move": "up"
+      },
+      {
+        "input": "left_stick_right",
+        "label": "Move pointer",
+        "mouse_move": "right"
+      },
+      {
+        "input": "left_stick_down",
+        "label": "Move pointer",
+        "mouse_move": "down"
+      },
+      {
+        "input": "left_stick_left",
+        "label": "Move pointer",
+        "mouse_move": "left"
       }
     ],
     "controller_family": "steam-2015"
@@ -2612,7 +2652,7 @@
     "schema_version": 1,
     "id": "builtin-desktop-steam-2026",
     "name": "Desktop - Steam Controller (2026)",
-    "description": "Physical Steam Controller (2026) navigation. Right touchpad moves the pointer; click it to select. Left touchpad scrolls, stick and face buttons keep keyboard shortcuts. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
+    "description": "Physical Steam Controller (2026) desktop navigation. Left stick moves the pointer; right stick scrolls vertically and horizontally. Right touchpad also moves the pointer. Touchpad clicks, left touchpad scrolling, face buttons, shoulders and grip shortcuts remain available. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
     "category": "desktop",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -2668,27 +2708,23 @@
       },
       {
         "input": "left_stick_up",
-        "keys": [
-          "Up"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "up"
       },
       {
         "input": "left_stick_right",
-        "keys": [
-          "Right"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "right"
       },
       {
         "input": "left_stick_down",
-        "keys": [
-          "Down"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "down"
       },
       {
         "input": "left_stick_left",
-        "keys": [
-          "Left"
-        ]
+        "label": "Move pointer",
+        "mouse_move": "left"
       },
       {
         "input": "dpad_up",
@@ -2793,6 +2829,26 @@
           "V"
         ],
         "label": "Paste"
+      },
+      {
+        "input": "right_stick_up",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_stick_right",
+        "label": "Scroll right",
+        "mouse_button": 7
+      },
+      {
+        "input": "right_stick_down",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
       }
     ],
     "controller_family": "steam-2026"
@@ -2801,7 +2857,7 @@
     "schema_version": 1,
     "id": "builtin-browser-steam-2026",
     "name": "Browser - Steam Controller (2026)",
-    "description": "Physical Steam Controller (2026) navigation. Right touchpad moves the pointer; click it to select. Left touchpad scrolls, stick and face buttons keep keyboard shortcuts. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
+    "description": "Physical Steam Controller (2026) browser navigation. Left stick moves the pointer; right stick scrolls vertically and horizontally. Right touchpad also moves the pointer. Touchpad clicks, left touchpad scrolling, face buttons, shoulders and grip shortcuts remain available. Requires Bifrost 0.1.5 with SDL3. Gyro and other available inputs can be customized in Controllers. Keep Steam from also generating keyboard/mouse input. Hardware behavior is untested.",
     "category": "browser",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -2968,6 +3024,46 @@
           "V"
         ],
         "label": "Paste"
+      },
+      {
+        "input": "left_stick_up",
+        "label": "Move pointer",
+        "mouse_move": "up"
+      },
+      {
+        "input": "right_stick_up",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "left_stick_right",
+        "label": "Move pointer",
+        "mouse_move": "right"
+      },
+      {
+        "input": "right_stick_right",
+        "label": "Scroll right",
+        "mouse_button": 7
+      },
+      {
+        "input": "left_stick_down",
+        "label": "Move pointer",
+        "mouse_move": "down"
+      },
+      {
+        "input": "right_stick_down",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "left_stick_left",
+        "label": "Move pointer",
+        "mouse_move": "left"
+      },
+      {
+        "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
       }
     ],
     "controller_family": "steam-2026"

@@ -315,3 +315,31 @@ if they reference a previous compiled file. Existing personal/active/saved mappi
 are preserved. No automated, visual, installer execution, hardware or gameplay
 tests ran. Native PR #1 remains draft and unmerged. Public website design/copy and
 artwork stay unchanged, per owner preference; only the release pin was updated.
+
+## 2026-10-06 - Owner STO layout switch configured through MCP
+
+At the owner's request, the running 0.1.8 app exported the current bundled
+DualSense STO template and saved an application rule for the installed Steam
+GameClient.exe. Create / Share (normalized SDL index 4) cycles only set 1 Space,
+set 2 Ground, and set 3 Menus while that application owns foreground focus.
+The rule points to the current corrected export, rather than the previously
+active older compiled mapping. MCP readback confirmed the saved rule and exact
+three-layout order. The exported file leaves Create unassigned in all three
+sets and uses cardinal stick indices 1/3/5/7. Switch notices default to enabled
+on the focused application's monitor; no explicit override was found in the
+inspected settings files. No app installation, restart, input injection or
+in-game/hardware tests were performed. Activation occurs when STO gains focus.
+
+## 2026-10-06 - Desktop and browser stick roles updated
+
+Owner requested left-stick pointer movement and right-stick scrolling for desktop
+and browser templates. Updated both compatible catalog feeds and all six desktop/
+browser templates in the current feed. Standard DualSense/Xbox-compatible and
+Steam 2026 templates use left-stick mouse movement and right-stick four-direction
+wheel scrolling (native codes up 4, down 5, left 6, right 7). Steam 2015 has no right
+stick, so its left stick moves the pointer and right touchpad scrolls. Existing
+non-stick shortcuts and other touchpad assignments remain available. STO game
+profiles and the owner's application rule are unchanged. Catalog description and
+MCP documentation explain these roles and deliberate template reapplication.
+This profile-only update uses the existing community feed; no installer update is
+required. No automated, visual or hardware/gameplay tests were run.
