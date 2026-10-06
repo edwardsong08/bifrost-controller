@@ -343,3 +343,10 @@ profiles and the owner's application rule are unchanged. Catalog description and
 MCP documentation explain these roles and deliberate template reapplication.
 This profile-only update uses the existing community feed; no installer update is
 required. No automated, visual or hardware/gameplay tests were run.
+
+Navigation catalog delivery: commit 74c22a2f was pushed to the configured profile
+feed branch. Fresh HTTP 200 readbacks of both public catalog feeds matched the
+committed JSON definitions. Current v2 feed SHA256:
+26295eb501f76ba044af518b9214d3c060288760c93958c62bc61c6cfca87b9d.
+The owner can use Profile library > Update profiles, then Use this profile for
+the selected desktop/browser template. No running controller profile was changed.
