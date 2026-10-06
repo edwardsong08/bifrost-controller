@@ -15,6 +15,7 @@
 #include <QJsonDocument>
 #include <QKeySequence>
 #include <QLabel>
+#include <QMutexLocker>
 #include <QRegularExpression>
 #include <QScreen>
 #include <QThread>
@@ -35,7 +36,16 @@ QString canonical(const QString &path)
 QString foregroundExecutable()
 {
 #ifdef Q_OS_WIN
-    return WinExtras::getForegroundWindowExePath();
+    DWORD pid = 0;
+    GetWindowThreadProcessId(GetForegroundWindow(), &pid);
+    HANDLE process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+    if (!process)
+        return {};
+    wchar_t path[32768];
+    DWORD length = 32768;
+    const bool success = QueryFullProcessImageNameW(process, 0, path, &length);
+    CloseHandle(process);
+    return success ? QString::fromWCharArray(path, int(length)) : QString();
 #else
     return {};
 #endif
@@ -167,7 +177,11 @@ ApplicationContext::ApplicationContext(AntiMicroSettings *settings, std::functio
     , m_settings(settings)
     , m_tabs(std::move(tabs))
 {
-    const auto saved = QJsonDocument::fromJson(settings->value("TROA/ApplicationRules").toByteArray()).array();
+    QJsonArray saved;
+    {
+        QMutexLocker lock(settings->getLock());
+        saved = QJsonDocument::fromJson(settings->value("TROA/ApplicationRules").toByteArray()).array();
+    }
     for (const auto &value : saved)
     {
         const auto rule = value.toObject();
@@ -203,8 +217,11 @@ QString ApplicationContext::revision() const
 QJsonObject ApplicationContext::rules() const { return {{"rules", m_rules}, {"revision", revision()}}; }
 void ApplicationContext::persist()
 {
-    m_settings->setValue("TROA/ApplicationRules", QJsonDocument(m_rules).toJson(QJsonDocument::Compact));
-    m_settings->sync();
+    {
+        QMutexLocker lock(m_settings->getLock());
+        m_settings->setValue("TROA/ApplicationRules", QJsonDocument(m_rules).toJson(QJsonDocument::Compact));
+        m_settings->sync();
+    }
     m_lastApplied.clear();
     m_rememberedModes.clear();
     ++m_focusGeneration;
@@ -627,9 +644,13 @@ QJsonObject ApplicationContext::state() const
 }
 void ApplicationContext::notice(const QString &title, const QString &detail)
 {
-    if (!m_settings->value("TROA/SwitchNotifications", true).toBool())
-        return;
-    const auto placement = m_settings->value("TROA/NotificationDisplay", "focused").toString();
+    QString placement;
+    {
+        QMutexLocker lock(m_settings->getLock());
+        if (!m_settings->value("TROA/SwitchNotifications", true).toBool())
+            return;
+        placement = m_settings->value("TROA/NotificationDisplay", "focused").toString();
+    }
     QList<QScreen *> screens;
     QScreen *screen = qApp->primaryScreen();
 #ifdef Q_OS_WIN

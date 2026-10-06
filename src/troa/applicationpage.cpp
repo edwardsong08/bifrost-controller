@@ -16,6 +16,7 @@
 #include <QKeySequenceEdit>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMutexLocker>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QTableWidget>
@@ -98,16 +99,24 @@ ApplicationPage::ApplicationPage(ApplicationContext *context, AntiMicroSettings 
                            "muted"));
     auto notices = new QHBoxLayout;
     auto showNotice = new QCheckBox("Show profile / layout switch notices");
-    showNotice->setChecked(settings->value("TROA/SwitchNotifications", true).toBool());
     auto display = new QComboBox;
     display->addItem("Focused application's screen", "focused");
     display->addItem("Primary screen", "primary");
     display->addItem("All screens", "all");
-    display->setCurrentIndex(qMax(0, display->findData(settings->value("TROA/NotificationDisplay", "focused").toString())));
-    connect(showNotice, &QCheckBox::toggled, this,
-            [settings](bool enabled) { settings->setValue("TROA/SwitchNotifications", enabled); });
-    connect(display, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-            [settings, display](int) { settings->setValue("TROA/NotificationDisplay", display->currentData().toString()); });
+    {
+        QMutexLocker lock(settings->getLock());
+        showNotice->setChecked(settings->value("TROA/SwitchNotifications", true).toBool());
+        display->setCurrentIndex(
+            qMax(0, display->findData(settings->value("TROA/NotificationDisplay", "focused").toString())));
+    }
+    connect(showNotice, &QCheckBox::toggled, this, [settings](bool enabled) {
+        QMutexLocker lock(settings->getLock());
+        settings->setValue("TROA/SwitchNotifications", enabled);
+    });
+    connect(display, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [settings, display](int) {
+        QMutexLocker lock(settings->getLock());
+        settings->setValue("TROA/NotificationDisplay", display->currentData().toString());
+    });
     notices->addWidget(showNotice);
     notices->addWidget(display);
     notices->addStretch();
