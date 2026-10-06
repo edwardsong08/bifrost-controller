@@ -24,6 +24,9 @@
 #include <QMainWindow>
 #include <QMap>
 #include <QSystemTrayIcon>
+#include <QJsonObject>
+
+namespace Troa { class LocalApi; class ModernShell; }
 
 #ifdef CHECK_FOR_UPDATES
     #include <QNetworkAccessManager>
@@ -70,6 +73,7 @@ class MainWindow : public QMainWindow
     QMap<int, QList<QAction *>> const &getProfileActions();
 
     bool isKeypadUnlocked();
+    QJsonObject handleTroaRequest(const QJsonObject &request);
 
   protected:
     void showEvent(QShowEvent *event) override;
@@ -174,6 +178,8 @@ class MainWindow : public QMainWindow
     bool signalDisconnect;
     bool showTrayIcon;
     bool m_graphical;
+    Troa::LocalApi *m_troaApi = nullptr;
+    Troa::ModernShell *m_troaShell = nullptr;
 
 #ifdef CHECK_FOR_UPDATES
     QNetworkAccessManager m_network_manager; // Used for checking updates

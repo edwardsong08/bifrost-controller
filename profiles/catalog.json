@@ -1,0 +1,60 @@
+[
+  {
+    "schema_version": 1,
+    "id": "builtin-desktop",
+    "name": "Desktop Essentials",
+    "description": "A starting layout for desktop navigation: right stick for the pointer, left stick for arrow keys, A for left click, B for right click, and shoulders for scrolling.",
+    "category": "desktop",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [
+      {"input": "a", "label": "Select", "mouse_button": 1},
+      {"input": "b", "label": "Context menu", "mouse_button": 3},
+      {"input": "x", "label": "Confirm", "keys": ["Enter"]},
+      {"input": "y", "label": "Next field", "keys": ["Tab"]},
+      {"input": "back", "label": "Cancel", "keys": ["Escape"]},
+      {"input": "start", "label": "Switch app", "keys": ["Alt", "Tab"]},
+      {"input": "left_shoulder", "label": "Scroll up", "mouse_button": 4},
+      {"input": "right_shoulder", "label": "Scroll down", "mouse_button": 5},
+      {"input": "left_stick_up", "keys": ["Up"]},
+      {"input": "left_stick_right", "keys": ["Right"]},
+      {"input": "left_stick_down", "keys": ["Down"]},
+      {"input": "left_stick_left", "keys": ["Left"]},
+      {"input": "right_stick_up", "mouse_move": "up"},
+      {"input": "right_stick_right", "mouse_move": "right"},
+      {"input": "right_stick_down", "mouse_move": "down"},
+      {"input": "right_stick_left", "mouse_move": "left"},
+      {"input": "dpad_up", "keys": ["Up"]},
+      {"input": "dpad_down", "keys": ["Down"]},
+      {"input": "dpad_left", "keys": ["Left"]},
+      {"input": "dpad_right", "keys": ["Right"]}
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-browser",
+    "name": "Browser Essentials",
+    "description": "A starting browser layout: right stick for the pointer, A/B for clicks, X for the address bar, Y for find, shoulders for scrolling, and the D-pad for history and tab navigation. Works at the browser application level.",
+    "category": "browser",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [
+      {"input": "a", "label": "Select", "mouse_button": 1},
+      {"input": "b", "label": "Context menu", "mouse_button": 3},
+      {"input": "x", "label": "Address bar", "keys": ["Ctrl", "L"]},
+      {"input": "y", "label": "Find on page", "keys": ["Ctrl", "F"]},
+      {"input": "back", "label": "Cancel", "keys": ["Escape"]},
+      {"input": "start", "label": "Confirm", "keys": ["Enter"]},
+      {"input": "left_shoulder", "label": "Scroll up", "mouse_button": 4},
+      {"input": "right_shoulder", "label": "Scroll down", "mouse_button": 5},
+      {"input": "dpad_left", "label": "Previous page", "keys": ["Alt", "Left"]},
+      {"input": "dpad_right", "label": "Next page", "keys": ["Alt", "Right"]},
+      {"input": "dpad_up", "label": "Previous tab", "keys": ["Ctrl", "Shift", "Tab"]},
+      {"input": "dpad_down", "label": "Next tab", "keys": ["Ctrl", "Tab"]},
+      {"input": "right_stick_up", "mouse_move": "up"},
+      {"input": "right_stick_right", "mouse_move": "right"},
+      {"input": "right_stick_down", "mouse_move": "down"},
+      {"input": "right_stick_left", "mouse_move": "left"}
+    ]
+  }
+]

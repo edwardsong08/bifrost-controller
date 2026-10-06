@@ -19,6 +19,12 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "troa/identity.h"
+#include "troa/localapi.h"
+#include "troa/modernshell.h"
+#include "troa/profilestore.h"
+#include <QJsonArray>
+#include <QVersionNumber>
 
 #include "aboutdialog.h"
 #include "advancestickassignmentdialog.h"
@@ -93,7 +99,11 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
 {
     ui->setupUi(this);
 
-    setWindowIcon(PadderCommon::loadIcon("antimicrox", ":/images/antimicrox.png"));
+    setWindowIcon(Troa::ModernShell::applicationIcon());
+    qApp->setWindowIcon(windowIcon());
+    setWindowTitle(Troa::name());
+    setStyleSheet(QString());
+    ui->label->setText(tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
     ui->stackedWidget->setCurrentIndex(0);
 
     m_translator = nullptr;
@@ -205,7 +215,7 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     ui->updateButton->setVisible(false);
 #ifdef CHECK_FOR_UPDATES
     connect(&m_network_manager, &QNetworkAccessManager::finished, this, &MainWindow::networkManagerFinished);
-    QNetworkRequest request(QUrl("https://api.github.com/repos/antimicrox/antimicrox/releases/latest"));
+    QNetworkRequest request(QUrl("https://api.github.com/repos/edwardsong08/troa-pc-controller-mapper/releases/latest"));
     m_network_manager.get(request);
 #endif
 
@@ -218,6 +228,91 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
         connect(timer, &QTimer::timeout, [this]() { this->checkEachTenMinutesBattery(m_joysticks); });
         timer->start(CHECK_BATTERIES_MSEC);
     }
+
+    if (graphical && !cmdutility->shouldListControllers())
+    {
+        m_troaApi = new Troa::LocalApi([this](const QJsonObject &request) { return handleTroaRequest(request); }, this);
+        m_troaApi->setEnabled(settings->value("TROA/AssistantAccess", true).toBool());
+        m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings,
+            [this](const QJsonObject &request) { return handleTroaRequest(request); });
+        setCentralWidget(m_troaShell);
+        setMinimumSize(980, 700);
+        if (!settings->contains("WindowSize")) resize(1160, 790);
+    }
+}
+
+QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
+{
+    const auto method = request.value("method").toString();
+    const auto arguments = request.value("arguments").toObject();
+    const Troa::ProfileStore store;
+    if (method == "mapper_status")
+        return {{"name", Troa::name()}, {"version", PadderCommon::programVersion},
+            {"assistant_access", m_troaApi && m_troaApi->isEnabled()}, {"profile_directory", Troa::profileDirectory()},
+            {"profile_schema_version", 1}, {"supported_inputs", QJsonArray::fromStringList(Troa::ProfileStore::inputs())},
+            {"named_keys", QJsonArray::fromStringList(Troa::ProfileStore::namedKeys())},
+            {"key_help", "Printable ASCII keys and named_keys are supported. keys arrays represent simultaneous chords."}};
+    if (method == "list_controllers") {
+        QJsonArray devices;
+        for (int index = 0; index < ui->tabWidget->count(); ++index) {
+            auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(index));
+            if (!tab) continue;
+            auto device = tab->getJoystick();
+            const auto instance = m_joysticks->key(device, -1);
+            devices.append(QJsonObject{{"controller_id", QString("instance:%1").arg(instance)},
+                {"persistent_id", device->getStringIdentifier()}, {"name", device->getSDLName()},
+                {"guid", device->getGUIDString()}, {"standard_layout", device->isGameController()},
+                {"buttons", device->getNumberButtons()}, {"axes", device->getNumberAxes()}, {"sticks", device->getNumberSticks()},
+                {"active_profile_name", device->getProfileName()}, {"active_set", device->getActiveSetNumber() + 1},
+                {"unsaved_changes", device->isDeviceEdited()}});
+        }
+        return {{"controllers", devices}};
+    }
+    if (method == "list_profiles") return {{"profiles", store.list()}};
+    if (method == "read_profile") return store.read(arguments.value("id").toString());
+    if (method == "validate_profile") {
+        const auto error = Troa::ProfileStore::validate(arguments.value("profile").toObject());
+        return error.isEmpty() ? QJsonObject{{"valid", true}} : Troa::failure(error);
+    }
+    if (method == "save_profile") {
+        const auto result = store.save(arguments.value("profile").toObject(), arguments.value("expected_revision").toString());
+        if (m_troaShell && !result.contains("error")) m_troaShell->refreshProfiles();
+        return result;
+    }
+    if (method == "list_profile_revisions") return {{"revisions", store.revisions(arguments.value("id").toString())}};
+    if (method == "restore_profile_revision") {
+        const auto result = store.restore(arguments.value("id").toString(), arguments.value("revision").toString(),
+                                          arguments.value("expected_revision").toString());
+        if (m_troaShell && !result.contains("error")) m_troaShell->refreshProfiles();
+        return result;
+    }
+    if (method == "activate_profile" || method == "unload_profile") {
+        const auto controller = arguments.value("controller_id").toString();
+        JoyTabWidget *target = nullptr;
+        for (int index = 0; index < ui->tabWidget->count(); ++index) {
+            auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(index));
+            if (tab && controller == QString("instance:%1").arg(m_joysticks->key(tab->getJoystick(), -1))) target = tab;
+        }
+        if (!target) return Troa::failure("Controller not found. List controllers again after reconnecting.");
+        if (target->getJoystick()->isDeviceEdited()) return Troa::failure("Save or discard your GUI changes before switching this controller's profile.");
+        if (method == "unload_profile") {
+            target->unloadConfig();
+            return {{"controller_id", controller}, {"active_profile_name", target->getJoystick()->getProfileName()}, {"unloaded", true}};
+        }
+        if (!target->getJoystick()->isGameController()) return Troa::failure("Managed profiles require an SDL-mapped controller. Configure the device layout first.");
+        const auto item = store.read(arguments.value("id").toString());
+        if (item.contains("error")) return item;
+        if (arguments.value("expected_revision").toString() != item.value("revision").toString())
+            return Troa::failure("Profile changed. Read it again and supply its current revision before activation.");
+        const auto mapping = store.exportMapping(arguments.value("id").toString());
+        if (mapping.isEmpty()) return Troa::failure("Could not compile the profile into a controller mapping.");
+        target->loadConfigFile(mapping);
+        const auto activeName = target->getJoystick()->getProfileName();
+        if (activeName != item.value("profile").toObject().value("name").toString())
+            return Troa::failure("The profile did not become active. Check the controller mapping window.");
+        return {{"controller_id", controller}, {"active_profile_name", activeName}, {"revision", item.value("revision")}, {"applied", true}};
+    }
+    return Troa::failure("Unknown mapper operation.");
 }
 
 MainWindow::~MainWindow()
@@ -634,7 +729,7 @@ void MainWindow::populateTrayIcon()
     trayIconMenu->addAction(updateJoy);
     trayIconMenu->addAction(closeAction);
 
-    QIcon icon = PadderCommon::loadIcon("io.github.antimicrox.antimicrox.trayicon", ":/images/antimicrox.png");
+    QIcon icon = Troa::ModernShell::applicationIcon();
     trayIcon->setIcon(icon);
     trayIcon->setContextMenu(trayIconMenu);
 
@@ -1693,13 +1788,17 @@ void MainWindow::networkManagerFinished(QNetworkReply *reply)
         WARN() << "Invalid REST response status code: " << status_code;
         VERBOSE() << "Supports SSL: " << (QSslSocket::supportsSsl() ? "true " : "false ")
                   << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
+        reply->deleteLater();
         return;
     }
     QJsonDocument json = QJsonDocument::fromJson(reply->readAll());
     QJsonObject doc = json.object();
     QString latest_version = doc["tag_name"].toString().split("-")[0]; // remove notes from versions like 3.2.1-debug
+    reply->deleteLater();
+    if (latest_version.startsWith('v')) latest_version.remove(0, 1);
     DEBUG() << "Latest version: " << latest_version << " Installed version: " << PadderCommon::programVersion;
-    if (latest_version != PadderCommon::programVersion && latest_version.length())
+    if (QVersionNumber::compare(QVersionNumber::fromString(latest_version),
+                               QVersionNumber::fromString(PadderCommon::programVersion)) > 0)
     {
         INFO() << "Update to: " << latest_version << " is available.";
         ui->updateButton->setVisible(true);
@@ -1711,7 +1810,7 @@ void MainWindow::networkManagerFinished(QNetworkReply *reply)
 void MainWindow::updateButtonPressed()
 {
     INFO() << "Opening update website";
-    QDesktopServices::openUrl(QUrl("https://github.com/antiMicroX/antimicrox/releases/latest"));
+    QDesktopServices::openUrl(QUrl(Troa::projectUrl() + "/releases/latest"));
 }
 
 #endif
@@ -1789,7 +1888,12 @@ void MainWindow::setAppTranslator(QTranslator *translator) { m_appTranslator = t
 
 QTranslator *MainWindow::getAppTranslator() const { return m_appTranslator; }
 
-void MainWindow::retranslateUi() { ui->retranslateUi(this); }
+void MainWindow::retranslateUi()
+{
+    ui->retranslateUi(this);
+    setWindowTitle(Troa::name());
+    ui->label->setText(tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
+}
 
 void MainWindow::refreshTabHelperThreads()
 {

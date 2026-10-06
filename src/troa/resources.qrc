@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/troa">
+    <file alias="catalog.json">../../profiles/catalog.json</file>
+  </qresource>
+</RCC>

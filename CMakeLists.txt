@@ -59,9 +59,9 @@ else()
 endif(NOT COMPILER_IS_MSVC)
 
 # The version number.
-set(ANTIMICROX_MAJOR_VERSION 3)
-set(ANTIMICROX_MINOR_VERSION 6)
-set(ANTIMICROX_PATCH_VERSION 1)
+set(ANTIMICROX_MAJOR_VERSION 0)
+set(ANTIMICROX_MINOR_VERSION 1)
+set(ANTIMICROX_PATCH_VERSION 0)
 
 if(UNIX)
     option(WITH_X11 "Compile with support for X11." ON)
@@ -534,6 +534,7 @@ else()
     endif()
 endif()
 
+list(APPEND antimicrox_RESOURCES src/troa/resources.qrc)
 if (Use_QT6)
     find_package(Qt6 ${QT_REQUIRED_VERSION} 
         COMPONENTS Core Widgets Gui Network LinguistTools Concurrent
@@ -651,6 +652,18 @@ target_link_libraries(antimicrox
         ${EXTRA_LIBS}
         )
 
+# Retain the internal target name to keep inherited platform/build logic intact.
+set_target_properties(antimicrox PROPERTIES OUTPUT_NAME "troa-pc-controller-mapper")
+target_sources(antimicrox PRIVATE
+    src/troa/identity.h
+    src/troa/profilestore.h src/troa/profilestore.cpp
+    src/troa/localapi.h src/troa/localapi.cpp
+    src/troa/modernshell.h src/troa/modernshell.cpp)
+
+# A console stdio companion avoids exposing a network port or requiring Python/Node.
+add_executable(troa-controller-mcp src/troa/mcp_main.cpp src/troa/identity.h)
+target_link_libraries(troa-controller-mcp PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network)
+
 target_include_directories(antimicrox PUBLIC
         ${SDL2_INCLUDE_DIRS}/SDL2
         )
@@ -661,6 +674,8 @@ target_include_directories(antimicrox PUBLIC
 
 # Specify out directory for final executable.
 install(TARGETS antimicrox RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS troa-controller-mcp RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(FILES LICENSE NOTICE.md docs/MCP.md DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/troa-controller-mapper")
 
 if(UNIX)
     find_package(ECM REQUIRED NO_MODULE)
@@ -774,6 +789,11 @@ if(WIN32)
     install(FILES
         ${QT_DLL_DIR}/../plugins/platforms/qwindows.dll
         DESTINATION ./bin/platforms/)
+    # Qt6 loads HTTPS support from a TLS plugin rather than QtNetwork alone.
+    if(QT_VERSION_MAJOR EQUAL 6 AND EXISTS "${QT_DLL_DIR}/../plugins/tls")
+        install(DIRECTORY "${QT_DLL_DIR}/../plugins/tls/" DESTINATION ./bin/tls
+                FILES_MATCHING PATTERN "*.dll")
+    endif()
 endif(WIN32)
 
 # uninstall target
@@ -818,8 +838,10 @@ install(FILES share/LICENSE_SDL_GameControllerDB DESTINATION "${CMAKE_INSTALL_DA
 include(InstallRequiredSystemLibraries)
 
 
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Program used to map keyboard keys and mouse controls to a gamepad.")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/AntiMicroX/antimicrox/")
+set(CPACK_PACKAGE_NAME "TROA PC Controller Mapper")
+set(CPACK_PACKAGE_VENDOR "TROA")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Controller mapping for TROA's community, with local MCP profile management.")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/edwardsong08/troa-pc-controller-mapper")
 
 
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
@@ -832,7 +854,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CPACK_PACKAGE_VERSION_PATCH "${CPACK_PACKAGE_VERSION_PATCH}-dbg")
 endif()
 
-set(CPACK_PACKAGE_FILE_NAME "antimicrox-${ANTIMICROX_MAJOR_VERSION}.${ANTIMICROX_MINOR_VERSION}.${ANTIMICROX_PATCH_VERSION}")
+set(CPACK_PACKAGE_FILE_NAME "troa-pc-controller-mapper-${ANTIMICROX_MAJOR_VERSION}.${ANTIMICROX_MINOR_VERSION}.${ANTIMICROX_PATCH_VERSION}")
 if(WIN32)
     if(PORTABLE_WIN)
         set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-PortableWindows")
@@ -842,7 +864,7 @@ if(WIN32)
 endif(WIN32)
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "AntiMicroX")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "TROA PC Controller Mapper")
 
 if(UNIX)
     set(CPACK_STRIP_FILES "")
@@ -882,23 +904,23 @@ if(WIN32 AND NOT UNIX)
 
         # There is a bug in NSI that does not handle full UNIX paths properly.
         # Make sure there is at least one set of four backlashes.
-        set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/src/images\\\\antimicrox.ico")
+        set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/src/images\\\\troa-controller.ico")
         set(CPACK_NSIS_MUI_ICON "${CPACK_PACKAGE_ICON}")
         set(CPACK_NSIS_MUI_UNIICON "${CPACK_PACKAGE_ICON}")
-        set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/antimicrox.exe")
+        set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/troa-pc-controller-mapper.exe")
 
-        set(CPACK_NSIS_DISPLAY_NAME "AntiMicroX")
-        set(CPACK_NSIS_PACKAGE_NAME "AntiMicroX")
-        set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\github.com/AntiMicroX/antimicrox/wiki")
-        set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\github.com/AntiMicroX/antimicrox")
-        set(CPACK_NSIS_MODIFY_PATH ON)
+        set(CPACK_NSIS_DISPLAY_NAME "TROA PC Controller Mapper")
+        set(CPACK_NSIS_PACKAGE_NAME "TROA PC Controller Mapper")
+        set(CPACK_NSIS_HELP_LINK "https://github.com/edwardsong08/troa-pc-controller-mapper")
+        set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/edwardsong08/troa-pc-controller-mapper")
+        set(CPACK_NSIS_MODIFY_PATH OFF)
     else()
         set(CPACK_GENERATOR ZIP)
     endif()
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "antimicrox;AntiMicroX")
-set(CPACK_CREATE_DESKTOP_LINKS "antimicrox")
+set(CPACK_PACKAGE_EXECUTABLES "troa-pc-controller-mapper;TROA PC Controller Mapper")
+set(CPACK_CREATE_DESKTOP_LINKS "troa-pc-controller-mapper")
 include(CPack)
 
 if(WIN32 AND NOT UNIX AND NOT PORTABLE_WIN)

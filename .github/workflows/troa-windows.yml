@@ -1,0 +1,71 @@
+name: TROA Windows preview
+
+on:
+  push:
+    branches: ["codex/troa-controller-mapper"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: troa-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows build dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-nsis
+            mingw-w64-x86_64-openssl
+      - name: SDL2 dependency
+        run: |
+          curl --fail --location --retry 3 -o sdl2.pkg.tar.zst https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-SDL2-2.32.10-1-any.pkg.tar.zst
+          pacman --noconfirm -U sdl2.pkg.tar.zst
+      - name: Qt 6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.10.0"
+          host: windows
+          target: desktop
+          arch: win64_mingw
+          cache: true
+      - name: Configure installer
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHECK_FOR_UPDATES=ON -DWITH_TESTS=OFF -DANTIMICROX_PKG_VERSION="TROA Windows preview"
+        env:
+          CMAKE_PREFIX_PATH: "${{ env.QT_ROOT_DIR }}/lib/cmake"
+      - name: Compile and package installer
+        run: cmake --build build --parallel 4 --target package
+      - name: Configure portable package
+        run: cmake -S . -B build -DPORTABLE_WIN=ON
+        env:
+          CMAKE_PREFIX_PATH: "${{ env.QT_ROOT_DIR }}/lib/cmake"
+      - name: Compile and package portable app
+        run: cmake --build build --parallel 4 --target package
+      - name: Package corresponding source and checksums
+        run: |
+          git archive --format=zip --output=build/troa-pc-controller-mapper-0.1.0-source.zip HEAD
+          cd build
+          sha256sum troa-pc-controller-mapper*.exe troa-pc-controller-mapper*.zip > SHA256SUMS.txt
+      - name: Save preview artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: troa-windows-preview
+          path: |
+            build/troa-pc-controller-mapper*.exe
+            build/troa-pc-controller-mapper*.zip
+            build/SHA256SUMS.txt
+          if-no-files-found: error

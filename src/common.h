@@ -37,8 +37,8 @@
 static QString findWinSystemConfigPath()
 {
     QString temp;
-    temp = (!qgetenv("LocalAppData").isEmpty()) ? QString::fromUtf8(qgetenv("LocalAppData")) + "\\antimicrox"
-                                                : QDir::homePath() + "\\.antimicrox";
+    temp = (!qgetenv("LocalAppData").isEmpty()) ? QString::fromUtf8(qgetenv("LocalAppData")) + "\\TROA PC Controller Mapper"
+                                                : QDir::homePath() + "\\.troa-pc-controller-mapper";
     return temp;
 }
 
@@ -70,12 +70,12 @@ inline QString configPath()
 #elif defined(Q_OS_WIN)
     return findWinSystemConfigPath();
 #else
-    return (!qgetenv("XDG_CONFIG_HOME").isEmpty()) ? QString::fromUtf8(qgetenv("XDG_CONFIG_HOME")) + "/antimicrox"
-                                                   : QDir::homePath() + "/.config/antimicrox";
+    return (!qgetenv("XDG_CONFIG_HOME").isEmpty()) ? QString::fromUtf8(qgetenv("XDG_CONFIG_HOME")) + "/troa-pc-controller-mapper"
+                                                   : QDir::homePath() + "/.config/troa-pc-controller-mapper";
 #endif
 }
 
-const QString configFileName = "antimicrox_settings.ini";
+const QString configFileName = "troa_controller_mapper_settings.ini";
 inline QString configFilePath()
 {
 #if defined(Q_OS_WIN) && defined(WIN_PORTABLE_PACKAGE)
@@ -117,15 +117,15 @@ const int LATESTCONFIGFILEVERSION = 19;
 // Specify the last known profile version that requires a migration
 // to be performed in order to be compatible with the latest version.
 const int LATESTCONFIGMIGRATIONVERSION = 5;
-const QString localSocketKey = "antimicroxSignalListener";
+const QString localSocketKey = "troaControllerMapperSignalListener";
 const QString unhideCommand = "unhideWindow";
-const QString githubProjectPage = "https://github.com/AntiMicroX/antimicrox/";
-const QString githubIssuesPage = "https://github.com/AntiMicroX/antimicrox/issues";
-const QString wikiPage = QString("%1/wiki").arg(githubProjectPage);
+const QString githubProjectPage = "https://github.com/edwardsong08/troa-pc-controller-mapper";
+const QString githubIssuesPage = githubProjectPage + "/issues";
+const QString wikiPage = "https://github.com/AntiMicroX/antimicrox/wiki";
 
-const QString mouseDeviceName("antimicrox Mouse Emulation");
-const QString keyboardDeviceName("antimicrox Keyboard Emulation");
-const QString springMouseDeviceName("antimicrox Abs Mouse Emulation");
+const QString mouseDeviceName("TROA Controller Mapper Mouse");
+const QString keyboardDeviceName("TROA Controller Mapper Keyboard");
+const QString springMouseDeviceName("TROA Controller Mapper Absolute Mouse");
 
 const int ANTIMICROX_MAJOR_VERSION = PROJECT_MAJOR_VERSION;
 const int ANTIMICROX_MINOR_VERSION = PROJECT_MINOR_VERSION;

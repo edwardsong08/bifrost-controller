@@ -1,299 +1,64 @@
-# <img src="./src/images/antimicrox.png" alt="Icon" width="60"/> AntiMicroX
+# TROA PC Controller Mapper
 
-1. [Description](#description)  
-2. [License](#license)  
-3. [Installation](#installation)
-4. [Wiki](#wiki)
-5. [Command Line](#command-line) 
-6. [D-Bus](#d-bus)
-7. [Testing Under Linux](#testing-under-linux)
-8. [AntiMicroX Profiles](#antimicrox-profiles)
-9. [Support](#support)
+A Windows-first controller mapping app for TROA's community, based on AntiMicroX.
 
-## ❗Looking for a new maintainer❗
+This initial preview keeps the native C++/Qt/SDL input engine and introduces a refreshed
+workspace, a managed profile library, and a local MCP companion for creating profiles
+with a compatible assistant. Linux remains a future product target.
 
-Due to lack of time and shifting focus of its developer AntiMicroX is looking for a new maintainer willing to continue development.   
-For now, this app will have only limited support and will not get any new features (unless coded by external contributors).   
-[Link to discussion](https://github.com/AntiMicroX/antimicrox/discussions/1171)
+## In this preview
 
-## Description
+- Controller mappings, calibration, profiles, and advanced assignments inherited from AntiMicroX.
+- A new workspace with clear navigation, light/dark appearance, and live controller status.
+- Desktop and browser starter templates using SDL's standard controller layout.
+- Personal profile copies with atomic saving, revision conflict checks, and preserved history.
+- Local MCP tools to inspect controllers and create, read, validate, save, restore, activate, or unload profiles.
+- A separate app identity, settings, installer, and update destination so AntiMicroX can remain installed.
 
-AntiMicroX is a graphical program used to map gamepad keys to keyboard, mouse, scripts and macros. You can use this program to control any desktop application with a gamepad on Linux🐧 and Windows 🪟.  
-It can be also used for generating SDL2 configuration (useful for mapping atypical gamepads to generic ones like xbox360).
+## Downloads
 
-We support X.org and Wayland.
+Windows installer and portable ZIP are built by **TROA Windows preview** in GitHub Actions.
+They are preview artifacts until a release is published. Corresponding source and SHA256
+checksums are included. A TROA website product/download page is planned; no site deployment
+is claimed by this repository.
 
-Features:
+Install the branded Windows package and open **TROA PC Controller Mapper**. Use the sidebar
+for Controller mappings, Profile library, and Assistant access. The desktop/browser catalog
+is a starting point to customize, rather than a claim of controller or game compatibility.
 
-- Mapping of gamepads/joystick buttons to:
-  - keyboard buttons
-  - mouse buttons and moves
-  - scripts and executables
-  - macros consisting of elements mentioned above
-- Assigning multiple switchable sets of mappings to gamepad.
-- Auto profiles - assign profile to active application window (not in Wayland [note](https://github.com/AntiMicroX/antimicrox/issues/303)).
+## Assistant access
 
-This program is currently supported under various Linux
-distributions.
+The package includes `troa-controller-mcp.exe`; no Python or Node runtime is required.
+Keep the app open, enable Assistant access, and copy its connection settings into a compatible
+MCP client. See [MCP tools and profile workflow](docs/MCP.md).
 
-This application is continuation of project called `AntiMicro`, which was later abandoned and revived by juliagoda.
+MCP configuration remains separate from the input loop. Normal controller mapping does not
+require an AI service or internet connection. Bundled templates update with app releases;
+personal copies are stored separately. GUI edits to generated mappings remain legacy .amgp
+files and are not automatically converted back to managed JSON definitions.
 
-Legacy repositories:
-- First AntiMicroX repository: https://github.com/juliagoda/antimicroX
-- Second, maintained by organization: https://github.com/AntiMicro/antimicro
-- First, original AntiMicro repository: https://github.com/Ryochan7/antimicro
+## Development
 
-**Screenshots:**  
-Disclaimer: Theme may depend on your system configuration.
+The application uses C++17, Qt Widgets, SDL2, and CMake. The refreshed interface deliberately
+reuses the existing mapping widgets and dialogs while the profile/API layer is kept separate.
+Qt6 is the first preview build target; inherited Qt5 and Linux build paths remain in source.
 
-<table border="0px" >
-  <tr>
-    <td>
-      <img src="./other/appdata/screenshots/app_light.png" alt="Main Window" />
-    </td>
-    <td>
-      <img src="./other/appdata/screenshots/controllermapping.png" alt="Mapping" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="./other/appdata/screenshots/calibration.png" alt="Calibration" />
-    </td>
-    <td>
-    <img src="./other/appdata/screenshots/advanced.png" alt="Advanced settings" />
-    </td>
-  </tr>
-</table>
+See [build instructions](BUILDING.md), [repository context](CONTEXT.md), and
+[upstream contribution guidance](CONTRIBUTING.md). The CMake application target remains
+`antimicrox` internally but produces `troa-pc-controller-mapper.exe`. The companion target
+is `troa-controller-mcp`.
 
-## License
+No automated, visual, or hardware tests are run for this preview, at the project owner's
+request. Compilation and packaging results are recorded separately from runtime acceptance.
+Triggers, gyro, timed macros, auto-profile configuration, and legacy import remain outside
+this first MCP profile schema and can be configured through the inherited interface.
 
-This program is licensed under the GPL v.3. Please read the LICENSE text document
-included with the source code if you would like to read the terms of the license.
-The license can also be found online at
-http://www.gnu.org/licenses/gpl.txt
+## Attribution and license
 
-## Installation
+This is an independently maintained derivative of [AntiMicroX](https://github.com/AntiMicroX/antimicrox),
+initially based on commit `dbb6349603e6ee2426d300eee9570e1ed44fb9f5`.
+Original copyright notices and GPL licensing are retained. See [NOTICE](NOTICE.md),
+[LICENSE](LICENSE), and the [original README](UPSTREAM_README.md).
 
-### Windows
-
-Just download `antimicrox-X.X.X-AMD64.exe` from [Release site](https://github.com/AntiMicroX/antimicrox/releases/latest) and install it.
-
-### Flatpak
-
-The flatpak version is distributed on Flathub, and runs on most major Linux distributions. See instructions here: [Flathub application page](https://flathub.org/apps/details/io.github.antimicrox.antimicrox)
-
-If you have Flathub [set up](https://flatpak.org/setup/) already:
-
-```bash
-flatpak install flathub io.github.antimicrox.antimicrox
-```
-
-❕ Flatpak package may not work correctly with wayland [(Fix available here)](https://github.com/AntiMicroX/antimicrox/wiki/Open-uinput-error)
-
-### AppImage
-
-Download from the [release site](https://github.com/AntiMicroX/antimicrox/releases).
-
-It is recommended to use [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher) with this package.
-
-### Debian/Ubuntu-based distributions
-
-Download from the [release site](https://github.com/AntiMicroX/antimicrox/releases) and install `.deb` package.
-
-### Fedora
-
-```
-dnf install antimicrox
-```
-
-### openSUSE
-
-A [package](https://software.opensuse.org/package/antimicrox) is available.
-
-```
-zypper install antimicrox
-```
-
-### Arch Linux or Arch Linux based distributions:
-
-```
-trizen -S antimicrox
-```
-**or**
-
-pre-built version can de downloaded from unofficial repository called [chaotic-aur](https://lonewolf.pedrohlc.com/chaotic-aur/).
-
-Append (one of listed mirrors) to `/etc/pacman.conf`:
-```bash
-# Brazil
-Server = http://lonewolf-builder.duckdns.org/$repo/$arch
-# Germany
-Server = http://chaotic.bangl.de/$repo/$arch
-# USA (Cloudflare cached)
-Server = https://repo.kitsuna.net/$arch
-# Netherlands
-Server = https://chaotic.tn.dedyn.io/$arch
-```
-To check signature, add keys:
-```bash
-sudo pacman-key --keyserver hkp://keyserver.ubuntu.com -r 3056513887B78AEB 8A9E14A07010F7E3
-sudo pacman-key --lsign-key 3056513887B78AEB
-sudo pacman-key --lsign-key 8A9E14A07010F7E3
-```
-Install package
-```bash
-pacman -S antimicrox
-```
-
-### Building Yourself
-
-List of required dependencies and build instructions can be found [here](./BUILDING.md).
-
-### Packages status
-
-Status of package `antimicrox`:  
-[![Packaging status](https://repology.org/badge/vertical-allrepos/antimicrox.svg?columns=3&minversion=3.1)](https://repology.org/project/antimicrox/versions)
-
-## Command Line
-
-Run `antimicrox --help` or read `man antimicrox` for command-line parameters.
-
-<details>
-  <summary>Commandline for flatpak</summary>
-  In case of flatpak package AntiMicroX can be launched with command:
-  <br>
-  <code>flatpak run io.github.antimicrox.antimicrox</code> instead of just <code>antimicrox</code>
-  <br>
-  In some cases it may be good to add alias
-  <br>
-  <code>alias antimicrox='flatpak run io.github.antimicrox.antimicrox'</code><br>
-  fo file <code>~/.bashrc</code>
-</details>
-
-## D-Bus
-
-AntiMicroX provides a D-Bus service, io.github.antimicrox. You can control some
-aspects of AntiMicroX using D-Bus, such as selecting the current control set.
-
-For example, to select set 0 for input device 0 with dbus-send:
-
-```
-dbus-send --print-reply --dest=io.github.antimicrox /InputDevice/0 io.github.antimicrox.InputDevice.setActiveSetNumber int32:0
-```
-
-### Objects
-
-AntiMicroX provides InputDevice objects with paths `/InputDevice/<N>`, where
-`<N>` is the device index.
-
-To find a device of interest, enumerate those objects and use `getSDLName` and
-`getDescription` to identify the device.
-
-### Interfaces
-
-InputDevice objects support the [io.github.antimicrox.InputDevice](other/io.github.antimicrox.inputdevice.xml) interface.
-
-#### Method: io.github.antimicrox.InputDevice.getSDLName()
-
-`getSDLName()` provides the human-readable name of the device, such as "Microsoft Xbox 360 Controller" or "HORIPAD FPS for Nintendo Switch".
-
-#### Method: io.github.antimicrox.InputDevice.getDescription()
-
-`getDescription()` provides a detailed description of the device:
-
-```
-Index:            1
-  UniqueID:         030081b85e0400008e020000100100001118654
-  GUID:             030081b85e0400008e02000010010000
-  VendorID:         1118
-  ProductID:        654
-  Serial:
-  Product Version:  272
-  Name:             Xbox 360 Controller
-  Game Controller: Yes
-  # of RawAxes:    6
-  # of Axes:       6
-  # of RawButtons: 21
-  # of Buttons:    21
-  # of Hats:       0
-  Accelerometer:   0
-  Gyroscope:       0
-```
-
-This includes:
-
-* The controller's `UniqueID` assigned by AntiMicroX
-* The controller's `GUID` assigned by SDL
-* The controller's USB `VendorID`, `ProductID`, `Serial`, `ProductVersion`, and
-  `Name`
-* Whether the device is a `Game Controller`
-* The controller's input features: `# of RawAxes`, `# of Axes`,
-  `# of RawButtons`, `# of Buttons`, `# of Hats`, `Accelerometer`, and
-  `Gysroscope`
-
-#### Method: io.github.antimicrox.InputDevice.getActiveSetNumber()
-
-`getActiveSetNumber()` returns the current set number for this device.
-
-API set indices are 0-based, but they are displayed in the UI with 1-based
-labels.
-
-#### Method: io.github.antimicrox.InputDevice.getActiveSetName()
-
-`getActiveSetName()` returns the name of the current set for this device.
-
-This is empty if the set was not given a name.  In that case, AntiMicroX
-displays a default name: `Set <N>` with a 1-based index.
-
-#### Method: io.github.antimicrox.InputDevice.setActiveSetNumber()
-
-`setActiveSetNumber()` changes the active set for this device to the set
-specified, as a 0-based index.
-
-### Test
-
-Use [D-Spy](https://gitlab.gnome.org/GNOME/d-spy) to inspect and test the D-Bus
-interface.
-
-## Wiki
-
-[Look here](https://github.com/AntiMicroX/antimicrox/wiki)
-
-## Testing Under Linux
-
-If you are having problems with antimicrox detecting a controller or
-detecting all axes and buttons, you should test the controller outside of
-antimicrox to check if the problem is with antimicrox or not. The two endorsed
-programs for testing gamepads outside of antimicrox are **sdl-jstest**
-(**sdl2-jstest**) and **evtest**. SDL2 utilizes evdev on Linux so performing
-testing with older programs that use joydev won't be as helpful since some
-devices behave a bit differently between the two systems. Another method also exists, 
-which can be found [here](https://github.com/juliagoda/SDL_JoystickButtonNames).
-
-## AntiMicroX Profiles
-
-If you would like to send the profile you are using for your application or find something 
-for yourself, [here](https://github.com/AntiMicroX/antimicrox-profiles) is the forked repository. If you want to report a bug, ask 
-a question or share a suggestion, you can do that on the antimicrox page or on the
-[antimicrox-profiles](https://github.com/AntiMicroX/antimicrox-profiles) page.
-
-## Support
-
-There are several ways to get help with AntiMicroX. The easiest way is to upvote (with 👍) issues you thing are the most important ones.
-
-### Contributing
-
-Any contributions into codebase are welcome. You can find contribution guide [here](./CONTRIBUTING.md).  
-Some issues are may have bounties which are meant to attract contributors.
-
-### Translation
-
-Translation process is handled via [Weblate](https://weblate.org/). If you want to help just click this [link](https://hosted.weblate.org/engage/antimicrox).
-
-Translation status
-
-<a href="https://hosted.weblate.org/engage/antimicrox/">
-<img src="https://hosted.weblate.org/widgets/antimicrox/-/gui/multi-auto.svg" alt="Translation status" />
-</a>
-
-More information about translating can be found [here](https://github.com/AntiMicroX/antimicrox/wiki/Translating-AntiMicroX).
+The repository remains owned by Edward's personal GitHub account. TROA may distribute
+public releases; collaborator permissions are managed separately from website distribution.

@@ -6,7 +6,12 @@ build-dir/
 Build/
 .flatpak-builder/
 repo/
-docs/
+docs/*
+!docs/MCP.md
+
+# Local tooling and artifacts
+.tools/
+distribution/
 
 # Changelogs
 src/Changelog
