@@ -23,14 +23,16 @@ checksums are included. A TROA website product/download page is planned; no site
 is claimed by this repository.
 
 Install the branded Windows package and open **TROA PC Controller Mapper**. Use the sidebar
-for Controller mappings, Profile library, and Assistant access. The desktop/browser catalog
+for Get started, Controllers, Profiles, and MCP & AI setup. The desktop/browser catalog
 is a starting point to customize, rather than a claim of controller or game compatibility.
 
-## Assistant access
+## MCP & AI setup
 
 The package includes `troa-controller-mcp.exe`; no Python or Node runtime is required.
-Keep the app open, enable Assistant access, and copy its connection settings into a compatible
-MCP client. See [MCP tools and profile workflow](docs/MCP.md).
+Choose **MCP setup** in the header, **MCP & AI setup** in the sidebar, or **MCP & AI > Open MCP setup**
+in the menu (Ctrl+Shift+M). Enable local access and copy JSON or Codex TOML connection settings
+into a compatible MCP client. The page distinguishes an available server from requests actually
+received; enabling access does not automatically connect an AI app. See [MCP tools and profile workflow](docs/MCP.md).
 
 MCP configuration remains separate from the input loop. Normal controller mapping does not
 require an AI service or internet connection. Bundled templates update with app releases;

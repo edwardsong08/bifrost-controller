@@ -16,5 +16,11 @@ notices, any later version. No endorsement by the AntiMicroX project is implied.
 The Windows SDL controller database has its own license in share/LICENSE_SDL_GameControllerDB.
 Qt, SDL, MinGW runtime libraries, and other bundled dependencies retain their respective licenses.
 
+The TROA helm artwork is the deployed website favicon from
+https://therealmsofasgard.com/favicon.ico, retrieved October 5, 2026.
+The website serves PNG bytes; src/images/troa-logo.png preserves those bytes unchanged.
+The native Windows ICO is packaged from this artwork by other/package-troa-logo.py.
+The controller symbol remains a separate workspace illustration.
+
 Distributions of modified binaries must include access to the corresponding source,
 including the build and packaging configuration for that version.

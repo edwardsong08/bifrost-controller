@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/troa">
     <file alias="catalog.json">../../profiles/catalog.json</file>
+    <file alias="logo.png">../images/troa-logo.png</file>
   </qresource>
 </RCC>

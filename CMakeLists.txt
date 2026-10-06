@@ -61,7 +61,7 @@ endif(NOT COMPILER_IS_MSVC)
 # The version number.
 set(ANTIMICROX_MAJOR_VERSION 0)
 set(ANTIMICROX_MINOR_VERSION 1)
-set(ANTIMICROX_PATCH_VERSION 0)
+set(ANTIMICROX_PATCH_VERSION 1)
 
 if(UNIX)
     option(WITH_X11 "Compile with support for X11." ON)
@@ -904,7 +904,7 @@ if(WIN32 AND NOT UNIX)
 
         # There is a bug in NSI that does not handle full UNIX paths properly.
         # Make sure there is at least one set of four backlashes.
-        set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/src/images\\\\troa-controller.ico")
+        set(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}/src/images\\\\troa-logo.ico")
         set(CPACK_NSIS_MUI_ICON "${CPACK_PACKAGE_ICON}")
         set(CPACK_NSIS_MUI_UNIICON "${CPACK_PACKAGE_ICON}")
         set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/troa-pc-controller-mapper.exe")

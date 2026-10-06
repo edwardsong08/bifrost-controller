@@ -3,7 +3,7 @@
     "schema_version": 1,
     "id": "builtin-desktop",
     "name": "Desktop Essentials",
-    "description": "A starting layout for desktop navigation: right stick for the pointer, left stick for arrow keys, A for left click, B for right click, and shoulders for scrolling.",
+    "description": "A starting layout for desktop navigation: right stick for the pointer, left stick for arrow keys, face buttons for clicks and shortcuts, and shoulders for scrolling. See the assignments below for your controller's button names.",
     "category": "desktop",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,

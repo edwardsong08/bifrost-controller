@@ -99,7 +99,7 @@ int main(int argc, char **argv)
         if (method == "initialize") {
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"}, {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
-                {"serverInfo", QJsonObject{{"name", "troa-pc-controller-mapper"}, {"version", "0.1.0"}}},
+                {"serverInfo", QJsonObject{{"name", "troa-pc-controller-mapper"}, {"version", "0.1.1"}}},
                 {"instructions", "Manage controller profiles locally. Read before changing, save drafts before activation, "
                  "and use exact revision/controller ids. This server does not inject input or run scripts."}};
         } else if (method == "ping") result = {};

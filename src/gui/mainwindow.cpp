@@ -24,6 +24,8 @@
 #include "troa/modernshell.h"
 #include "troa/profilestore.h"
 #include <QJsonArray>
+#include <QGuiApplication>
+#include <QKeySequence>
 #include <QVersionNumber>
 
 #include "aboutdialog.h"
@@ -67,11 +69,13 @@
 #include <QLibraryInfo>
 #include <QLocalServer>
 #include <QMapIterator>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QPointer>
 #include <QRegularExpression>
 #include <QResource>
 #include <QShowEvent>
+#include <QScreen>
 #include <QTextStream>
 #include <QTranslator>
 #include <QUrl>
@@ -236,8 +240,26 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
         m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings,
             [this](const QJsonObject &request) { return handleTroaRequest(request); });
         setCentralWidget(m_troaShell);
-        setMinimumSize(980, 700);
-        if (!settings->contains("WindowSize")) resize(1160, 790);
+        auto mcpMenu = new QMenu(tr("MCP & AI"), this);
+        ui->menuBar->insertMenu(ui->menuHelp->menuAction(), mcpMenu);
+        auto setup = mcpMenu->addAction(tr("Open MCP setup"));
+        setup->setShortcut(QKeySequence("Ctrl+Shift+M"));
+        connect(setup, &QAction::triggered, this, [this]() {
+            show();
+            raise();
+            activateWindow();
+            m_troaShell->showAssistant();
+        });
+        auto copy = mcpMenu->addAction(tr("Copy connection settings"));
+        connect(copy, &QAction::triggered, this, [this]() {
+            m_troaShell->showAssistant();
+            m_troaShell->copyConnectionSettings();
+        });
+        const auto screen = QGuiApplication::primaryScreen();
+        const auto available = screen ? screen->availableGeometry() : QRect(0, 0, 1200, 850);
+        setMinimumSize(qMin(880, available.width() - 40), qMin(580, available.height() - 70));
+        if (!settings->contains("WindowSize"))
+            resize(qMin(1160, available.width() - 40), qMin(790, available.height() - 70));
     }
 }
 
@@ -1363,10 +1385,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
         this->hideWindow();
     } else
     {
-        qApp->quit();
+        // Use the same save/discard/cancel flow as App > Quit.
+        // Closing the title bar must not silently lose edited mappings.
+        quitProgram();
     }
-
-    QMainWindow::closeEvent(event);
+    event->ignore();
 }
 
 /**

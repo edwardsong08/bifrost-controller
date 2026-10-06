@@ -75,3 +75,13 @@ Windows compilation and packaging succeeded in GitHub Actions run 37406545582. D
 - Windows preview workflow packages an installer, portable ZIP, corresponding source ZIP, and SHA256 checksums. No ctest or other test commands run.
 - Inherited advanced dialogs remain available. MCP schema initially covers standard SDL buttons, D-pad, and sticks, with key chords and mouse actions.
 
+## UI refinement - 2026-10-05
+
+- Edward requested clearer MCP discovery, an Apple-like level of simplicity/polish, and the real TROA logo used by deployed sites. Preserve the full mapping features.
+- Version 0.1.1 adds Get started guidance, calmer light/dark styling, readable profile assignment tables, controller-aware PlayStation button names, and explicit MCP setup entry points in header/sidebar/menu.
+- MCP setup includes JSON and Codex TOML, copyable executable path and starter request, companion availability, and last-request status. Enabling access is not presented as a connected AI client.
+- Branding uses the exact PNG bytes served at the deployed /favicon.ico; the original controller symbol remains in controller guidance/navigation.
+- The title-bar close action now uses the existing save/discard/cancel flow for edited mappings.
+- A read-only diagnostic of the installed 0.1.0 app returned MCP status and a DualSense controller with no unsaved edits. No mappings were changed. Desktop inspection still timed out; no test suites or hardware-input tests are run.
+- Updated preview compilation/installation is pending.
+

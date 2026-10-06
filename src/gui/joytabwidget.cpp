@@ -108,12 +108,12 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     removeButton = new QPushButton(tr("Remove"), this);
     removeButton->setObjectName(QString::fromUtf8("removeButton"));
-    removeButton->setToolTip(tr("Remove configuration from recent list."));
+    removeButton->setToolTip(tr("Remove this profile from the recent list. The saved file is kept."));
     removeButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     removeButton->setIcon(PadderCommon::loadIcon("user-trash", ":/images/actions/edit_clear_list.png"));
     configHorizontalLayout->addWidget(removeButton);
 
-    loadButton = new QPushButton(tr("Load"), this);
+    loadButton = new QPushButton(tr("Open profile"), this);
     loadButton->setObjectName(QString::fromUtf8("loadButton"));
     loadButton->setToolTip(tr("Load configuration file."));
     loadButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -123,12 +123,13 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     saveButton = new QPushButton(tr("Save"), this);
     saveButton->setObjectName(QString::fromUtf8("saveButton"));
+    saveButton->setProperty("role", "primary");
     saveButton->setToolTip(tr("Save changes to configuration file."));
     saveButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     saveButton->setIcon(PadderCommon::loadIcon("document-save", ":/images/actions/document_save.png"));
     configHorizontalLayout->addWidget(saveButton);
 
-    saveAsButton = new QPushButton(tr("Save As"), this);
+    saveAsButton = new QPushButton(tr("Save a copy"), this);
     saveAsButton->setObjectName(QString::fromUtf8("saveAsButton"));
     saveAsButton->setToolTip(tr("Save changes to a new configuration file."));
     saveAsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -432,8 +433,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     stickAssignPushButton->setIcon(icon7);
     horizontalLayout_3->addWidget(stickAssignPushButton);
 
-    gameControllerMappingPushButton = new QPushButton(tr("Controller Mapping"), this);
+    gameControllerMappingPushButton = new QPushButton(tr("Controller layout"), this);
     gameControllerMappingPushButton->setObjectName(QString::fromUtf8("gameControllerMappingPushButton"));
+    gameControllerMappingPushButton->setToolTip(
+        tr("Identify the physical buttons and sticks so standard controller profiles work correctly."));
     gameControllerMappingPushButton->setIcon(
         QIcon::fromTheme(QString::fromUtf8("games_config_options"), QIcon(":/images/actions/games_config_options.png")));
 
@@ -441,15 +444,16 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     gameControllerMappingPushButton->setVisible(false);
     horizontalLayout_3->addWidget(gameControllerMappingPushButton);
 
-    quickSetPushButton = new QPushButton(tr("Quick Set"), this);
+    quickSetPushButton = new QPushButton(tr("Quick assign"), this);
     quickSetPushButton->setObjectName(QString::fromUtf8("quickSetPushButton"));
+    quickSetPushButton->setToolTip(tr("Assign actions by pressing controller inputs in sequence."));
     horizontalLayout_3->addWidget(quickSetPushButton);
 
     QSpacerItem *horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
-    namesPushButton = new QPushButton(tr("Names"), this);
+    namesPushButton = new QPushButton(tr("Action names"), this);
     namesPushButton->setObjectName(QString::fromUtf8("namesPushButton"));
     namesPushButton->setToolTip(tr("Toggle button name displaying."));
     namesPushButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -457,13 +461,13 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     horizontalLayout_3->addWidget(namesPushButton);
 
-    delayButton = new QPushButton(tr("Pref"), this);
+    delayButton = new QPushButton(tr("Profile options"), this);
     delayButton->setObjectName(QString::fromUtf8("delayButton"));
     delayButton->setToolTip(tr("Change global profile settings."));
     delayButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     horizontalLayout_3->addWidget(delayButton);
 
-    resetButton = new QPushButton(tr("Reset"), this);
+    resetButton = new QPushButton(tr("Revert changes"), this);
     resetButton->setObjectName(QString::fromUtf8("resetButton"));
     resetButton->setToolTip(tr("Revert changes to the configuration. Reload configuration file."));
     resetButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -1561,15 +1565,15 @@ void JoyTabWidget::removeProfileEditNotification()
 void JoyTabWidget::retranslateUi()
 {
     removeButton->setText(tr("Remove"));
-    removeButton->setToolTip(tr("Remove configuration from recent list."));
+    removeButton->setToolTip(tr("Remove this profile from the recent list. The saved file is kept."));
 
-    loadButton->setText(tr("Load"));
+    loadButton->setText(tr("Open profile"));
     loadButton->setToolTip(tr("Load configuration file."));
 
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save changes to configuration file."));
 
-    saveAsButton->setText(tr("Save As"));
+    saveAsButton->setText(tr("Save a copy"));
     saveAsButton->setToolTip(tr("Save changes to a new configuration file."));
 
     setsMenuButton->setText(tr("Sets"));
@@ -1585,18 +1589,18 @@ void JoyTabWidget::retranslateUi()
     refreshSetButtons();
     refreshCopySetActions();
 
-    gameControllerMappingPushButton->setText(tr("Controller Mapping"));
+    gameControllerMappingPushButton->setText(tr("Controller layout"));
     stickAssignPushButton->setText(tr("Stick/Pad Assign"));
-    quickSetPushButton->setText(tr("Quick Set"));
-    resetButton->setText(tr("Reset"));
+    quickSetPushButton->setText(tr("Quick assign"));
+    resetButton->setText(tr("Revert changes"));
 
-    namesPushButton->setText(tr("Names"));
+    namesPushButton->setText(tr("Action names"));
     namesPushButton->setToolTip(tr("Toggle button name displaying."));
 
-    delayButton->setText(tr("Pref"));
+    delayButton->setText(tr("Profile options"));
     delayButton->setToolTip(tr("Change global profile settings."));
 
-    resetButton->setText(tr("Reset"));
+    resetButton->setText(tr("Revert changes"));
     resetButton->setToolTip(tr("Revert changes to the configuration. Reload configuration file."));
     refreshButtons();
 }

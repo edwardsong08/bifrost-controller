@@ -5,8 +5,9 @@ The Windows package includes two executables:
 - troa-pc-controller-mapper.exe: the interface and existing native mapping engine.
 - troa-controller-mcp.exe: a local MCP stdio companion; no Python or Node installation is needed.
 
-Keep the mapper open and enable **Assistant access** in its sidebar. Copy the connection
-settings into a compatible MCP client's configuration. The command is the absolute path
+Keep the mapper open. Choose **MCP setup** in the header, **MCP & AI setup** in the sidebar,
+or **MCP & AI > Open MCP setup** in the menu (Ctrl+Shift+M). Enable **local MCP access** and copy
+JSON or Codex TOML settings into a compatible MCP client's configuration. The command is the absolute path
 to the installed troa-controller-mcp.exe, with no arguments. The copied JSON uses the
 common `mcpServers` format; clients with another configuration format should use the
 same command and empty argument list.
@@ -14,7 +15,9 @@ same command and empty argument list.
 MCP speaks JSON-RPC over stdin/stdout and negotiates protocol version 2025-11-25.
 The companion communicates with the running mapper over a Qt local socket/named pipe,
 restricted to the same Windows or Linux user. It exposes no HTTP service. Disabling
-Assistant access closes the listener and its existing connections.
+local MCP access closes the listener and its existing connections. The setup page shows
+whether the companion is installed, local access is enabled, and when the running app last
+received an MCP request. Availability is not proof that a particular AI app is connected.
 
 ## Tools
 

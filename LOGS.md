@@ -43,3 +43,14 @@
 - Opened troa-pc-controller-mapper.exe; Windows reports its branded main window is responding. This confirms launch only, not functional acceptance.
 - No automated, visual, or hardware tests ran. MCP client configuration and operations, profile activation, and controller behavior remain untested. The upstream application remains installed separately.
 - No public GitHub Release, website downloader, or TROA site deployment was published. Preview packages are GitHub Actions artifacts and local files; the implementation remains in draft PR #1.
+
+## 2026-10-05 - Clearer workspace, MCP setup, and deployed TROA branding
+
+- Edward reported difficulty finding MCP and authorized further UI improvements for a clear, polished experience. He requested the deployed TROA logo and retained controller symbolism.
+- Confirmed the running app is the branded 0.1.0 preview. A read-only MCP diagnostic returned enabled access and a standard-layout DualSense Wireless Controller with no unsaved changes; no mappings were activated or changed.
+- Native desktop inspection timed out again. Changes use source inspection and compilation; no automated, visual, or hardware-input test runs are being performed.
+- Reworked Get started, controller navigation, profile tables/selection feedback, light/dark appearance, and scrollable setup pages. Clearer existing mapping control names retain their original actions.
+- Added header/sidebar/menu MCP setup entries, Ctrl+Shift+M, JSON/TOML configuration, path/settings/request copy actions, and honest availability/last-request indicators.
+- Used the exact deployed TROA favicon artwork for app/tray/installer branding. The site favicon is PNG content; preserve its bytes in troa-logo.png and package a genuine Windows ICO. Controller art remains on controller navigation/guidance.
+- Fixed title-bar close to use the existing save/discard/cancel flow instead of quitting directly.
+- Preview version is 0.1.1. Build and installation are pending; source remains in draft PR #1 and repository access is unchanged.
