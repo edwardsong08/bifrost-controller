@@ -72,6 +72,7 @@ class JoyTabWidget : public QWidget
 
     QString getCurrentConfigName(); // JoyTabSettings class
     QString currentProfilePath(); // Only report successfully loaded native mappings.
+    bool loadProfileNow(const QString &path); // GUI-thread load for APIs and application rules.
     QString getConfigName(int index);
 
     InputDevice *getJoystick();

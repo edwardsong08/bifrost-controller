@@ -40,6 +40,41 @@ QString foregroundExecutable()
     return {};
 #endif
 }
+QString nativeProfileName(const QString &path)
+{
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly))
+    {
+        QXmlStreamReader reader(&file);
+        if (reader.readNextStartElement())
+            while (reader.readNextStartElement())
+            {
+                if (reader.name() == QStringLiteral("profilename"))
+                {
+                    const auto name = reader.readElementText().trimmed();
+                    if (!name.isEmpty())
+                        return name;
+                } else
+                    reader.skipCurrentElement();
+            }
+    }
+    return QFileInfo(path).completeBaseName();
+}
+QString controllerButtonName(InputDevice *device, int index)
+{
+    const auto name = device->getSDLName().toLower();
+    if (name.contains("dualsense") || name.contains("dualshock") || name.contains("ps4") || name.contains("ps5"))
+    {
+        const QStringList buttons = {
+            "Cross (×)",   "Circle (○)",   "Square (□)", "Triangle (△)", "Create / Share", "PS button",  "Options",
+            "L3",          "R3",           "L1",         "R1",           "D-pad up",       "D-pad down", "D-pad left",
+            "D-pad right", "Extra button", "Paddle 1",   "Paddle 2",     "Paddle 3",       "Paddle 4",   "Touchpad press"};
+        if (index >= 0 && index < buttons.size())
+            return buttons.at(index);
+    }
+    auto button = device->getActiveSetJoystick()->getJoyButton(index);
+    return button ? button->getPartialName(true, false) : QString("Button %1").arg(index + 1);
+}
 QString modeName(InputDevice *device, const QJsonObject &rule, int index)
 {
     for (const auto &value : rule.value("modes").toArray())
@@ -284,6 +319,9 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
     }
     rule["executable"] = exe.absoluteFilePath();
     rule["profile_path"] = QFileInfo(rule.value("profile_path").toString()).absoluteFilePath();
+    rule["profile_name"] = nativeProfileName(rule.value("profile_path").toString());
+    rule["controller_name"] = target->getJoystick()->getSDLName();
+    rule["controller_button_name"] = button < 0 ? "" : controllerButtonName(target->getJoystick(), button);
     rule["keyboard_shortcut"] =
         QKeySequence::fromString(rule.value("keyboard_shortcut").toString(), QKeySequence::PortableText)
             .toString(QKeySequence::PortableText);
@@ -455,6 +493,11 @@ QString ApplicationContext::cycle(InputDevice *device, const QJsonObject &rule, 
 void ApplicationContext::poll()
 {
 #ifdef Q_OS_WIN
+    if (m_windowScanTick++ % 4 == 0)
+    {
+        m_openExecutables.clear();
+        EnumWindows(collectWindows, reinterpret_cast<LPARAM>(&m_openExecutables));
+    }
     DWORD pid = 0;
     GetWindowThreadProcessId(GetForegroundWindow(), &pid);
     const bool mapperFocused = pid == GetCurrentProcessId();
@@ -497,7 +540,7 @@ void ApplicationContext::poll()
                 {
                     m_loading = true;
                     if (canonical(tab->currentProfilePath()) != canonical(path))
-                        tab->loadConfigFile(path);
+                        tab->loadProfileNow(path);
                     m_loading = false;
                     if (canonical(tab->currentProfilePath()) != canonical(path))
                         m_messages[controller] = "Profile could not be loaded.";
@@ -518,9 +561,9 @@ void ApplicationContext::poll()
         }
         const int set = device->getActiveSetNumber();
         const auto observed = id + ":" + tab->currentProfilePath() + ":" + QString::number(set);
-        if (!m_mapperFocused && !rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(path))
+        if (!rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(path))
         {
-            if (m_observed.value(controller) != observed)
+            if (!m_mapperFocused && m_observed.value(controller) != observed)
                 notice(rule.value("name").toString() + " · " + modeName(device, rule, set),
                        device->getSDLName() + "  •  " + tab->getCurrentConfigName());
             m_rememberedModes[id] = set;
@@ -532,10 +575,6 @@ void ApplicationContext::poll()
 QJsonObject ApplicationContext::state() const
 {
     QJsonArray controllers, applications;
-    QSet<QString> openPaths;
-#ifdef Q_OS_WIN
-    EnumWindows(collectWindows, reinterpret_cast<LPARAM>(&openPaths));
-#endif
     for (auto tab : m_tabs())
     {
         auto device = tab->getJoystick();
@@ -543,9 +582,8 @@ QJsonObject ApplicationContext::state() const
         const auto rule = matchingRule(controller);
         QJsonArray buttons;
         if (device->isGameController())
-            for (auto button : device->getActiveSetJoystick()->getButtons())
-                buttons.append(
-                    QJsonObject{{"index", button->getJoyNumber()}, {"name", button->getPartialName(true, false)}});
+            for (int index = 0; index < device->getActiveSetJoystick()->getNumberButtons(); ++index)
+                buttons.append(QJsonObject{{"index", index}, {"name", controllerButtonName(device, index)}});
         const bool matches =
             !rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(rule.value("profile_path").toString());
         QString message =
@@ -561,12 +599,15 @@ QJsonObject ApplicationContext::state() const
             {"controller", device->getSDLName()},
             {"application", rule.value("name").toString(QFileInfo(m_executable).fileName())},
             {"assigned_profile",
-             rule.isEmpty() ? "No rule" : QFileInfo(rule.value("profile_path").toString()).completeBaseName()},
+             rule.isEmpty()
+                 ? "No rule"
+                 : rule.value("profile_name").toString(QFileInfo(rule.value("profile_path").toString()).completeBaseName())},
             {"active_profile", tab->currentProfilePath().isEmpty() ? "No saved profile" : tab->getCurrentConfigName()},
             {"profile_path", tab->currentProfilePath()},
             {"controller_buttons", buttons},
             {"active_mode", modeName(device, matches ? rule : QJsonObject(), device->getActiveSetNumber())},
             {"active_set", device->getActiveSetNumber() + 1},
+            {"unsaved_changes", device->isDeviceEdited()},
             {"assignment_active", matches},
             {"message", message.trimmed()}});
     }
@@ -575,7 +616,7 @@ QJsonObject ApplicationContext::state() const
         auto rule = value.toObject();
         const auto path = canonical(rule.value("executable").toString());
         rule["focus_state"] = path == canonical(m_executable) ? (m_mapperFocused ? "Last focused" : "Focused")
-                                                              : (openPaths.contains(path) ? "Open" : "Closed");
+                                                              : (m_openExecutables.contains(path) ? "Open" : "Closed");
         applications.append(rule);
     }
     return {{"executable", m_executable},

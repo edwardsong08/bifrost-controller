@@ -61,6 +61,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -1245,6 +1246,23 @@ QString JoyTabWidget::currentProfilePath()
         ? path : QString();
 }
 
+bool JoyTabWidget::loadProfileNow(const QString &path)
+{
+    if (m_joystick->isDeviceEdited()) return false;
+    const auto absolute = QFileInfo(path).absoluteFilePath();
+    if (currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0) return true;
+    {
+        // Keep the inherited user's combo-box flow queued. Only explicit API/application loads
+        // block its signals, then load synchronously so status never claims a pending selection.
+        const QSignalBlocker blocker(configBox);
+        loadConfigFile(absolute);
+    }
+    if (configBox->currentData().toString().compare(absolute, Qt::CaseInsensitive) != 0) return false;
+    changeJoyConfig(configBox->currentIndex());
+    emit joystickConfigChanged(m_joystick->getJoyNumber());
+    return currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0;
+}
+
 QString JoyTabWidget::getConfigName(int index) { return configBox->itemText(index); }
 
 // Switch widget to currently selected Set
@@ -1363,7 +1381,7 @@ void JoyTabWidget::loadConfigFile(QString fileLocation)
     {
         int numberRecentProfiles = m_settings->value("NumberRecentProfiles", DEFAULTNUMBERPROFILES).toInt();
         QFileInfo fileinfo(fileLocation);
-        if (fileinfo.exists() && ((fileinfo.suffix() == "xml") || (fileinfo.suffix() == "amgp")))
+        if (fileinfo.exists() && ((fileinfo.suffix().toLower() == "xml") || (fileinfo.suffix().toLower() == "amgp")))
         {
             qDebug() << "Loading config file: " << fileLocation;
             int searchIndex = configBox->findData(fileinfo.absoluteFilePath());

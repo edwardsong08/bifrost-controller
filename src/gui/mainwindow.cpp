@@ -350,7 +350,7 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
             return Troa::failure("Profile changed. Read it again and supply its current revision before activation.");
         const auto mapping = store.exportMapping(arguments.value("id").toString());
         if (mapping.isEmpty()) return Troa::failure("Could not compile the profile into a controller mapping.");
-        target->loadConfigFile(mapping);
+        if (!target->loadProfileNow(mapping)) return Troa::failure("The controller profile could not be loaded.");
         const auto activeName = target->getJoystick()->getProfileName();
         if (activeName != item.value("profile").toObject().value("name").toString())
             return Troa::failure("The profile did not become active. Check the controller mapping window.");

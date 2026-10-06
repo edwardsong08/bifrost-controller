@@ -157,7 +157,8 @@ void ApplicationPage::refresh()
             selectedRow = i;
         cell(m_rules, i, 1, rule.value("focus_state").toString());
         cell(m_rules, i, 2, rule.value("controller_name").toString());
-        cell(m_rules, i, 3, QFileInfo(rule.value("profile_path").toString()).completeBaseName());
+        cell(m_rules, i, 3,
+             rule.value("profile_name").toString(QFileInfo(rule.value("profile_path").toString()).completeBaseName()));
         QStringList modes;
         for (const auto &value : rule.value("modes").toArray())
             modes.append(value.toObject().value("name").toString());

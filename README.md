@@ -13,6 +13,8 @@ with a compatible assistant. Linux remains a future product target.
 - Desktop and browser starter templates using SDL's standard controller layout.
 - Personal profile copies with atomic saving, revision conflict checks, and preserved history.
 - Local MCP tools to inspect controllers and create, read, validate, save, restore, activate, or unload profiles.
+- Per-application profile rules, named layouts (such as Space/Ground), keyboard/controller switching, and monitor-aware switch notices.
+- The deployed TROA logo, TROA ivory/charcoal/gold colors, and Bifrost-inspired navy panels.
 - A separate app identity, settings, installer, and update destination so AntiMicroX can remain installed.
 
 ## Downloads
@@ -23,7 +25,7 @@ checksums are included. A TROA website product/download page is planned; no site
 is claimed by this repository.
 
 Install the branded Windows package and open **TROA PC Controller Mapper**. Use the sidebar
-for Get started, Controllers, Profiles, and MCP & AI setup. The desktop/browser catalog
+for Get started, Controllers, Profiles, Applications, and MCP & AI setup. The desktop/browser catalog
 is a starting point to customize, rather than a claim of controller or game compatibility.
 
 ## MCP & AI setup
@@ -52,7 +54,7 @@ is `troa-controller-mcp`.
 
 No automated, visual, or hardware tests are run for this preview, at the project owner's
 request. Compilation and packaging results are recorded separately from runtime acceptance.
-Triggers, gyro, timed macros, auto-profile configuration, and legacy import remain outside
+Triggers, gyro, timed macros, and legacy import remain outside
 this first MCP profile schema and can be configured through the inherited interface.
 
 ## Attribution and license

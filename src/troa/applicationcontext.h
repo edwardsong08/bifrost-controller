@@ -60,5 +60,7 @@ class ApplicationContext : public QObject, public QAbstractNativeEventFilter
     QList<QPointer<QWidget>> m_notices;
     bool m_loading = false;
     int m_focusGeneration = 0;
+    int m_windowScanTick = 0;
+    QSet<QString> m_openExecutables;
 };
 } // namespace Troa

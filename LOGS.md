@@ -64,3 +64,4 @@
 - Extended managed schema 1 compatibly with optional named layouts and added MCP context/rule/export tools. No game-specific bindings are fabricated.
 - Read the actual deployed TROA CSS and Bifrost source styles: ivory/charcoal/gold, quiet navy surfaces, compact navigation. Other TROA repos remain untouched.
 - 0.1.1 compilation/packaging succeeded in run 37408876833. Expanded preview 0.1.2 compilation/installation is pending; no automated, visual, or controller tests are run.
+- Source review found that native combo selection queues profile loading. Added an explicit synchronous GUI-thread load for application/API requests, preserving the inherited interactive flow and reporting actual reader success before selecting a layout. Rule display now uses native profile names rather than content hashes, with readable normalized DualSense switch-button names.
