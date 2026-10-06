@@ -370,3 +370,16 @@ focus. The native mode does not emulate or hide a physical controller. MCP accep
 native_controls and reports mapping_suspended. Existing STO rule remains untouched.
 Version bumped to 0.1.9. Compile/package and delivery pending; no automated,
 visual, installer execution, hardware or gameplay tests authorized or performed.
+
+## 2026-10-06 - Owner-reported formatting CI failure
+
+Read actual formatting run 37448649088 / job 112219496140 at source 57ef5659.
+Ubuntu CI uses clang-format 14.0.0 and reported nine files, not just mcp_main.cpp:
+common.h, aboutdialog.cpp, mainwindow.cpp/.h, joytabwidget.cpp/.h,
+mainsettingsdialog.cpp/.h and mcp_main.cpp. Earlier local formatting used major
+23 and only changed ranges, leaving incompatible existing formatting in fork
+changes. Applied clang-format 14 to those nine files; no inherited files changed.
+Then inspected every tracked C/C++ source using exact clang-format 14.0.0:
+zero formatting differences. Recorded the required formatter version in AGENTS.md.
+These are source-layout changes only. No application, installer, visual, hardware
+or gameplay tests. Fresh GitHub formatting result and final Windows build pending.

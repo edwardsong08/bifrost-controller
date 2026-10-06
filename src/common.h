@@ -70,8 +70,9 @@ inline QString configPath()
 #elif defined(Q_OS_WIN)
     return findWinSystemConfigPath();
 #else
-    return (!qgetenv("XDG_CONFIG_HOME").isEmpty()) ? QString::fromUtf8(qgetenv("XDG_CONFIG_HOME")) + "/troa-pc-controller-mapper"
-                                                   : QDir::homePath() + "/.config/troa-pc-controller-mapper";
+    return (!qgetenv("XDG_CONFIG_HOME").isEmpty())
+               ? QString::fromUtf8(qgetenv("XDG_CONFIG_HOME")) + "/troa-pc-controller-mapper"
+               : QDir::homePath() + "/.config/troa-pc-controller-mapper";
 #endif
 }
 

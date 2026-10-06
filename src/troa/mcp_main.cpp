@@ -14,13 +14,15 @@ QJsonObject rpcError(const QJsonValue &id, int code, const QString &message)
 {
     return {{"jsonrpc", "2.0"}, {"id", id}, {"error", QJsonObject{{"code", code}, {"message", message}}}};
 }
-QJsonObject tool(const QString &name, const QString &description, QJsonObject properties = {},
-                 QJsonArray required = {}, bool readOnly = true)
+QJsonObject tool(const QString &name, const QString &description, QJsonObject properties = {}, QJsonArray required = {},
+                 bool readOnly = true)
 {
-    return {{"name", name}, {"description", description},
-        {"inputSchema", QJsonObject{{"type", "object"}, {"properties", properties}, {"required", required},
-                                    {"additionalProperties", false}}},
-        {"annotations", QJsonObject{{"readOnlyHint", readOnly}, {"destructiveHint", false}, {"openWorldHint", false}}}};
+    return {{"name", name},
+            {"description", description},
+            {"inputSchema",
+             QJsonObject{
+                 {"type", "object"}, {"properties", properties}, {"required", required}, {"additionalProperties", false}}},
+            {"annotations", QJsonObject{{"readOnlyHint", readOnly}, {"destructiveHint", false}, {"openWorldHint", false}}}};
 }
 QJsonArray tools()
 {
@@ -84,20 +86,26 @@ QJsonObject forward(const QString &name, const QJsonObject &arguments)
 {
     QLocalSocket socket;
     socket.connectToServer(Troa::socketName());
-    if (!socket.waitForConnected(2000)) return {{"error", "Open Bifrost Controller and enable Assistant access."}};
-    socket.write(QJsonDocument(QJsonObject{{"method", name}, {"arguments", arguments}}).toJson(QJsonDocument::Compact) + '\n');
-    if (socket.bytesToWrite() > 0 && !socket.waitForBytesWritten(2000)) return {{"error", "The request could not be delivered to the mapper."}};
+    if (!socket.waitForConnected(2000))
+        return {{"error", "Open Bifrost Controller and enable Assistant access."}};
+    socket.write(QJsonDocument(QJsonObject{{"method", name}, {"arguments", arguments}}).toJson(QJsonDocument::Compact) +
+                 '\n');
+    if (socket.bytesToWrite() > 0 && !socket.waitForBytesWritten(2000))
+        return {{"error", "The request could not be delivered to the mapper."}};
     QByteArray response;
-    while (!response.contains('\n')) {
+    while (!response.contains('\n'))
+    {
         if (!socket.bytesAvailable() && !socket.waitForReadyRead(10000))
             return {{"error", "Mapper response timed out. Check its current state before retrying a change."}};
         response += socket.readAll();
-        if (response.size() > 512 * 1024) return {{"error", "Mapper response exceeded the allowed size."}};
+        if (response.size() > 512 * 1024)
+            return {{"error", "Mapper response exceeded the allowed size."}};
     }
     QJsonParseError error;
     const auto doc = QJsonDocument::fromJson(response.left(response.indexOf('\n')), &error);
-    return error.error == QJsonParseError::NoError && doc.isObject() ? doc.object()
-        : QJsonObject{{"error", "Mapper returned an invalid response."}};
+    return error.error == QJsonParseError::NoError && doc.isObject()
+               ? doc.object()
+               : QJsonObject{{"error", "Mapper returned an invalid response."}};
 }
 void send(const QJsonObject &response)
 {
@@ -111,26 +119,50 @@ int main(int argc, char **argv)
     QCoreApplication::setApplicationName(Troa::slug());
     bool initialized = false;
     std::string line;
-    while (true) {
+    while (true)
+    {
         line.clear();
         bool oversized = false;
         char character;
-        while (std::cin.get(character) && character != '\n') {
-            if (line.size() < 256 * 1024) line.push_back(character); else oversized = true;
+        while (std::cin.get(character) && character != '\n')
+        {
+            if (line.size() < 256 * 1024)
+                line.push_back(character);
+            else
+                oversized = true;
         }
-        if (line.empty() && !std::cin) break;
-        if (oversized) { send(rpcError(QJsonValue::Null, -32600, "Request exceeds 256 KiB.")); continue; }
+        if (line.empty() && !std::cin)
+            break;
+        if (oversized)
+        {
+            send(rpcError(QJsonValue::Null, -32600, "Request exceeds 256 KiB."));
+            continue;
+        }
         QJsonParseError error;
         const auto doc = QJsonDocument::fromJson(QByteArray::fromStdString(line), &error);
-        if (error.error != QJsonParseError::NoError) { send(rpcError(QJsonValue::Null, -32700, "Invalid JSON.")); continue; }
-        if (!doc.isObject()) { send(rpcError(QJsonValue::Null, -32600, "Expected a JSON-RPC object.")); continue; }
+        if (error.error != QJsonParseError::NoError)
+        {
+            send(rpcError(QJsonValue::Null, -32700, "Invalid JSON."));
+            continue;
+        }
+        if (!doc.isObject())
+        {
+            send(rpcError(QJsonValue::Null, -32600, "Expected a JSON-RPC object."));
+            continue;
+        }
         const auto request = doc.object();
         const auto id = request.value("id");
         const auto method = request.value("method").toString();
-        if (request.value("jsonrpc") != "2.0" || method.isEmpty()) { send(rpcError(id.isUndefined() ? QJsonValue::Null : id, -32600, "Invalid JSON-RPC request.")); continue; }
-        if (id.isUndefined()) continue; // Notifications do not have responses.
+        if (request.value("jsonrpc") != "2.0" || method.isEmpty())
+        {
+            send(rpcError(id.isUndefined() ? QJsonValue::Null : id, -32600, "Invalid JSON-RPC request."));
+            continue;
+        }
+        if (id.isUndefined())
+            continue; // Notifications do not have responses.
         QJsonObject result;
-        if (method == "initialize") {
+        if (method == "initialize")
+        {
             initialized = true;
             result = {{"protocolVersion", "2025-11-25"},
                       {"capabilities", QJsonObject{{"tools", QJsonObject{}}}},
@@ -138,23 +170,43 @@ int main(int argc, char **argv)
                       {"instructions",
                        "Manage controller profiles locally. Read before changing, save drafts before activation, "
                        "and use exact revision/controller ids. This server does not inject input or run scripts."}};
-        } else if (method == "ping") result = {};
-        else if (!initialized) { send(rpcError(id, -32002, "Initialize the server first.")); continue; }
-        else if (method == "tools/list") result = {{"tools", tools()}};
-        else if (method == "tools/call") {
+        } else if (method == "ping")
+            result = {};
+        else if (!initialized)
+        {
+            send(rpcError(id, -32002, "Initialize the server first."));
+            continue;
+        } else if (method == "tools/list")
+            result = {{"tools", tools()}};
+        else if (method == "tools/call")
+        {
             const auto params = request.value("params").toObject();
             const auto name = params.value("name").toString();
             bool found = false;
-            for (const auto &value : tools()) if (value.toObject().value("name").toString() == name) found = true;
-            if (!found) { send(rpcError(id, -32602, "Unknown tool.")); continue; }
-            if (params.contains("arguments") && !params.value("arguments").isObject()) {
-                send(rpcError(id, -32602, "arguments must be an object.")); continue;
+            for (const auto &value : tools())
+                if (value.toObject().value("name").toString() == name)
+                    found = true;
+            if (!found)
+            {
+                send(rpcError(id, -32602, "Unknown tool."));
+                continue;
+            }
+            if (params.contains("arguments") && !params.value("arguments").isObject())
+            {
+                send(rpcError(id, -32602, "arguments must be an object."));
+                continue;
             }
             const auto data = forward(name, params.value("arguments").toObject());
-            result = {{"content", QJsonArray{QJsonObject{{"type", "text"},
-                       {"text", QString::fromUtf8(QJsonDocument(data).toJson(QJsonDocument::Indented))}}}},
-                      {"structuredContent", data}, {"isError", data.contains("error")}};
-        } else { send(rpcError(id, -32601, "Method not found.")); continue; }
+            result = {{"content", QJsonArray{QJsonObject{
+                                      {"type", "text"},
+                                      {"text", QString::fromUtf8(QJsonDocument(data).toJson(QJsonDocument::Indented))}}}},
+                      {"structuredContent", data},
+                      {"isError", data.contains("error")}};
+        } else
+        {
+            send(rpcError(id, -32601, "Method not found."));
+            continue;
+        }
         send({{"jsonrpc", "2.0"}, {"id", id}, {"result", result}});
     }
     return 0;

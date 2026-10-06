@@ -121,7 +121,6 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
         ui->closeToTrayCheckBox->setChecked(true);
     }
 
-
 #ifdef Q_OS_WIN
     ui->autoProfileTableWidget->hideColumn(3);
 #endif
@@ -604,7 +603,6 @@ bool MainSettingsDialog::saveNewSettings()
 
     settings->setValue("CloseToTray", closeToTray);
     settings->getLock()->unlock();
-
 
 #if defined(WITH_X11)
 

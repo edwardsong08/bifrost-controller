@@ -1286,22 +1286,28 @@ QString JoyTabWidget::currentProfilePath()
     auto reader = tabHelper.getReader();
     const auto path = configBox->currentData().toString();
     return configBox->currentIndex() > 0 && reader && !reader->hasError() &&
-        QFileInfo(reader->getFileName()).absoluteFilePath().compare(QFileInfo(path).absoluteFilePath(), Qt::CaseInsensitive) == 0
-        ? path : QString();
+                   QFileInfo(reader->getFileName())
+                           .absoluteFilePath()
+                           .compare(QFileInfo(path).absoluteFilePath(), Qt::CaseInsensitive) == 0
+               ? path
+               : QString();
 }
 
 bool JoyTabWidget::loadProfileNow(const QString &path)
 {
-    if (m_joystick->isDeviceEdited()) return false;
+    if (m_joystick->isDeviceEdited())
+        return false;
     const auto absolute = QFileInfo(path).absoluteFilePath();
-    if (currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0) return true;
+    if (currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0)
+        return true;
     {
         // Keep the inherited user's combo-box flow queued. Only explicit API/application loads
         // block its signals, then load synchronously so status never claims a pending selection.
         const QSignalBlocker blocker(configBox);
         loadConfigFile(absolute);
     }
-    if (configBox->currentData().toString().compare(absolute, Qt::CaseInsensitive) != 0) return false;
+    if (configBox->currentData().toString().compare(absolute, Qt::CaseInsensitive) != 0)
+        return false;
     changeJoyConfig(configBox->currentIndex());
     emit joystickConfigChanged(m_joystick->getJoyNumber());
     return currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0;

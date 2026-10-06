@@ -70,8 +70,8 @@ class JoyTabWidget : public QWidget
 
     QHash<int, QString> *recentConfigs(); // JoyTabSettings class
 
-    QString getCurrentConfigName(); // JoyTabSettings class
-    QString currentProfilePath(); // Only report successfully loaded native mappings.
+    QString getCurrentConfigName();           // JoyTabSettings class
+    QString currentProfilePath();             // Only report successfully loaded native mappings.
     bool loadProfileNow(const QString &path); // GUI-thread load for APIs and application rules.
     QString getConfigName(int index);
 

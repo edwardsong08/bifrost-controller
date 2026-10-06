@@ -21,12 +21,16 @@
 
 #include <SDL2/SDL_joystick.h>
 
+#include <QJsonObject>
 #include <QMainWindow>
 #include <QMap>
 #include <QSystemTrayIcon>
-#include <QJsonObject>
 
-namespace Troa { class LocalApi; class ModernShell; class ApplicationContext; }
+namespace Troa {
+class LocalApi;
+class ModernShell;
+class ApplicationContext;
+} // namespace Troa
 
 #ifdef CHECK_FOR_UPDATES
     #include <QNetworkAccessManager>

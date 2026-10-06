@@ -114,7 +114,8 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     qApp->setWindowIcon(windowIcon());
     setWindowTitle(Troa::name());
     setStyleSheet(QString());
-    ui->label->setText(tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
+    ui->label->setText(
+        tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
     ui->stackedWidget->setCurrentIndex(0);
 
     m_translator = nullptr;
@@ -250,14 +251,18 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     {
         m_troaApi = new Troa::LocalApi([this](const QJsonObject &request) { return handleTroaRequest(request); }, this);
         m_troaApi->setEnabled(settings->value("TROA/AssistantAccess", true).toBool());
-        m_troaContext = new Troa::ApplicationContext(settings, [this]() {
-            QList<JoyTabWidget *> tabs;
-            for (int i = 0; i < ui->tabWidget->count(); ++i)
-                if (auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(i))) tabs.append(tab);
-            return tabs;
-        }, this);
+        m_troaContext = new Troa::ApplicationContext(
+            settings,
+            [this]() {
+                QList<JoyTabWidget *> tabs;
+                for (int i = 0; i < ui->tabWidget->count(); ++i)
+                    if (auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(i)))
+                        tabs.append(tab);
+                return tabs;
+            },
+            this);
         m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings, m_troaContext,
-            [this](const QJsonObject &request) { return handleTroaRequest(request); });
+                                            [this](const QJsonObject &request) { return handleTroaRequest(request); });
         setCentralWidget(m_troaShell);
         auto mcpMenu = new QMenu(tr("Assistant · MCP"), this);
         ui->menuBar->insertMenu(ui->menuHelp->menuAction(), mcpMenu);
@@ -287,23 +292,37 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
     const auto method = request.value("method").toString();
     const auto arguments = request.value("arguments").toObject();
     const Troa::ProfileStore store;
-    if (m_troaContext) {
-        if (method == "application_context") return m_troaContext->state();
-        if (method == "list_application_rules") return m_troaContext->rules();
-        if (method == "save_application_rule") return m_troaContext->saveRule(arguments.value("rule").toObject(), arguments.value("expected_revision").toString());
-        if (method == "remove_application_rule") return m_troaContext->removeRule(arguments.value("id").toString(), arguments.value("expected_revision").toString());
+    if (m_troaContext)
+    {
+        if (method == "application_context")
+            return m_troaContext->state();
+        if (method == "list_application_rules")
+            return m_troaContext->rules();
+        if (method == "save_application_rule")
+            return m_troaContext->saveRule(arguments.value("rule").toObject(),
+                                           arguments.value("expected_revision").toString());
+        if (method == "remove_application_rule")
+            return m_troaContext->removeRule(arguments.value("id").toString(),
+                                             arguments.value("expected_revision").toString());
     }
     if (method == "mapper_status")
-        return {{"name", Troa::name()}, {"version", PadderCommon::programVersion},
-            {"assistant_access", m_troaApi && m_troaApi->isEnabled()}, {"profile_directory", Troa::profileDirectory()},
-            {"profile_schema_version", 1}, {"supported_inputs", QJsonArray::fromStringList(Troa::ProfileStore::inputs())},
+        return {
+            {"name", Troa::name()},
+            {"version", PadderCommon::programVersion},
+            {"assistant_access", m_troaApi && m_troaApi->isEnabled()},
+            {"profile_directory", Troa::profileDirectory()},
+            {"profile_schema_version", 1},
+            {"supported_inputs", QJsonArray::fromStringList(Troa::ProfileStore::inputs())},
             {"named_keys", QJsonArray::fromStringList(Troa::ProfileStore::namedKeys())},
             {"key_help", "Printable ASCII keys and named_keys are supported. keys arrays represent simultaneous chords."}};
-    if (method == "list_controllers") {
+    if (method == "list_controllers")
+    {
         QJsonArray devices;
-        for (int index = 0; index < ui->tabWidget->count(); ++index) {
+        for (int index = 0; index < ui->tabWidget->count(); ++index)
+        {
             auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(index));
-            if (!tab) continue;
+            if (!tab)
+                continue;
             auto device = tab->getJoystick();
             const auto instance = m_joysticks->key(device, -1);
             int availableButtons = device->getNumberButtons();
@@ -334,49 +353,70 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
         }
         return {{"controllers", devices}};
     }
-    if (method == "list_profiles") return {{"profiles", store.list()}};
-    if (method == "read_profile") return store.read(arguments.value("id").toString());
-    if (method == "export_profile") {
+    if (method == "list_profiles")
+        return {{"profiles", store.list()}};
+    if (method == "read_profile")
+        return store.read(arguments.value("id").toString());
+    if (method == "export_profile")
+    {
         const auto item = store.read(arguments.value("id").toString());
-        if (item.contains("error")) return item;
+        if (item.contains("error"))
+            return item;
         if (arguments.value("expected_revision").toString() != item.value("revision").toString())
             return Troa::failure("Profile changed. Read it again before exporting.");
         const auto path = store.exportMapping(arguments.value("id").toString());
-        return path.isEmpty() ? Troa::failure("Could not export this native controller profile.") :
-            QJsonObject{{"profile_path", path}, {"revision", item.value("revision")}};
+        return path.isEmpty() ? Troa::failure("Could not export this native controller profile.")
+                              : QJsonObject{{"profile_path", path}, {"revision", item.value("revision")}};
     }
-    if (method == "validate_profile") {
+    if (method == "validate_profile")
+    {
         const auto error = Troa::ProfileStore::validate(arguments.value("profile").toObject());
         return error.isEmpty() ? QJsonObject{{"valid", true}} : Troa::failure(error);
     }
-    if (method == "save_profile") {
-        const auto result = store.save(arguments.value("profile").toObject(), arguments.value("expected_revision").toString());
-        if (m_troaShell && !result.contains("error")) m_troaShell->refreshProfiles();
+    if (method == "save_profile")
+    {
+        const auto result =
+            store.save(arguments.value("profile").toObject(), arguments.value("expected_revision").toString());
+        if (m_troaShell && !result.contains("error"))
+            m_troaShell->refreshProfiles();
         return result;
     }
-    if (method == "list_profile_revisions") return {{"revisions", store.revisions(arguments.value("id").toString())}};
-    if (method == "restore_profile_revision") {
+    if (method == "list_profile_revisions")
+        return {{"revisions", store.revisions(arguments.value("id").toString())}};
+    if (method == "restore_profile_revision")
+    {
         const auto result = store.restore(arguments.value("id").toString(), arguments.value("revision").toString(),
                                           arguments.value("expected_revision").toString());
-        if (m_troaShell && !result.contains("error")) m_troaShell->refreshProfiles();
+        if (m_troaShell && !result.contains("error"))
+            m_troaShell->refreshProfiles();
         return result;
     }
-    if (method == "activate_profile" || method == "unload_profile") {
+    if (method == "activate_profile" || method == "unload_profile")
+    {
         const auto controller = arguments.value("controller_id").toString();
         JoyTabWidget *target = nullptr;
-        for (int index = 0; index < ui->tabWidget->count(); ++index) {
+        for (int index = 0; index < ui->tabWidget->count(); ++index)
+        {
             auto tab = qobject_cast<JoyTabWidget *>(ui->tabWidget->widget(index));
-            if (tab && controller == QString("instance:%1").arg(m_joysticks->key(tab->getJoystick(), -1))) target = tab;
+            if (tab && controller == QString("instance:%1").arg(m_joysticks->key(tab->getJoystick(), -1)))
+                target = tab;
         }
-        if (!target) return Troa::failure("Controller not found. List controllers again after reconnecting.");
-        if (target->getJoystick()->isDeviceEdited()) return Troa::failure("Save or discard your GUI changes before switching this controller's profile.");
-        if (method == "unload_profile") {
+        if (!target)
+            return Troa::failure("Controller not found. List controllers again after reconnecting.");
+        if (target->getJoystick()->isDeviceEdited())
+            return Troa::failure("Save or discard your GUI changes before switching this controller's profile.");
+        if (method == "unload_profile")
+        {
             target->unloadConfig();
-            return {{"controller_id", controller}, {"active_profile_name", target->getJoystick()->getProfileName()}, {"unloaded", true}};
+            return {{"controller_id", controller},
+                    {"active_profile_name", target->getJoystick()->getProfileName()},
+                    {"unloaded", true}};
         }
-        if (!target->getJoystick()->isGameController()) return Troa::failure("Managed profiles require an SDL-mapped controller. Configure the device layout first.");
+        if (!target->getJoystick()->isGameController())
+            return Troa::failure("Managed profiles require an SDL-mapped controller. Configure the device layout first.");
         const auto item = store.read(arguments.value("id").toString());
-        if (item.contains("error")) return item;
+        if (item.contains("error"))
+            return item;
         if (arguments.value("expected_revision").toString() != item.value("revision").toString())
             return Troa::failure("Profile changed. Read it again and supply its current revision before activation.");
         const auto profile = item.value("profile").toObject();
@@ -391,8 +431,10 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
         if (!layoutExists)
             return Troa::failure("Choose a layout included in this profile.");
         const auto mapping = store.exportMapping(arguments.value("id").toString());
-        if (mapping.isEmpty()) return Troa::failure("Could not compile the profile into a controller mapping.");
-        if (!target->loadProfileNow(mapping)) return Troa::failure("The controller profile could not be loaded.");
+        if (mapping.isEmpty())
+            return Troa::failure("Could not compile the profile into a controller mapping.");
+        if (!target->loadProfileNow(mapping))
+            return Troa::failure("The controller profile could not be loaded.");
         const auto activeName = target->getJoystick()->getProfileName();
         if (activeName != item.value("profile").toObject().value("name").toString())
             return Troa::failure("The profile did not become active. Check the controller mapping window.");
@@ -2076,7 +2118,8 @@ void MainWindow::retranslateUi()
 {
     ui->retranslateUi(this);
     setWindowTitle(Troa::name());
-    ui->label->setText(tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
+    ui->label->setText(
+        tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
     polishMenus();
 }
 

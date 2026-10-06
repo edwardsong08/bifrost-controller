@@ -77,10 +77,10 @@ class MainSettingsDialog : public QDialog
     void settingsApplied();
 
   protected slots:
-    void mappingsTableItemChanged(QTableWidgetItem *item); // MainSettingsMapping class
-    void insertMappingRow();                               // MainSettingsMapping class
-    void deleteMappingRow();                               // MainSettingsMapping class
-    void syncMappingSettings();                            // MainSettingsMapping class
+    void mappingsTableItemChanged(QTableWidgetItem *item);                                 // MainSettingsMapping class
+    void insertMappingRow();                                                               // MainSettingsMapping class
+    void deleteMappingRow();                                                               // MainSettingsMapping class
+    void syncMappingSettings();                                                            // MainSettingsMapping class
     void selectDefaultProfileDir();                                                        // MainSettingsProfile class
     void fillGUIDComboBox();                                                               // MainSettingsProfile class
     void changeDeviceForProfileTable(int index);                                           // MainSettingsProfile class

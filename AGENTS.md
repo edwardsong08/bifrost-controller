@@ -7,6 +7,7 @@
 - Edward explicitly requested no test runs. Do not add or run automated, visual, or hardware tests; compile/package the app and report behavior as untested.
 - Keep personal GitHub ownership and collaborator access unchanged. Organization admins do not automatically receive permissions on a personal repository.
 - Follow CONTRIBUTING.md and .clang-format when code changes are authorized.
+- Match the code-formatting workflow's clang-format 14.0.0; do not use a newer major formatter for this repository. Source-formatting checks are separate from application tests.
 - Preserve existing controller profiles and keyboard/mouse mapping behavior. Check compatibility when changing serialization or device handling.
 - Use a codex/ branch for implementation work. origin is Edward's fork; upstream is the official AntiMicroX repository.
 - Distinguish the installed official release from any future locally compiled fork. Record actual build and runtime verification, including gaps.

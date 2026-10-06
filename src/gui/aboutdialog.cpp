@@ -20,9 +20,9 @@
 #include "ui_aboutdialog.h"
 
 #include "common.h"
+#include "eventhandlerfactory.h"
 #include "troa/identity.h"
 #include "troa/modernshell.h"
-#include "eventhandlerfactory.h"
 
 #include <SDL2/SDL_gamecontroller.h>
 #include <SDL2/SDL_version.h>
