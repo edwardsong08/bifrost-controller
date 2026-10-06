@@ -29,3 +29,17 @@
 - Added structured desktop/browser templates, personal copies, atomic saves, SHA256 revision conflict checks, preserved history, and compiled legacy mapping exports.
 - Added Windows installer/portable preview packaging with corresponding source and checksums. Compilation is pending.
 - Website product/download page and curated game-specific profiles remain future work. No public product release or site deployment occurred.
+
+## 2026-10-05 - Windows preview compilation and packaging
+
+- Pushed implementation commit d0e19159114dbcc4c6a257a27d1082da5b8b116d on codex/troa-controller-mapper and created draft PR #1.
+- GitHub Actions run 37405802429 compiled the installer and portable application successfully with WITH_TESTS=OFF.
+- That run failed in the final source/checksum step because Git was unavailable in the MSYS shell. No download artifact was uploaded from that failed run.
+- Commit 49d81549239fcde1aa09e55c7a9fa305208983a3 moves source archiving/checksums to native Windows PowerShell and updates the next-action list. Rebuild run 37406545582 succeeded.
+- Collaborator access remains unchanged. The personal fork does not grant TROA organization admins automatic access.
+- Downloaded artifact 11387454096 to ignored distribution/preview. Installer, portable ZIP, and source ZIP hashes all matched SHA256SUMS.txt.
+- Installer SHA256: 8570e4c1158dd9bbfd5a405fdddbc5337a110c97deebe02b357dfe42118dbcd4.
+- Installed the fork preview into C:\Users\edwar\AppData\Local\Programs\TROA PC Controller Mapper; installer exit code 0 and uninstall registry version 0.1.0.
+- Opened troa-pc-controller-mapper.exe; Windows reports its branded main window is responding. This confirms launch only, not functional acceptance.
+- No automated, visual, or hardware tests ran. MCP client configuration and operations, profile activation, and controller behavior remain untested. The upstream application remains installed separately.
+- No public GitHub Release, website downloader, or TROA site deployment was published. Preview packages are GitHub Actions artifacts and local files; the implementation remains in draft PR #1.

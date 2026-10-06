@@ -25,13 +25,20 @@ Build toward TROA PC Controller Mapper, a modern controller mapping app for TROA
 - Stack: C++17, Qt 6 with Qt 5 fallback, SDL2, CMake.
 - License: existing GPL license; preserve upstream notices.
 
-## App installed for inspection
+## Apps installed for inspection
+
+- TROA preview 0.1.0 from GitHub Actions run 37406545582, built from 49d81549239fcde1aa09e55c7a9fa305208983a3.
+- Executable: C:\Users\edwar\AppData\Local\Programs\TROA PC Controller Mapper\bin\troa-pc-controller-mapper.exe
+- MCP companion: same bin directory, troa-controller-mcp.exe. A client connection has not been configured or exercised.
+- Installer, portable ZIP, source ZIP, and checksums: distribution/preview (ignored local artifacts).
+- Installer exit code 0; Windows uninstall registry lists version 0.1.0. The launched process has window title TROA PC Controller Mapper and is responding.
+- No automated, visual, or hardware tests were run. An open process is not controller/profile/MCP acceptance.
 
 - Official upstream Windows release 3.6.1, downloaded from GitHub Releases.
 - Executable: C:\Users\edwar\AppData\Local\Programs\AntiMicroX\bin\antimicrox.exe
 - Installer and provenance record: sibling antimicrox-downloads folder.
 - Installer SHA256 matched the official GitHub asset digest.
-- This is the upstream binary, not a build of the fork.
+- AntiMicroX remains installed separately from the new fork preview.
 
 ## Source map
 
@@ -56,7 +63,7 @@ These remain future work unless Edward authorizes the next implementation phase.
 
 ## Verification limits
 
-Windows compilation and packaging run in GitHub Actions. No automated, visual, or hardware tests are authorized for this preview. Desktop screenshot automation timed out during upstream installation. Edward requested the actual app rather than opening the source in VS Code.
+Windows compilation and packaging succeeded in GitHub Actions run 37406545582. Downloaded installer, portable, and source archive hashes matched the included manifest. No automated, visual, or hardware tests are authorized for this preview. Desktop screenshot automation timed out during upstream installation. Edward requested the actual app rather than opening the source in VS Code.
 
 ## Authorized implementation - 2026-10-05
 
