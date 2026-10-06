@@ -5,8 +5,8 @@ The Windows package includes two executables:
 - bifrost-controller.exe: the interface and existing native mapping engine.
 - bifrost-controller-mcp.exe: a local MCP stdio companion; no Python or Node installation is needed.
 
-Keep the mapper open. Choose **MCP setup** in the header, **MCP & AI setup** in the sidebar,
-or **MCP & AI > Open MCP setup** in the menu (Ctrl+Shift+M). Enable **local MCP access** and copy
+Keep the mapper open. Choose **Assistant · MCP** in the header/sidebar,
+or **Assistant · MCP > Open MCP setup** in the menu (Ctrl+Shift+M). Enable **local MCP access** and copy
 JSON or Codex TOML settings into a compatible MCP client's configuration. The command is the absolute path
 to the installed bifrost-controller-mcp.exe, with no arguments. The copied JSON uses the
 common `mcpServers` format; clients with another configuration format should use the
@@ -79,17 +79,21 @@ revisions. Generated legacy .amgp mappings have content-addressed filenames so a
 updated definition reloads through the existing mapping engine.
 
 Community templates are embedded for offline use. Starting with 0.1.3, compatible
-catalog updates also download at startup or through **Profiles > Update profiles**.
+catalog updates also download at startup or through **Profile library > Update profiles**.
 Downloads never activate profiles, replace personal copies or rewrite existing
-application-rule mapping files. Templates currently include desktop, browser and
-the console-inspired STO DualSense Space/Ground/Menus starting layout. See
+application-rule mapping files. The v2 catalog includes ten templates with separate STO Space/Ground/Menus
+starting layouts for DualSense, Xbox, and Steam Controller 2015/2026 hardware. See
 [its setup notes](profiles/star-trek-online-dualsense.md); gameplay is untested.
 
 ## Current boundaries
 
-MCP profile definitions cover standard buttons, D-pad, both sticks and, from 0.1.3,
-`left_trigger` / `right_trigger`. Gyro, complex timed macros, and legacy profile import are still
-managed through the inherited interface. MCP does not expose script execution,
+From 0.1.5, MCP definitions cover standard buttons, D-pad, sticks, triggers,
+`left_touchpad_*` / `right_touchpad_*` directions and clicks, exposed
+`raw_button_0` through `raw_button_63`, and gyro/accelerometer directions.
+`list_controllers.available_inputs` is authoritative for the connected driver;
+activation refuses required inputs that are unavailable. `activate_profile.set`
+selects a named layout; it defaults to 1. Timed macros and legacy profile import
+remain native-editor features. Touchpads use directional mapping zones. MCP does not expose script execution,
 arbitrary file access, or direct keyboard/mouse injection. GUI edits to a generated
 mapping should be saved as a legacy .amgp file; they do not automatically rewrite its
 managed JSON definition. Website-specific browser switching is not implemented.
@@ -98,7 +102,7 @@ No automated or hardware tests were run for this preview, per Edward's request.
 
 ## Applications and named layouts
 
-Use **Applications** in the mapper to assign a saved native profile to an application executable
+Use **App rules** in the mapper to assign a saved native profile to an application executable
 and controller. The rule shows Open/Focused/Closed, and the live controller table distinguishes
 the assigned profile from the mapping and layout actually active. Applications without a rule
 keep the current mapping; the status says so. Modern rules take precedence over inherited automatic
@@ -106,7 +110,7 @@ rules for their matching controller/application. Unsaved controller changes paus
 
 Layouts correspond to the existing eight mapping sets. For Star Trek Online, configure the actual
 game .exe (not just its launcher), choose its saved profile, and name sets 1 and 2 **Space** and
-**Ground**. Assign actions under Controllers and save. Choose a keyboard shortcut, a controller
+**Ground**. Assign actions under Map controls and save. Choose a keyboard shortcut, a controller
 button, or both to cycle the selected layouts. These labels do not invent game bindings. The
 controller button must be unused in every selected layout; existing actions are never erased.
 The notice appears for the actual profile/layout change, without taking focus or intercepting clicks.

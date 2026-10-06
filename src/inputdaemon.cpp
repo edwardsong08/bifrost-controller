@@ -27,6 +27,7 @@
 #include "joystick.h"
 #include "logger.h"
 #include "sdleventreader.h"
+#include "troa/controllersupport.h"
 
 #include <QDebug>
 #include <QEventLoop>
@@ -725,6 +726,23 @@ void InputDaemon::firstInputPass(QQueue<SDL_Event> *sdlEventQueue)
             } else
             {
                 sdlEventQueue->append(event);
+                if (auto pad = trackcontrollers.value(event.jbutton.which))
+                {
+                    int target = pad->extraButtonForRaw(event.jbutton.button);
+                    if (pad->isSteam2026() && (event.jbutton.button == 16 || event.jbutton.button == 17))
+                        target = Troa::TouchpadClickBase + (event.jbutton.button == 17 ? 0 : 1);
+                    if (target >= 0 && pad->supportsButton(target))
+                    {
+                        SDL_Event mapped{};
+                        mapped.type = event.type == SDL_JOYBUTTONDOWN ? SDL_CONTROLLERBUTTONDOWN : SDL_CONTROLLERBUTTONUP;
+                        mapped.cbutton.which = event.jbutton.which;
+                        mapped.cbutton.button = Uint8(target);
+                        mapped.cbutton.state = event.jbutton.state;
+                        createOrGrabBitStatusEntry(&pendingEventValues, pad)
+                            ->changeButtonStatus(target, mapped.cbutton.state == SDL_PRESSED);
+                        sdlEventQueue->append(mapped);
+                    }
+                }
             }
 
             break;
@@ -807,6 +825,46 @@ void InputDaemon::firstInputPass(QQueue<SDL_Event> *sdlEventQueue)
         }
 
 #if SDL_VERSION_ATLEAST(2, 0, 14)
+        case SDL_CONTROLLERTOUCHPADDOWN:
+        case SDL_CONTROLLERTOUCHPADMOTION:
+        case SDL_CONTROLLERTOUCHPADUP: {
+            auto pad = trackcontrollers.value(event.ctouchpad.which);
+            if (!pad || event.ctouchpad.touchpad < 0 || event.ctouchpad.touchpad >= pad->touchpadCount() ||
+                event.ctouchpad.finger != 0)
+                break;
+            const bool down = event.type != SDL_CONTROLLERTOUCHPADUP;
+            for (int direction = 0; direction < 2; ++direction)
+            {
+                const int index = Troa::TouchpadAxisBase + event.ctouchpad.touchpad * 2 + direction;
+                const float position = direction == 0 ? event.ctouchpad.x : event.ctouchpad.y;
+                SDL_Event mapped{};
+                mapped.type = SDL_CONTROLLERAXISMOTION;
+                mapped.caxis.which = event.ctouchpad.which;
+                mapped.caxis.axis = Uint8(index);
+                mapped.caxis.value = down ? Sint16(qBound(-32767, qRound((position * 2.0f - 1.0f) * 32767.0f), 32767)) : 0;
+                auto axis = pad->getActiveSetJoystick()->getJoyAxis(index);
+                createOrGrabBitStatusEntry(&releaseEventsGenerated, pad, false)
+                    ->changeAxesStatus(index, mapped.caxis.value == 0);
+                createOrGrabBitStatusEntry(&pendingEventValues, pad)
+                    ->changeAxesStatus(index, !axis->inDeadZone(mapped.caxis.value));
+                sdlEventQueue->append(mapped);
+            }
+            // The 2015 driver explicitly encodes a click as pressure 1 and an ordinary touch as 0.5.
+            // The 2026 driver has independent physical click reports handled above; pressure is not a click.
+            if (!pad->isSteam2026())
+            {
+                const int index = Troa::TouchpadClickBase + event.ctouchpad.touchpad;
+                SDL_Event mapped{};
+                mapped.type = down && event.ctouchpad.pressure >= 0.99f ? SDL_CONTROLLERBUTTONDOWN : SDL_CONTROLLERBUTTONUP;
+                mapped.cbutton.which = event.ctouchpad.which;
+                mapped.cbutton.button = Uint8(index);
+                mapped.cbutton.state = mapped.type == SDL_CONTROLLERBUTTONDOWN ? SDL_PRESSED : SDL_RELEASED;
+                createOrGrabBitStatusEntry(&pendingEventValues, pad)
+                    ->changeButtonStatus(index, mapped.cbutton.state == SDL_PRESSED);
+                sdlEventQueue->append(mapped);
+            }
+            break;
+        }
         case SDL_CONTROLLERSENSORUPDATE: {
             InputDevice *joy = trackcontrollers.value(event.caxis.which);
 

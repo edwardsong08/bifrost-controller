@@ -3,12 +3,14 @@
 #include "antimicrosettings.h"
 #include "applicationcontext.h"
 #include "applicationpage.h"
+#include "controllersupport.h"
 #include "identity.h"
 #include "localapi.h"
 #include "profilestore.h"
 
 #include <QAction>
 #include <QApplication>
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
@@ -28,6 +30,8 @@
 #include <QListWidget>
 #include <QMap>
 #include <QMenu>
+#include <QMessageBox>
+#include <QMutexLocker>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -38,6 +42,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QResizeEvent>
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QStyle>
@@ -56,6 +61,8 @@ QLabel *label(const QString &text, const char *role = "body")
     result->setTextFormat(Qt::PlainText);
     result->setProperty("role", role);
     result->setWordWrap(true);
+    result->setMinimumWidth(0);
+    result->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     return result;
 }
 QPushButton *button(const QString &text, bool primary = false)
@@ -119,32 +126,6 @@ QString connectionJson()
     const QJsonObject config{{"mcpServers", QJsonObject{{"bifrost-controller", QJsonObject{{"command", companionPath()},
                                                                                            {"args", QJsonArray{}}}}}}};
     return QString::fromUtf8(QJsonDocument(config).toJson(QJsonDocument::Indented));
-}
-QString inputName(QString input, bool playStation)
-{
-    if (playStation)
-    {
-        const QMap<QString, QString> names = {
-            {"a", "Cross (×)"},         {"b", "Circle (○)"},        {"x", "Square (□)"},         {"y", "Triangle (△)"},
-            {"back", "Create / Share"}, {"start", "Options"},       {"guide", "PS button"},      {"left_shoulder", "L1"},
-            {"right_shoulder", "R1"},   {"left_stick_press", "L3"}, {"right_stick_press", "R3"}, {"left_trigger", "L2"},
-            {"right_trigger", "R2"}};
-        if (names.contains(input))
-            return names.value(input);
-    }
-    if (input == "a" || input == "b" || input == "x" || input == "y")
-        return input.toUpper() + " button";
-    input.replace("dpad_", "D-pad ");
-    input.replace("left_stick_press", "Left stick click");
-    input.replace("right_stick_press", "Right stick click");
-    input.replace("left_stick_", "Left stick ");
-    input.replace("right_stick_", "Right stick ");
-    input.replace("left_shoulder", "Left shoulder");
-    input.replace("right_shoulder", "Right shoulder");
-    input.replace('_', ' ');
-    if (!input.isEmpty())
-        input[0] = input.at(0).toUpper();
-    return input;
 }
 QString actionName(const QJsonObject &binding)
 {
@@ -280,9 +261,21 @@ void ModernShell::applyAppearance(bool dark)
         QTabBar::tab:selected { background: %4; color: %1; border-bottom: 2px solid %9; }
         QGroupBox { border: 1px solid %5; border-radius: 9px; margin-top: 13px; padding-top: 15px; }
         QGroupBox::title { subcontrol-origin: margin; padding: 0 8px; }
-        QMenu, QMenuBar { background: %4; }
-        QMenu::item { padding: 8px 24px; }
-        QMenu::item:selected { background: %7; }
+        QDialog { background: %2; }
+        QMenuBar { background: %4; border-bottom: 1px solid %5; padding: 4px 8px; }
+        QMenuBar::item { background: transparent; padding: 7px 12px; margin: 2px; border-radius: 6px; }
+        QMenuBar::item:selected, QMenuBar::item:pressed { background: %7; color: %8; }
+        QMenu { background: %4; border: 1px solid %5; border-radius: 9px; padding: 6px; }
+        QMenu::item { padding: 8px 30px 8px 12px; border-radius: 5px; }
+        QMenu::item:selected { background: %7; color: %8; }
+        QMenu::item:disabled { color: %3; }
+        QMenu::separator { height: 1px; background: %5; margin: 6px 8px; }
+        QComboBox { padding-right: 28px; }
+        QComboBox::drop-down { subcontrol-origin: padding; subcontrol-position: top right; width: 26px;
+                              border-left: 1px solid %5; }
+        QComboBox QAbstractItemView { background: %4; color: %1; border: 1px solid %5;
+                                    selection-background-color: %7; selection-color: %8; padding: 4px; }
+        QDialogButtonBox QPushButton { min-width: 68px; }
         QScrollBar:vertical { background: transparent; width: 10px; }
         QScrollBar::handle:vertical { background: %5; border-radius: 5px; min-height: 24px; }
         QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
@@ -324,11 +317,12 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     titles->setSpacing(2);
     titles->addWidget(label("TROA GAMING SOFTWARE", "eyebrow"));
     titles->addWidget(label("Bifrost Controller", "title"));
-    header->addLayout(titles);
-    header->addStretch();
+    header->addLayout(titles, 1);
     m_status = label("No controller connected", "status");
+    m_status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_status->setMaximumWidth(210);
     header->addWidget(m_status);
-    auto mcp = button("MCP setup");
+    auto mcp = button("Assistant · MCP");
     mcp->setToolTip("Connect an AI app to this mapper. Shortcut: Ctrl+Shift+M");
     connect(mcp, &QPushButton::clicked, this, &ModernShell::showAssistant);
     header->addWidget(mcp);
@@ -350,7 +344,7 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     auto mappingLayout = new QVBoxLayout(mappingPage);
     mappingLayout->setContentsMargins(0, 0, 0, 0);
     mappingLayout->setSpacing(12);
-    mappingLayout->addWidget(label("Controllers", "section"));
+    mappingLayout->addWidget(label("Map controls", "section"));
     mappingLayout->addWidget(label(
         "Choose a controller tab, then click an input to assign an action. Save your profile when you're done.", "muted"));
     auto applicationStatus = label("Application context", "heading");
@@ -386,7 +380,7 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     tools->setText("Controller tools");
     tools->setPopupMode(QToolButton::InstantPopup);
     auto menu = new QMenu(tools);
-    for (const auto &name : {"actionCalibration", "actionProperties", "actionKeyValue", "actionOptions"})
+    for (const auto &name : {"actionCalibration", "actionProperties", "actionKeyValue"})
         if (auto action = owner->findChild<QAction *>(name))
             menu->addAction(action);
     tools->setMenu(menu);
@@ -400,7 +394,7 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     m_pages->addWidget(scrollPage(assistantPage()));
     m_pages->addWidget(scrollPage(new ApplicationPage(context, settings)));
 
-    const QStringList names = {"Get started", "Controllers", "Profiles", "MCP & AI setup", "Applications"};
+    const QStringList names = {"Overview", "Map controls", "Profile library", "Assistant · MCP", "App rules"};
     for (int index = 0; index < names.size(); ++index)
     {
         auto control = button(names.at(index));
@@ -410,10 +404,11 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
         control->setMinimumHeight(24);
         if (index == 1)
             control->setIcon(controllerIcon());
-        navigation->addWidget(control);
         m_navigation.append(control);
         connect(control, &QPushButton::clicked, this, [this, index]() { navigate(index); });
     }
+    for (int index : {0, 1, 2, 4, 3})
+        navigation->addWidget(m_navigation.at(index));
     navigation->addStretch();
     auto options = button("Settings");
     connect(options, &QPushButton::clicked, owner, [owner]() {
@@ -422,16 +417,29 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     });
     navigation->addWidget(options);
     navigation->addWidget(label("APPEARANCE", "eyebrow"));
-    auto appearance = new QComboBox;
-    appearance->addItems({"Light", "Dark"});
-    appearance->setAccessibleName("Appearance");
-    appearance->setCurrentIndex(settings->value("TROA/DarkAppearance", false).toBool() ? 1 : 0);
-    applyAppearance(appearance->currentIndex() == 1);
-    connect(appearance, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index) {
-        m_settings->setValue("TROA/DarkAppearance", index == 1);
-        applyAppearance(index == 1);
-    });
-    navigation->addWidget(appearance);
+    auto appearance = new QHBoxLayout;
+    appearance->setSpacing(6);
+    auto appearanceGroup = new QButtonGroup(this);
+    const bool dark = settings->value("TROA/DarkAppearance", false).toBool();
+    for (int index = 0; index < 2; ++index)
+    {
+        auto mode = button(index == 0 ? "Light" : "Dark");
+        mode->setCheckable(true);
+        mode->setChecked(index == (dark ? 1 : 0));
+        mode->setAccessibleName(index == 0 ? "Use light appearance" : "Use dark appearance");
+        appearanceGroup->addButton(mode, index);
+        appearance->addWidget(mode);
+        connect(mode, &QPushButton::clicked, this, [this, index]() {
+            {
+                QMutexLocker lock(m_settings->getLock());
+                m_settings->setValue("TROA/DarkAppearance", index == 1);
+                m_settings->sync();
+            }
+            applyAppearance(index == 1);
+        });
+    }
+    applyAppearance(dark);
+    navigation->addLayout(appearance);
     navigation->addWidget(label("Preview " + QCoreApplication::applicationVersion(), "muted"));
     body->addWidget(sidebar);
     body->addWidget(m_pages, 1);
@@ -445,6 +453,40 @@ ModernShell::ModernShell(QWidget *mapping, QWidget *owner, LocalApi *api, AntiMi
     refreshProfiles();
     refreshControllers();
     refreshAssistantStatus();
+    auto updateOverview = [this, context]() {
+        const auto state = context->state();
+        const auto executable = state.value("executable").toString();
+        const auto application = QFileInfo(executable).fileName();
+        m_homeFocus->setText(
+            (state.value("mapper_focused").toBool() ? "Last focused application: " : "Focused application: ") +
+            (application.isEmpty() ? "No application detected" : application));
+        m_homeFocus->setToolTip(executable);
+        const auto devices = state.value("controllers").toArray();
+        const auto signature = QJsonDocument(devices).toJson(QJsonDocument::Compact);
+        if (m_homeControllers->property("state").toByteArray() == signature)
+            return;
+        m_homeControllers->setProperty("state", signature);
+        m_homeControllers->setRowCount(devices.size());
+        for (int i = 0; i < devices.size(); ++i)
+        {
+            const auto device = devices.at(i).toObject();
+            const QStringList values = {device.value("controller").toString(),
+                                        device.value("active_profile").toString() + " · " +
+                                            device.value("active_mode").toString(),
+                                        device.value("unsaved_changes").toBool() ? "Unsaved edits — save your mapping"
+                                                                                 : device.value("message").toString()};
+            for (int column = 0; column < values.size(); ++column)
+            {
+                auto item = new QTableWidgetItem(values.at(column));
+                item->setToolTip(values.at(column));
+                m_homeControllers->setItem(i, column, item);
+            }
+        }
+        m_homeControllers->resizeRowsToContents();
+        m_homeControllers->setVisible(!devices.isEmpty());
+    };
+    connect(context, &ApplicationContext::changed, this, updateOverview);
+    updateOverview();
     navigate(0);
     m_catalogNetwork = new QNetworkAccessManager(this);
     if (m_settings->value("TROA/UpdateCommunityProfiles", true).toBool())
@@ -472,58 +514,79 @@ QWidget *ModernShell::startPage()
     auto root = new QVBoxLayout(page);
     root->setContentsMargins(0, 0, 0, 0);
     root->setSpacing(16);
-    root->addWidget(label("Make your controller feel at home.", "section"));
-    root->addWidget(label("Map controller inputs to the keys and mouse actions you use on your PC.", "muted"));
+    root->addWidget(label("Your controller workspace", "section"));
+    root->addWidget(label("See what is active, then choose the task you want to work on.", "muted"));
     auto connection = card();
-    auto row = new QHBoxLayout(connection);
-    row->setContentsMargins(20, 18, 20, 18);
-    row->setSpacing(16);
+    auto connectionLayout = cardLayout(connection);
+    auto row = new QHBoxLayout;
     auto icon = new QLabel;
-    icon->setPixmap(controllerIcon().pixmap(56, 56));
+    icon->setPixmap(controllerIcon().pixmap(40, 40));
     row->addWidget(icon);
     auto details = new QVBoxLayout;
-    m_startStatus = label("Connect your controller", "heading");
+    m_startStatus = label("Connect a controller", "heading");
     m_startDetail = label("Plug it in with USB, or pair it in Windows Bluetooth settings.", "muted");
     details->addWidget(m_startStatus);
     details->addWidget(m_startDetail);
     row->addLayout(details, 1);
-    auto open = button("Open controllers");
-    connect(open, &QPushButton::clicked, this, [this]() { navigate(1); });
-    row->addWidget(open);
+    auto rescan = button("Rescan");
+    connect(rescan, &QPushButton::clicked, this, [this]() {
+        if (auto action = window()->findChild<QAction *>("actionUpdate_Joysticks"))
+            action->trigger();
+    });
+    row->addWidget(rescan);
+    connectionLayout->addLayout(row);
+    m_homeFocus = label("Focused application", "muted");
+    connectionLayout->addWidget(m_homeFocus);
+    m_homeControllers = new QTableWidget(0, 3);
+    m_homeControllers->setHorizontalHeaderLabels({"Controller", "Active profile / layout", "Status"});
+    m_homeControllers->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_homeControllers->setSelectionMode(QAbstractItemView::NoSelection);
+    m_homeControllers->setShowGrid(false);
+    m_homeControllers->verticalHeader()->hide();
+    m_homeControllers->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_homeControllers->setMinimumHeight(145);
+    m_homeControllers->setWordWrap(true);
+    m_homeControllers->setAccessibleName("Actual active profiles for connected controllers");
+    connectionLayout->addWidget(m_homeControllers);
     root->addWidget(connection);
-    auto guide = card();
-    auto steps = cardLayout(guide);
-    steps->addWidget(step("1", "Connect", "Your controller appears in Controllers. If it is missing, choose Rescan."));
-    steps->addWidget(step("2", "Choose a starting profile",
-                          "Use a desktop or browser template, or open one of your existing mapping files."));
-    steps->addWidget(
-        step("3", "Make it yours", "Click a controller input to change its action. Save a copy to keep your own setup."));
-    root->addWidget(guide);
-    auto starts = new QHBoxLayout;
-    for (const auto &entry : QList<QPair<QString, QString>>{{"Desktop", "builtin-desktop"}, {"Browser", "builtin-browser"}})
+    const QList<QPair<QString, QString>> tasks = {
+        {"Choose a profile", "Browse desktop, browser, and game templates. Review the inputs and layout before using one."},
+        {"Customize controls", "Edit button, stick, trigger, touchpad, and motion mappings exposed by your controller."},
+        {"Set profiles for apps",
+         "Choose the profile used when an app is focused, and a shortcut to switch layouts within it."}};
+    const QList<int> targets = {2, 1, 4};
+    for (int i = 0; i < tasks.size(); ++i)
     {
         auto tile = card();
-        auto layout = cardLayout(tile);
-        layout->addWidget(label(entry.first, "heading"));
-        layout->addWidget(label(entry.first == "Desktop" ? "Pointer control, clicks, scrolling, and everyday shortcuts."
-                                                         : "Tabs, the address bar, navigation, and scrolling.",
-                                "muted"));
-        auto choose = button("View " + entry.first.toLower() + " profile");
-        connect(choose, &QPushButton::clicked, this, [this, entry]() { chooseTemplate(entry.second); });
-        layout->addWidget(choose);
-        starts->addWidget(tile, 1);
+        auto layout = new QHBoxLayout(tile);
+        layout->setContentsMargins(18, 14, 18, 14);
+        auto descriptions = new QVBoxLayout;
+        descriptions->addWidget(label(tasks.at(i).first, "heading"));
+        descriptions->addWidget(label(tasks.at(i).second, "muted"));
+        layout->addLayout(descriptions, 1);
+        auto open = button(i == 0 ? "Browse profiles" : i == 1 ? "Map controls" : "App rules", i == 0);
+        connect(open, &QPushButton::clicked, this, [this, targets, i]() { navigate(targets.at(i)); });
+        layout->addWidget(open);
+        root->addWidget(tile);
     }
-    root->addLayout(starts);
-    auto assistant = card();
-    auto assistantLayout = cardLayout(assistant);
-    assistantLayout->addWidget(label("Create profiles with your AI assistant", "heading"));
-    assistantLayout->addWidget(label("MCP lets a compatible AI app read your controller setup and help you build profiles. "
-                                     "Connect it once in MCP & AI setup.",
-                                     "muted"));
-    auto setup = button("Set up MCP", true);
-    connect(setup, &QPushButton::clicked, this, &ModernShell::showAssistant);
-    assistantLayout->addWidget(setup, 0, Qt::AlignLeft);
-    root->addWidget(assistant);
+    auto footer = new QHBoxLayout;
+    auto help = button("How to get started");
+    connect(help, &QPushButton::clicked, this, [this]() {
+        QMessageBox::information(
+            this, "Get started",
+            "1. Connect your controller, then choose a template in Profile library.\n\n"
+            "2. Review its layouts and assignments, choose your controller, then press Use this profile.\n\n"
+            "3. Customize inputs in Map controls. Save a copy to keep a personal mapping file.\n\n"
+            "4. Add an App rule using that saved file to switch profiles automatically and cycle layouts.\n\n"
+            "Assistant · MCP connects an AI app to help create and edit library profiles. App updates prompt you separately "
+            "from community-template updates.");
+    });
+    footer->addWidget(help);
+    auto assistant = button("Connect an assistant · MCP");
+    connect(assistant, &QPushButton::clicked, this, &ModernShell::showAssistant);
+    footer->addWidget(assistant);
+    footer->addStretch();
+    root->addLayout(footer);
     root->addStretch();
     return page;
 }
@@ -533,17 +596,21 @@ QWidget *ModernShell::libraryPage()
     auto root = new QVBoxLayout(page);
     root->setContentsMargins(0, 0, 0, 0);
     root->setSpacing(12);
-    root->addWidget(label("Profiles", "section"));
-    root->addWidget(
-        label("Start with a community template. Make a personal copy when you want to keep your own version.", "muted"));
+    root->addWidget(label("Profile library", "section"));
+    root->addWidget(label("Review a template and its layouts, then choose the controller that will use it. Library copies "
+                          "update separately from saved mapping files.",
+                          "muted"));
     auto updates = new QHBoxLayout;
     m_updateProfiles = button("Update profiles");
     connect(m_updateProfiles, &QPushButton::clicked, this, &ModernShell::updateCommunityProfiles);
     updates->addWidget(m_updateProfiles);
-    auto startup = new QCheckBox("Download community templates at startup");
+    auto startup = new QCheckBox("Refresh templates at startup");
     startup->setChecked(m_settings->value("TROA/UpdateCommunityProfiles", true).toBool());
-    connect(startup, &QCheckBox::toggled, this,
-            [this](bool on) { m_settings->setValue("TROA/UpdateCommunityProfiles", on); });
+    connect(startup, &QCheckBox::toggled, this, [this](bool on) {
+        QMutexLocker lock(m_settings->getLock());
+        m_settings->setValue("TROA/UpdateCommunityProfiles", on);
+        m_settings->sync();
+    });
     updates->addWidget(startup);
     updates->addStretch();
     root->addLayout(updates);
@@ -554,7 +621,8 @@ QWidget *ModernShell::libraryPage()
     m_search->setPlaceholderText("Search profiles");
     m_search->setAccessibleName("Search profiles by name or category");
     root->addWidget(m_search);
-    auto split = new QHBoxLayout;
+    auto split = new QBoxLayout(QBoxLayout::LeftToRight);
+    m_librarySplit = split;
     split->setSpacing(14);
     m_profiles = new QListWidget;
     m_profiles->setAccessibleName("Profile library");
@@ -562,6 +630,7 @@ QWidget *ModernShell::libraryPage()
     m_profiles->setMinimumHeight(230);
     split->addWidget(m_profiles, 1);
     auto detail = card();
+    detail->setMinimumWidth(0);
     auto layout = cardLayout(detail);
     m_profileName = label("Choose a profile", "heading");
     m_profileDescription = label("", "muted");
@@ -570,7 +639,8 @@ QWidget *ModernShell::libraryPage()
     layout->addWidget(m_profileDescription);
     layout->addWidget(m_profileMeta);
     m_layout = new QComboBox;
-    m_layout->setAccessibleName("Profile layout to preview");
+    m_layout->setAccessibleName("Layout to preview and apply");
+    m_layout->setToolTip("This layout is selected when you press Use this profile.");
     layout->addWidget(m_layout);
     connect(m_layout, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) { previewProfile(); });
     m_bindings = new QTableWidget(0, 3);
@@ -580,7 +650,11 @@ QWidget *ModernShell::libraryPage()
     m_bindings->setShowGrid(false);
     m_bindings->verticalHeader()->hide();
     m_bindings->verticalHeader()->setDefaultSectionSize(36);
-    m_bindings->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_bindings->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_bindings->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    m_bindings->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    m_bindings->horizontalHeader()->setMaximumSectionSize(240);
+    m_bindings->setMinimumWidth(0);
     m_bindings->setMinimumHeight(210);
     m_bindings->setAccessibleName("Profile controller assignments");
     layout->addWidget(m_bindings, 1);
@@ -590,14 +664,21 @@ QWidget *ModernShell::libraryPage()
     connect(m_search, &QLineEdit::textChanged, this, [this]() { filterProfiles(); });
     m_controllerHelp = label("", "muted");
     root->addWidget(m_controllerHelp);
-    auto actions = new QHBoxLayout;
+    auto actions = new QVBoxLayout;
     m_controller = new QComboBox;
     m_controller->setAccessibleName("Controller to receive profile");
-    actions->addWidget(m_controller, 1);
+    m_controller->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    m_controller->setMinimumContentsLength(18);
+    actions->addWidget(m_controller);
     m_apply = button("Use this profile", true);
-    m_copy = button("Make a personal copy");
-    actions->addWidget(m_apply);
-    actions->addWidget(m_copy);
+    m_copy = button("Copy to my library");
+    m_copy->setToolTip("Keep an independent library definition for editing with your assistant. Use Map controls > Save a "
+                       "copy for a native mapping file.");
+    auto actionButtons = new QHBoxLayout;
+    actionButtons->addWidget(m_apply);
+    actionButtons->addWidget(m_copy);
+    actionButtons->addStretch();
+    actions->addLayout(actionButtons);
     root->addLayout(actions);
     connect(m_controller, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { previewProfile(); });
     connect(m_apply, &QPushButton::clicked, this, &ModernShell::applyProfile);
@@ -605,7 +686,7 @@ QWidget *ModernShell::libraryPage()
     m_libraryFeedback = label("");
     m_libraryFeedback->hide();
     root->addWidget(m_libraryFeedback);
-    root->addWidget(label("Using a profile changes this controller's assignments. Save any work in Controllers first. "
+    root->addWidget(label("Using a profile changes this controller's assignments. Save any work in Map controls first. "
                           "Personal copies are kept when community templates update.",
                           "muted"));
     return page;
@@ -616,7 +697,7 @@ QWidget *ModernShell::assistantPage()
     auto root = new QVBoxLayout(page);
     root->setContentsMargins(0, 0, 0, 0);
     root->setSpacing(16);
-    root->addWidget(label("MCP & AI setup", "section"));
+    root->addWidget(label("Assistant · MCP", "section"));
     root->addWidget(label("Connect your AI app to this mapper so you can create controller profiles together.", "muted"));
     auto access = card();
     auto accessLayout = cardLayout(access);
@@ -758,7 +839,7 @@ void ModernShell::updateCommunityProfiles()
     m_updateProfiles->setEnabled(false);
     m_catalogStatus->setText("Checking for community profiles…");
     const QUrl url("https://raw.githubusercontent.com/edwardsong08/bifrost-controller/"
-                   "codex/troa-controller-mapper/profiles/catalog.json");
+                   "codex/troa-controller-mapper/profiles/catalog-v2.json");
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setRawHeader("User-Agent", "Bifrost-Controller-Community-Profiles");
@@ -888,10 +969,9 @@ void ModernShell::previewProfile()
         for (const auto &value : layouts)
             if (value.toObject().value("set").toInt() == m_layout->currentData().toInt())
                 bindings = value.toObject().value("bindings").toArray();
-        const bool playStation = m_controller && (m_controller->currentText().contains("DualSense", Qt::CaseInsensitive) ||
-                                                  m_controller->currentText().contains("DualShock", Qt::CaseInsensitive) ||
-                                                  m_controller->currentText().contains("PS4", Qt::CaseInsensitive) ||
-                                                  m_controller->currentText().contains("PS5", Qt::CaseInsensitive));
+        const auto family = m_controller && !m_controller->currentData().toString().isEmpty()
+                                ? m_controller->currentData(Qt::UserRole + 1).toString()
+                                : profile.value("controller_family").toString("generic");
         m_profileMeta->setText(QString("%1 assignments · %2")
                                    .arg(bindings.size())
                                    .arg(item.value("bundled").toBool() ? "Community template" : "Personal profile"));
@@ -900,7 +980,7 @@ void ModernShell::previewProfile()
             const auto binding = value.toObject();
             const int row = m_bindings->rowCount();
             m_bindings->insertRow(row);
-            m_bindings->setItem(row, 0, new QTableWidgetItem(inputName(binding.value("input").toString(), playStation)));
+            m_bindings->setItem(row, 0, new QTableWidgetItem(Troa::inputName(binding.value("input").toString(), family)));
             m_bindings->setItem(row, 1, new QTableWidgetItem(actionName(binding)));
             m_bindings->setItem(row, 2, new QTableWidgetItem(binding.value("label").toString()));
         }
@@ -909,22 +989,69 @@ void ModernShell::previewProfile()
 }
 void ModernShell::updateProfileActions()
 {
-    const bool selected = !selectedId().isEmpty();
-    if (m_copy)
-        m_copy->setEnabled(selected);
-    if (m_apply)
-        m_apply->setEnabled(selected && m_controller && !m_controller->currentData().toString().isEmpty());
+    const auto item = ProfileStore().read(selectedId());
+    const bool selected = !item.contains("error") && !selectedId().isEmpty();
+    m_copy->setEnabled(selected);
+    const auto device = m_controller->currentData(Qt::UserRole + 2).toJsonObject();
+    QString reason;
+    if (device.isEmpty())
+        reason = "Connect a controller with a standard layout to use this profile.";
+    else if (selected)
+    {
+        const auto profile = item.value("profile").toObject();
+        const auto wanted = profile.value("controller_family").toString("generic");
+        if (wanted.startsWith("steam-") && wanted != device.value("controller_family").toString())
+            reason = "Choose the matching physical Steam Controller model for this template.";
+        else
+        {
+            auto layouts = profile.value("layouts").toArray();
+            if (layouts.isEmpty())
+                layouts.append(QJsonObject{{"bindings", profile.value("bindings")}});
+            const auto available = device.value("available_inputs").toArray();
+            QStringList missing;
+            for (const auto &layout : layouts)
+                for (const auto &value : layout.toObject().value("bindings").toArray())
+                {
+                    const auto input = value.toObject().value("input").toString();
+                    if (!available.contains(input) && !missing.contains(input))
+                        missing.append(input);
+                }
+            if (!missing.isEmpty())
+                reason = "The connected controller does not expose: " + missing.join(", ") +
+                         ". Choose a compatible template or configure its controller layout.";
+        }
+    }
+    m_apply->setEnabled(selected && reason.isEmpty());
+    m_apply->setToolTip(reason);
+    m_controllerHelp->setText(reason.isEmpty() ? "Use this profile applies the selected layout to the controller below."
+                                               : reason);
+}
+void ModernShell::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    if (!m_librarySplit || !m_profiles)
+        return;
+    const bool compact = width() < 1100;
+    m_librarySplit->setDirection(compact ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
+    m_profiles->setMinimumHeight(compact ? 130 : 230);
+    m_profiles->setMaximumHeight(compact ? 180 : QWIDGETSIZE_MAX);
+    m_profiles->setMaximumWidth(compact ? QWIDGETSIZE_MAX : 280);
 }
 void ModernShell::refreshControllers()
 {
     const auto response = m_handler({{"method", "list_controllers"}});
     const auto devices = response.value("controllers").toArray();
+    if (auto owner = window())
+        for (const auto &name : {"actionProperties", "actionCalibration"})
+            if (auto action = owner->findChild<QAction *>(name))
+                action->setEnabled(!devices.isEmpty());
     m_status->setText(devices.isEmpty()
                           ? "No controller connected"
                           : QString("%1 controller%2 connected").arg(devices.size()).arg(devices.size() == 1 ? "" : "s"));
-    m_startStatus->setText(devices.isEmpty() ? "Connect your controller" : "Your controller is ready to configure");
-    m_startDetail->setText(devices.isEmpty() ? "Plug it in with USB, or pair it in Windows Bluetooth settings."
-                                             : "Choose a profile or open Controllers to customize its buttons and sticks.");
+    m_startStatus->setText(devices.isEmpty() ? "Connect a controller" : "Connected controllers");
+    m_startDetail->setText(devices.isEmpty()
+                               ? "Plug it in with USB, or pair it in Windows Bluetooth settings."
+                               : "Active mappings are shown below. Save unsaved edits before changing profiles.");
     const auto signature = QJsonDocument(devices).toJson(QJsonDocument::Compact);
     if (m_controller->property("devices").toByteArray() != signature)
     {
@@ -938,6 +1065,8 @@ void ModernShell::refreshControllers()
             if (!device.value("standard_layout").toBool())
                 continue;
             m_controller->addItem(device.value("name").toString(), device.value("controller_id"));
+            m_controller->setItemData(m_controller->count() - 1, device.value("controller_family"), Qt::UserRole + 1);
+            m_controller->setItemData(m_controller->count() - 1, device, Qt::UserRole + 2);
         }
         const int index = m_controller->findData(selected);
         if (index >= 0)
@@ -945,8 +1074,7 @@ void ModernShell::refreshControllers()
         if (!m_controller->count())
             m_controller->addItem("No compatible controller connected", QString{});
         m_controller->blockSignals(false);
-        if (selected != m_controller->currentData().toString())
-            previewProfile();
+        previewProfile();
     }
     m_controllerHelp->setText(
         !m_controller->currentData().toString().isEmpty() ? "Choose which controller will use this profile."
@@ -967,11 +1095,12 @@ void ModernShell::applyProfile()
     const auto result = m_handler({{"method", "activate_profile"},
                                    {"arguments", QJsonObject{{"id", selectedId()},
                                                              {"controller_id", m_controller->currentData().toString()},
+                                                             {"set", m_layout->currentData().toInt()},
                                                              {"expected_revision", item.value("revision")}}}});
     if (result.contains("error"))
         libraryFeedback(result.value("error").toString(), true);
     else
-        libraryFeedback("Profile applied to " + m_controller->currentText() +
+        libraryFeedback("Profile applied to " + m_controller->currentText() + " · " + m_layout->currentText() +
                         ". Open Controllers to view or customize its assignments.");
 }
 void ModernShell::copyProfile()

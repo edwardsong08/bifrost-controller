@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "profilestore.h"
+#include "controllersupport.h"
 #include "identity.h"
 
 #include <QDateTime>
@@ -16,21 +17,7 @@
 #include <Qt>
 
 namespace {
-const QStringList buttons = {"a",
-                             "b",
-                             "x",
-                             "y",
-                             "back",
-                             "guide",
-                             "start",
-                             "left_stick_press",
-                             "right_stick_press",
-                             "left_shoulder",
-                             "right_shoulder",
-                             "dpad_up",
-                             "dpad_down",
-                             "dpad_left",
-                             "dpad_right"};
+const QStringList buttons = Troa::buttonInputs();
 const QStringList directions = {"up", "right", "down", "left"};
 const QMap<QString, int> keys = {{"Enter", Qt::Key_Return},
                                  {"Escape", Qt::Key_Escape},
@@ -62,7 +49,25 @@ const QMap<QString, int> keys = {{"Enter", Qt::Key_Return},
                                  {"F9", Qt::Key_F9},
                                  {"F10", Qt::Key_F10},
                                  {"F11", Qt::Key_F11},
-                                 {"F12", Qt::Key_F12}};
+                                 {"F12", Qt::Key_F12},
+                                 {"F13", Qt::Key_F13},
+                                 {"F14", Qt::Key_F14},
+                                 {"F15", Qt::Key_F15},
+                                 {"F16", Qt::Key_F16},
+                                 {"F17", Qt::Key_F17},
+                                 {"F18", Qt::Key_F18},
+                                 {"F19", Qt::Key_F19},
+                                 {"F20", Qt::Key_F20},
+                                 {"F21", Qt::Key_F21},
+                                 {"F22", Qt::Key_F22},
+                                 {"F23", Qt::Key_F23},
+                                 {"F24", Qt::Key_F24},
+                                 {"CapsLock", Qt::Key_CapsLock},
+                                 {"NumLock", Qt::Key_NumLock},
+                                 {"ScrollLock", Qt::Key_ScrollLock},
+                                 {"PrintScreen", Qt::Key_Print},
+                                 {"Pause", Qt::Key_Pause},
+                                 {"Menu", Qt::Key_Menu}};
 int keyCode(const QString &key)
 {
     if (keys.contains(key))
@@ -146,7 +151,7 @@ QJsonArray ProfileStore::catalog()
     QJsonArray result;
     if (file.open(QIODevice::ReadOnly))
         result = QJsonDocument::fromJson(file.readAll()).array();
-    QFile cache(QDir(dataDirectory()).filePath("community-catalog.json"));
+    QFile cache(QDir(dataDirectory()).filePath("community-catalog-v2.json"));
     if (!cache.open(QIODevice::ReadOnly) || cache.size() > 256 * 1024)
         return result;
     const auto downloaded = QJsonDocument::fromJson(cache.readAll()).array();
@@ -187,7 +192,7 @@ QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
     }
     if (!QDir().mkpath(dataDirectory()))
         return failure("Could not create the community cache folder.");
-    const auto path = QDir(dataDirectory()).filePath("community-catalog.json");
+    const auto path = QDir(dataDirectory()).filePath("community-catalog-v2.json");
     QFile existing(path);
     const auto normalized = document.toJson(QJsonDocument::Indented);
     if (normalized.size() > 256 * 1024)
@@ -203,9 +208,13 @@ QStringList ProfileStore::inputs()
 {
     auto result = buttons;
     result.append({"left_trigger", "right_trigger"});
-    for (const auto &stick : {QString("left_stick"), QString("right_stick")})
+    for (const auto &stick :
+         {QString("left_stick"), QString("right_stick"), QString("left_touchpad"), QString("right_touchpad")})
         for (const auto &direction : directions)
             result.append(stick + "_" + direction);
+    for (const auto &sensor : {QString("accelerometer"), QString("gyro")})
+        for (const auto &direction : {"left", "right", "up", "down", "forward", "backward"})
+            result.append(sensor + "_" + direction);
     return result;
 }
 QStringList ProfileStore::namedKeys() { return keys.keys(); }
@@ -220,6 +229,10 @@ QString ProfileStore::validate(const QJsonObject &profile)
         return "schema_version must be 1.";
     if (profile.value("controller").toString() != "sdl-gamecontroller")
         return "Use controller: sdl-gamecontroller.";
+    if (profile.contains("controller_family") &&
+        !QStringList{"generic", "playstation", "xbox", "steam-2015", "steam-2026"}.contains(
+            profile.value("controller_family").toString()))
+        return "controller_family must be generic, playstation, xbox, steam-2015, or steam-2026.";
     if (profile.value("description").toString().size() > 2000)
         return "description is too long.";
     if (!QStringList{"desktop", "browser", "game", "custom"}.contains(profile.value("category").toString()))
@@ -422,11 +435,8 @@ QString ProfileStore::exportMapping(const QString &id) const
     const QString directory = QDir(profileDirectory()).filePath("compiled/" + id);
     if (!QDir().mkpath(directory))
         return {};
-    const auto filePath = QDir(directory).filePath(item.value("revision").toString() + ".amgp");
-    QSaveFile file(filePath);
-    if (!file.open(QIODevice::WriteOnly))
-        return {};
-    QXmlStreamWriter xml(&file);
+    QByteArray bytes;
+    QXmlStreamWriter xml(&bytes);
     xml.setAutoFormatting(true);
     xml.writeStartDocument();
     xml.writeStartElement("gamecontroller");
@@ -449,7 +459,7 @@ QString ProfileStore::exportMapping(const QString &id) const
         {
             const auto binding = value.toObject();
             const int index = buttons.indexOf(binding.value("input").toString());
-            if (index >= 0 && index < 11)
+            if (index >= 0 && (index < 11 || index >= 15))
                 bindingXml(xml, binding, "button", index + 1);
         }
         xml.writeStartElement("dpad");
@@ -476,18 +486,43 @@ QString ProfileStore::exportMapping(const QString &id) const
                     xml.writeEndElement();
                 }
         }
-        for (int stick = 0; stick < 2; ++stick)
+        for (int stick = 0; stick < 4; ++stick)
         {
+            const QStringList prefixes = {"left_stick_", "right_stick_", "left_touchpad_", "right_touchpad_"};
+            bool assigned = false;
+            for (const auto &value : bindings)
+                if (value.toObject().value("input").toString().startsWith(prefixes.at(stick)))
+                    assigned = true;
+            if (stick >= 2 && !assigned)
+                continue;
             xml.writeStartElement("stick");
             xml.writeAttribute("index", QString::number(stick + 1));
             xml.writeTextElement("deadZone", QString::number(profile.value("dead_zone").toInt(8000)));
             for (int direction = 0; direction < directions.size(); ++direction)
             {
-                const auto input = QString(stick == 0 ? "left_stick_" : "right_stick_") + directions.at(direction);
+                const auto input = prefixes.at(stick) + directions.at(direction);
                 for (const auto &value : bindings)
                     if (value.toObject().value("input").toString() == input)
                         bindingXml(xml, value.toObject(), "stickbutton", 1 << direction);
             }
+            xml.writeEndElement();
+        }
+        for (int sensor = 0; sensor < 2; ++sensor)
+        {
+            const auto prefix = QString(sensor == 0 ? "accelerometer_" : "gyro_");
+            const QStringList sensorDirections = {"left", "right", "up", "down", "forward", "backward"};
+            bool assigned = false;
+            for (const auto &value : bindings)
+                if (value.toObject().value("input").toString().startsWith(prefix))
+                    assigned = true;
+            if (!assigned)
+                continue;
+            xml.writeStartElement("sensor");
+            xml.writeAttribute("type", QString::number(sensor));
+            for (int direction = 0; direction < sensorDirections.size(); ++direction)
+                for (const auto &value : bindings)
+                    if (value.toObject().value("input").toString() == prefix + sensorDirections.at(direction))
+                        bindingXml(xml, value.toObject(), "sensorbutton", 1 << direction);
             xml.writeEndElement();
         }
         xml.writeEndElement();
@@ -495,6 +530,15 @@ QString ProfileStore::exportMapping(const QString &id) const
     xml.writeEndElement();
     xml.writeEndElement();
     xml.writeEndDocument();
-    return !xml.hasError() && file.commit() ? filePath : QString{};
+    if (xml.hasError())
+        return {};
+    // Include the compiler output hash. Keep every exported revision immutable, including old manually edited files.
+    const auto hash = QString::fromLatin1(QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex());
+    const auto filePath = QDir(directory).filePath(item.value("revision").toString() + "-" + hash + ".amgp");
+    QFile existing(filePath);
+    if (existing.exists())
+        return existing.open(QIODevice::ReadOnly) && existing.readAll() == bytes ? filePath : QString{};
+    QSaveFile file(filePath);
+    return file.open(QIODevice::WriteOnly) && file.write(bytes) == bytes.size() && file.commit() ? filePath : QString{};
 }
 } // namespace Troa

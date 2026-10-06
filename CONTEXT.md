@@ -4,6 +4,44 @@
 
 Build Bifrost Controller, TROA's modern desktop controller mapping app alongside Bifrost Server Manager in the TROA gaming software ecosystem, based on Edward's AntiMicroX fork. Implementation of the Windows preview is authorized.
 
+## Current audit implementation — 2026-10-06
+
+Version 0.1.5 is being prepared on codex/troa-controller-mapper. Edward requested
+a fresh task-based UI, full source audit, Apply in Settings, Xbox plus both Valve
+Steam Controller hardware generations, STO layouts, app-update popups and removal
+of language mode. English-only startup retires the previous Language preference.
+See docs/UI-AUDIT.md for inspected surfaces, fixes and explicit limitations.
+
+The workspace now leads with actual state and separates Map controls, Profile
+library, App rules and Assistant · MCP. Native saves are atomic, managed exports
+immutable, profile activation honors the selected layout, and unavailable inputs
+block incompatible templates. The reader filename-state fix addresses the user's
+false “profile could not be loaded” report. Settings Apply keeps the dialog open,
+reports persistence errors, and distinguishes immediate changes from those needing
+Rescan/reopen. Inert repeat controls are hidden; legacy auto profiles are opt-in.
+
+Windows uses pinned SDL3 3.4.18 through sdl2-compat 2.32.74 and retains native SDL2
+profile indices. The v2 community catalog adds separate 2015/2026 Steam hardware
+templates and sensor/extra-input support; the old catalog remains compatible with
+0.1.4. Ten v2 templates include STO DualSense, Xbox and both Steam models.
+Touchpads use directional zones. No hardware/gameplay acceptance is claimed.
+
+App-update checks at startup and every six hours include public preview releases,
+show a popup once per new version and retain a manual menu action. The popup opens
+TROA's download page. Updates are user initiated, not silent installation. Existing
+users need one manual upgrade before receiving these prompts.
+
+Read-only calls through the actual Codex Bifrost MCP connector succeeded against
+the running 0.1.4 app this session. It reports enabled access and a standard-layout
+DualSense with the STO PS5-style profile, set 1, without unsaved changes. This
+supersedes older empty-controller/pending-client notes below. No mapping was
+changed by these diagnostic calls. The running app is under Program Files.
+
+Compilation/package/release and TROA installer pin for 0.1.5 remain pending.
+Edward will upgrade manually; do not install/restart his app on his behalf.
+No automated, visual or hardware tests are authorized. Native PR #1 stays draft;
+public release distribution is authorized separately from merging that PR.
+
 ## Community profile updates - 2026-10-06
 
 Owner requested game-specific defaults delivered at startup or through an update

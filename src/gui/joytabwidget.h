@@ -109,7 +109,7 @@ class JoyTabWidget : public QWidget
     void refreshButtons();
 
   private slots:
-    void saveConfigFile(); // JoyTabSettings class
+    bool saveConfigFile(); // False on cancellation or write failure; callers must preserve edits.
     void resetJoystick();
     void saveAsConfig();             // JoyTabSettings class
     void removeConfig();             // JoyTabSettings class

@@ -59,6 +59,9 @@ SDLEventReader::~SDLEventReader()
 
 void SDLEventReader::initSDL()
 {
+    // Opt into the official physical Steam drivers. Environment overrides remain respected.
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
+    SDL_SetHint("SDL_JOYSTICK_HIDAPI_STEAM_TRITON", "1");
     // SDL_INIT_GAMECONTROLLER should automatically initialize SDL_INIT_JOYSTICK
     // but it doesn't seem to be the case with v2.0.4
     // Passing SDL_INIT_SENSOR here triggers bug libsdl-org/SDL#4276 on windows

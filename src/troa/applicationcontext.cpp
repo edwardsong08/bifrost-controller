@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "applicationcontext.h"
 #include "antimicrosettings.h"
+#include "controllersupport.h"
+#include "gamecontroller/gamecontroller.h"
 #include "gui/joytabwidget.h"
 #include "identity.h"
 #include "inputdevice.h"
@@ -72,6 +74,8 @@ QString nativeProfileName(const QString &path)
 }
 QString controllerButtonName(InputDevice *device, int index)
 {
+    if (device->isGameController() && !Troa::buttonInput(index).isEmpty())
+        return Troa::inputName(Troa::buttonInput(index), Troa::controllerFamily(device));
     const auto name = device->getSDLName().toLower();
     if (name.contains("dualsense") || name.contains("dualshock") || name.contains("ps4") || name.contains("ps5"))
     {
@@ -101,6 +105,9 @@ bool unusedButton(InputDevice *device, const QJsonObject &rule)
     const int index = rule.value("controller_button").toInt(-1);
     if (index < 0)
         return false;
+    if (auto pad = qobject_cast<GameController *>(device))
+        if (!pad->supportsButton(index))
+            return false;
     // Never steal an input already mapped by the profile, including virtual D-pad use.
     for (const auto &value : rule.value("modes").toArray())
     {
@@ -215,12 +222,14 @@ QString ApplicationContext::revision() const
         QCryptographicHash::hash(QJsonDocument(m_rules).toJson(QJsonDocument::Compact), QCryptographicHash::Sha256).toHex());
 }
 QJsonObject ApplicationContext::rules() const { return {{"rules", m_rules}, {"revision", revision()}}; }
-void ApplicationContext::persist()
+bool ApplicationContext::persist()
 {
     {
         QMutexLocker lock(m_settings->getLock());
         m_settings->setValue("TROA/ApplicationRules", QJsonDocument(m_rules).toJson(QJsonDocument::Compact));
         m_settings->sync();
+        if (m_settings->status() != QSettings::NoError)
+            return false;
     }
     m_lastApplied.clear();
     m_rememberedModes.clear();
@@ -228,6 +237,7 @@ void ApplicationContext::persist()
     registerShortcuts();
     poll();
     emit changed();
+    return true;
 }
 QStringList ApplicationContext::profileModes(const QString &path, QString *error)
 {
@@ -324,6 +334,10 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
         return failure("Choose an available controller button.");
     if (button >= 0 && !target->getJoystick()->isGameController())
         return failure("Controller switching currently needs an SDL standard controller layout.");
+    if (button >= 0)
+        if (auto pad = qobject_cast<GameController *>(target->getJoystick()))
+            if (!pad->supportsButton(button))
+                return failure("This controller does not expose the chosen switch button.");
     UINT modifiers = 0, key = 0;
     if (!shortcutParts(rule.value("keyboard_shortcut").toString(), &modifiers, &key))
         return failure("Use a single A–Z, 0–9, or F1–F11 shortcut, optionally with Ctrl, Alt, or Shift.");
@@ -342,6 +356,7 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
     rule["keyboard_shortcut"] =
         QKeySequence::fromString(rule.value("keyboard_shortcut").toString(), QKeySequence::PortableText)
             .toString(QKeySequence::PortableText);
+    const auto previousRules = m_rules;
     bool replaced = false;
     for (int i = 0; i < m_rules.size(); ++i)
         if (m_rules.at(i).toObject().value("id").toString() == id)
@@ -356,7 +371,13 @@ QJsonObject ApplicationContext::saveRule(QJsonObject rule, const QString &expect
             return failure("The application rule limit is 100.");
         m_rules.append(rule);
     }
-    persist();
+    if (!persist())
+    {
+        m_rules = previousRules;
+        QMutexLocker lock(m_settings->getLock());
+        m_settings->setValue("TROA/ApplicationRules", QJsonDocument(m_rules).toJson(QJsonDocument::Compact));
+        return failure("The application rule could not be saved to disk. Check the settings folder permissions.");
+    }
     return rules();
 #endif
 }
@@ -367,8 +388,15 @@ QJsonObject ApplicationContext::removeRule(const QString &id, const QString &exp
     for (int i = 0; i < m_rules.size(); ++i)
         if (m_rules.at(i).toObject().value("id").toString() == id)
         {
+            const auto previousRules = m_rules;
             m_rules.removeAt(i);
-            persist();
+            if (!persist())
+            {
+                m_rules = previousRules;
+                QMutexLocker lock(m_settings->getLock());
+                m_settings->setValue("TROA/ApplicationRules", QJsonDocument(m_rules).toJson(QJsonDocument::Compact));
+                return failure("The rule could not be removed from disk. Check the settings folder permissions.");
+            }
             return rules();
         }
     return failure("Application rule not found.");
@@ -600,7 +628,12 @@ QJsonObject ApplicationContext::state() const
         QJsonArray buttons;
         if (device->isGameController())
             for (int index = 0; index < device->getActiveSetJoystick()->getNumberButtons(); ++index)
+            {
+                if (auto pad = qobject_cast<GameController *>(device))
+                    if (!pad->supportsButton(index))
+                        continue;
                 buttons.append(QJsonObject{{"index", index}, {"name", controllerButtonName(device, index)}});
+            }
         const bool matches =
             !rule.isEmpty() && canonical(tab->currentProfilePath()) == canonical(rule.value("profile_path").toString());
         QString message =

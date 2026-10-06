@@ -9,6 +9,8 @@
 
 class AntiMicroSettings;
 class QComboBox;
+class QBoxLayout;
+class QResizeEvent;
 class QLabel;
 class QListWidget;
 class QLineEdit;
@@ -36,6 +38,7 @@ class ModernShell : public QWidget
     static QIcon controllerIcon();
 
   private:
+    void resizeEvent(QResizeEvent *event) override;
     QWidget *startPage();
     QWidget *libraryPage();
     QWidget *assistantPage();
@@ -69,6 +72,8 @@ class ModernShell : public QWidget
     QComboBox *m_controller = nullptr;
     QComboBox *m_layout = nullptr;
     QLabel *m_status = nullptr;
+    QLabel *m_homeFocus = nullptr;
+    QTableWidget *m_homeControllers = nullptr;
     QLabel *m_startStatus = nullptr;
     QLabel *m_startDetail = nullptr;
     QLabel *m_mcpStatus = nullptr;
@@ -80,5 +85,6 @@ class ModernShell : public QWidget
     QNetworkReply *m_catalogReply = nullptr;
     QPushButton *m_updateProfiles = nullptr;
     QLabel *m_catalogStatus = nullptr;
+    QBoxLayout *m_librarySplit = nullptr;
 };
 } // namespace Troa

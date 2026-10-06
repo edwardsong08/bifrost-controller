@@ -412,46 +412,18 @@ int main(int argc, char *argv[])
         appLogger->setCurrentLogFile(settings.value("LogFile").toString());
     }
 
-    QString targetLang = QLocale::system().name();
-
+    // The Bifrost release is English-only; retire prior language preferences.
     if (settings.contains("Language"))
     {
-        targetLang = settings.value("Language").toString();
+        settings.remove("Language");
+        settings.sync();
     }
-
     QTranslator qtTranslator;
-
-#if defined(Q_OS_UNIX)
-    // Ensure that the Wayland appId matches the .desktop file name
-    QGuiApplication::setDesktopFileName("io.github.antimicrox.antimicrox");
-
-    installSignalHandlers();
-
-    QString transPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-
-    if (QDir(transPath).entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries).count() == 0)
-    {
-        qtTranslator.load(QString("qt_").append(targetLang), "/app/share/antimicrox/translations");
-    } else
-    {
-        qtTranslator.load(QString("qt_").append(targetLang), transPath);
-    }
-
-#endif
-    antimicrox.installTranslator(&qtTranslator);
-
     QTranslator myappTranslator;
-
-    if (QDir("/app/share/antimicrox").entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries).count() > 0)
-    {
-        myappTranslator.load(QString("antimicrox_").append(targetLang), "app/share/antimicrox/translations");
-    } else
-    {
-        myappTranslator.load(QString("antimicrox_").append(targetLang),
-                             QApplication::applicationDirPath().append("/../share/antimicrox/translations"));
-    }
-
-    antimicrox.installTranslator(&myappTranslator);
+#if defined(Q_OS_UNIX)
+    QGuiApplication::setDesktopFileName("io.github.antimicrox.antimicrox");
+    installSignalHandlers();
+#endif
 
     if (cmdutility.shouldListControllers())
     {

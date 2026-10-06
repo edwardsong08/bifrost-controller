@@ -11,3 +11,5 @@
 - Use a codex/ branch for implementation work. origin is Edward's fork; upstream is the official AntiMicroX repository.
 - Distinguish the installed official release from any future locally compiled fork. Record actual build and runtime verification, including gaps.
 - Keep CONTEXT.md current and append dated work and validation notes to LOGS.md.
+- Bifrost is English-only for now. Do not reintroduce language selection or load stored language preferences.
+- Edward will download and install the next update manually from TROA. Do not replace or restart his installed app without a new request.

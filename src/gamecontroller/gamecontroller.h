@@ -94,6 +94,10 @@ class GameController : public InputDevice
     QHash<int, int> const &getDpadvalues();
 
     SDL_GameController *getController() const;
+    int touchpadCount() const { return m_touchpadCount; }
+    bool isSteam2026() const { return m_steam2026; }
+    bool supportsButton(int index) const;
+    int extraButtonForRaw(int index) const;
     virtual SDL_GameControllerType getControllerType() const override;
 
   protected slots:
@@ -110,6 +114,8 @@ class GameController : public InputDevice
     SDL_JoystickID joystickID;
     SDL_GameController *controller;
     SDL_GameControllerType m_controller_type;
+    int m_touchpadCount = 0;
+    bool m_steam2026 = false;
 
     void enableSensors();
 };

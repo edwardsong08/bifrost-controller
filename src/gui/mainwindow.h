@@ -137,7 +137,6 @@ class MainWindow : public QMainWindow
     void openWikiPage();
     void openCalibration();
     void propogateNameDisplayStatus(JoyTabWidget *tabwidget, bool displayNames);
-    void changeLanguage(QString language); // MainConfiguration class
     void openMainSettingsDialog();
     void showStickAssignmentDialog();
     void checkHideEmptyOption();
@@ -181,9 +180,11 @@ class MainWindow : public QMainWindow
     Troa::LocalApi *m_troaApi = nullptr;
     Troa::ModernShell *m_troaShell = nullptr;
     Troa::ApplicationContext *m_troaContext = nullptr;
+    void polishMenus();
 
 #ifdef CHECK_FOR_UPDATES
     QNetworkAccessManager m_network_manager; // Used for checking updates
+    void checkForUpdates(bool manual = false);
     void networkManagerFinished(QNetworkReply *reply);
     void updateButtonPressed();
 #endif

@@ -165,3 +165,22 @@
 - Updated visible app/installer identity, executable/MCP names, repository/update URLs, README, and current context. Historical records retain the earlier temporary name.
 - Kept preview settings/data locations and TROA setting keys compatible so existing personal profiles and revisions remain intact. TROA artwork and the site/Bifrost palette remain.
 - Renamed personal fork / new Windows package compilation and installation are pending. Repository ownership/access and upstream attribution remain unchanged; no Server Manager integration or site release is claimed.
+
+## 2026-10-06 - Source audit, task-based workspace and 0.1.5 preparation
+
+- Owner requested a fresh UI assessment, removal of unwanted/broken controls,
+  Settings Apply, both Steam Controller hardware models, Xbox/STO profiles, and
+  app-update popups. Latest steering makes the product English-only.
+- Implemented the workspace/state/menu/settings/save/activation corrections
+  recorded in docs/UI-AUDIT.md, including atomic native saves and false native
+  profile-load confirmation. Kept useful advanced mapping features accessible.
+- Added capability-aware inputs, raw extras, Steam touchpad directional controls,
+  managed sensor bindings and ten compatible v2 templates. Pinned official SDL3
+  and SDL2 compatibility sources in the Windows workflow; no dependency tests run.
+- Startup/six-hour release checks include previews, deduplicate automatic popups,
+  and retain manual update checking. Installer execution remains manual.
+- Actual read-only Codex MCP tools reached installed 0.1.4 and returned the
+  DualSense/STO set-1 state. No diagnostic activation or user mapping edits occurred.
+- Source formatting and Windows compile/package are next. No automated, visual,
+  hardware or game tests were added or run. App remains untouched; owner installs
+  the forthcoming public installer manually from TROA.

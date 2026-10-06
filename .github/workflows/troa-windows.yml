@@ -31,10 +31,19 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-nsis
             mingw-w64-x86_64-openssl
-      - name: SDL2 dependency
+            git
+      - name: Pinned SDL3 controller runtime and SDL2 compatibility API
         run: |
-          curl --fail --location --retry 3 -o sdl2.pkg.tar.zst https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-SDL2-2.32.10-1-any.pkg.tar.zst
-          pacman --noconfirm -U sdl2.pkg.tar.zst
+          git clone --depth 1 --branch release-3.4.18 https://github.com/libsdl-org/SDL.git .deps/SDL
+          test "$(git -C .deps/SDL rev-parse HEAD)" = "829a65d769d935c4852f8159e964312c0957260a"
+          cmake -S .deps/SDL -B .deps/SDL-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/mingw64 -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_TESTS=OFF -DSDL_TEST_LIBRARY=OFF -DSDL_EXAMPLES=OFF -DSDL_INSTALL_TESTS=OFF
+          cmake --build .deps/SDL-build --parallel 4
+          cmake --install .deps/SDL-build
+          git clone --depth 1 --branch release-2.32.74 https://github.com/libsdl-org/sdl2-compat.git .deps/sdl2-compat
+          test "$(git -C .deps/sdl2-compat rev-parse HEAD)" = "e4df8a55f20da762290a78c2bbe8f8d89d01486a"
+          cmake -S .deps/sdl2-compat -B .deps/compat-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/mingw64 -DSDL2COMPAT_TESTS=OFF -DSDL2COMPAT_INSTALL=ON -DSDL2COMPAT_INSTALL_TESTS=OFF -DSDL2COMPAT_STATIC=OFF
+          cmake --build .deps/compat-build --parallel 4
+          cmake --install .deps/compat-build
       - name: Qt 6
         uses: jurplel/install-qt-action@v4
         with:
@@ -44,7 +53,7 @@ jobs:
           arch: win64_mingw
           cache: true
       - name: Configure installer
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHECK_FOR_UPDATES=ON -DWITH_TESTS=OFF -DANTIMICROX_PKG_VERSION="Bifrost Controller Windows preview"
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCHECK_FOR_UPDATES=ON -DWITH_TESTS=OFF -DBIFROST_SDL3_COMPAT=ON -DANTIMICROX_PKG_VERSION="Bifrost Controller Windows preview"
         env:
           CMAKE_PREFIX_PATH: "${{ env.QT_ROOT_DIR }}/lib/cmake"
       - name: Compile and package installer
@@ -59,7 +68,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          git archive --format=zip --output=build/bifrost-controller-0.1.4-source.zip HEAD
+          git archive --format=zip --output=build/bifrost-controller-0.1.5-source.zip HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
           $checksums = Get-ChildItem build/bifrost-controller*.exe, build/bifrost-controller*.zip |
             Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }

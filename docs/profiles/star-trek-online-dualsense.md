@@ -8,7 +8,8 @@ No game or hardware-input tests have been performed.
 
 ## Install and select
 
-1. Install Bifrost Controller 0.1.4 or newer. Version 0.1.2 cannot download
+1. Install Bifrost Controller 0.1.5 or newer. This fixes false profile-load failure
+   feedback and applies the selected Space/Ground/Menus layout. Version 0.1.2 cannot download
    catalogs or use triggers in managed profiles; 0.1.3 has a bundled-resource
    packaging issue and must also be upgraded.
 2. In **Profiles**, press **Update profiles** or leave startup downloads enabled.

@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QLibraryInfo>
+#include <QLocale>
 #include <QReadWriteLock>
 #include <QRegularExpression>
 
@@ -123,36 +124,31 @@ QStringList parseArgumentsString(const QString &tempString)
  * @param Language code
  */
 void reloadTranslations(QTranslator *translator, QTranslator *appTranslator, const QString &language)
-{ // Remove application specific translation strings
+{
     qApp->removeTranslator(translator);
-
-    // Remove old Qt translation strings
     qApp->removeTranslator(appTranslator);
-
-// Load new Qt translation strings
-#if defined(Q_OS_UNIX)
-    translator->load(QString("qt_").append(language), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-#elif defined(Q_OS_WIN)
-    #ifdef QT_DEBUG
-    translator->load(QString("qt_").append(language), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    #else
-    translator->load(QString("qt_").append(language),
-                     QApplication::applicationDirPath().append("\\share\\qt\\translations"));
-    #endif
-#endif
-
-    qApp->installTranslator(appTranslator);
-
-// Load application specific translation strings
-#if defined(Q_OS_UNIX)
-    translator->load("antimicrox_" + language,
-                     QApplication::applicationDirPath().append("/../share/antimicrox/translations"));
-#elif defined(Q_OS_WIN)
-    translator->load("antimicrox_" + language,
-                     QApplication::applicationDirPath().append("\\share\\antimicrox\\translations"));
-#endif
-
-    qApp->installTranslator(translator);
+    const auto appDir = QApplication::applicationDirPath();
+    const QStringList qtPaths = {appDir + "/translations", appDir + "/../share/qt/translations",
+                                 QLibraryInfo::location(QLibraryInfo::TranslationsPath),
+                                 "/app/share/antimicrox/translations"};
+    bool qtLoaded = false;
+    for (const auto &directory : qtPaths)
+    {
+        qtLoaded = translator->load(QLocale(language), "qtbase", "_", directory) ||
+                   translator->load(QLocale(language), "qt", "_", directory);
+        if (qtLoaded)
+            break;
+    }
+    if (qtLoaded)
+        qApp->installTranslator(translator);
+    // Loading also clears the previous catalog, so English/system fallback cannot retain old text.
+    const bool appLoaded =
+        appTranslator->load(QLocale(language), "antimicrox", "_", appDir + "/../share/antimicrox/translations") ||
+        appTranslator->load(QLocale(language), "antimicrox", "_", "/app/share/antimicrox/translations");
+    if (appLoaded)
+        qApp->installTranslator(appTranslator);
+    else if (!language.startsWith("en"))
+        qWarning() << "No mapping-tool translation for" << language << "; using English.";
 }
 
 void lockInputDevices() { sdlWaitMutex.lock(); }

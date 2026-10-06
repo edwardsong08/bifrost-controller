@@ -25,6 +25,7 @@
 #include "inputdevice.h"
 #include "joycontrolstick.h"
 #include "joysensor.h"
+#include "troa/controllersupport.h"
 #include "xml/joyaxisxml.h"
 #include "xml/joybuttonxml.h"
 #include "xml/joydpadxml.h"
@@ -80,6 +81,15 @@ void GameControllerSet::populateSticksDPad()
     stick2->setDefaultStickName("R Stick");
     addControlStick(1, stick2);
 
+    auto controller = qobject_cast<GameController *>(getInputDevice());
+    for (int pad = 0; pad < controller->touchpadCount(); ++pad)
+    {
+        auto touchpad = new JoyControlStick(getJoyAxis(Troa::TouchpadAxisBase + pad * 2),
+                                            getJoyAxis(Troa::TouchpadAxisBase + pad * 2 + 1), pad + 2, getIndex(), this);
+        touchpad->setDefaultStickName(pad == 0 ? "Left touchpad" : "Right touchpad");
+        addControlStick(pad + 2, touchpad);
+    }
+
     // Assign DPad buttons as a virtual DPad. Allows rougelike controls
     // to be assigned.
     JoyButton *buttonUp = getJoyButton(SDL_CONTROLLER_BUTTON_DPAD_UP);
@@ -107,6 +117,14 @@ void GameControllerSet::populateSticksDPad()
     // Give default names to triggers
     getJoyAxis(SDL_CONTROLLER_AXIS_TRIGGERLEFT)->setDefaultAxisName(tr("L Trigger"));
     getJoyAxis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT)->setDefaultAxisName(tr("R Trigger"));
+    const auto family = Troa::controllerFamily(controller);
+    for (int i = 0; i < controller->getNumberRawButtons(); ++i)
+        if (controller->supportsButton(i))
+            getJoyButton(i)->setDefaultButtonName(Troa::inputName(Troa::buttonInput(i), family));
+    getJoyAxis(SDL_CONTROLLER_AXIS_TRIGGERLEFT)->setDefaultAxisName(Troa::inputName("left_trigger", family));
+    getJoyAxis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT)->setDefaultAxisName(Troa::inputName("right_trigger", family));
+    if (family == "steam-2015")
+        stick2->setDefaultStickName("Right touchpad / legacy stick output");
 }
 
 template <typename T> void readConf(T *x, QXmlStreamReader *xml)

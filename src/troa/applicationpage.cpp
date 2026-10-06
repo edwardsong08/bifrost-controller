@@ -32,6 +32,8 @@ QLabel *text(const QString &value, const char *role = "body")
     label->setTextFormat(Qt::PlainText);
     label->setWordWrap(true);
     label->setProperty("role", role);
+    label->setMinimumWidth(0);
+    label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     return label;
 }
 QTableWidget *table(const QStringList &columns)
@@ -40,6 +42,9 @@ QTableWidget *table(const QStringList &columns)
     widget->setHorizontalHeaderLabels(columns);
     widget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     widget->horizontalHeader()->setStretchLastSection(true);
+    widget->horizontalHeader()->setMaximumSectionSize(260);
+    widget->setMinimumWidth(0);
+    widget->setShowGrid(false);
     widget->verticalHeader()->hide();
     widget->setSelectionBehavior(QAbstractItemView::SelectRows);
     widget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -62,7 +67,7 @@ ApplicationPage::ApplicationPage(ApplicationContext *context, AntiMicroSettings 
     auto layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(14);
-    layout->addWidget(text("Applications & layouts", "section"));
+    layout->addWidget(text("App rules", "section"));
     layout->addWidget(text("Pick a profile for each application. Within a game, switch named layouts such as Space and "
                            "Ground using a keyboard shortcut or an unused controller button.",
                            "muted"));
@@ -95,7 +100,7 @@ ApplicationPage::ApplicationPage(ApplicationContext *context, AntiMicroSettings 
     m_feedback = text("", "success");
     m_feedback->hide();
     layout->addWidget(m_feedback);
-    layout->addWidget(text("Layouts use the profile's eight mapping sets. Configure the actions under Controllers, then "
+    layout->addWidget(text("Layouts use the profile's eight mapping sets. Configure the actions under Map controls, then "
                            "save the .amgp profile. A switch button must be unassigned in every selected layout. "
                            "Applications with no rule keep the current profile; this is shown above.",
                            "muted"));
@@ -120,6 +125,8 @@ ApplicationPage::ApplicationPage(ApplicationContext *context, AntiMicroSettings 
         settings->setValue("TROA/NotificationDisplay", display->currentData().toString());
     });
     notices->addWidget(showNotice);
+    display->setEnabled(showNotice->isChecked());
+    connect(showNotice, &QCheckBox::toggled, display, &QComboBox::setEnabled);
     notices->addWidget(display);
     notices->addStretch();
     layout->addLayout(notices);
@@ -263,6 +270,7 @@ void ApplicationPage::editRule(bool existing)
             if (value.toObject().value("controller_id").toString() == controller->currentData().toString())
                 path->setText(value.toObject().value("profile_path").toString());
     });
+    useCurrent->setEnabled(!devices.isEmpty());
     form->addRow("Application name", name);
     form->addRow("Application .exe", exeRow);
     form->addRow("Controller", controller);
@@ -270,7 +278,7 @@ void ApplicationPage::editRule(bool existing)
     root->addLayout(form);
     root->addWidget(text("Layouts to cycle through", "heading"));
     root->addWidget(text("Select the mapping sets you want and give them clear names. For example, set 1 = Space and set 2 "
-                         "= Ground. The actions are edited under Controllers.",
+                         "= Ground. The actions are edited under Map controls.",
                          "muted"));
     auto modesGrid = new QGridLayout;
     QList<QCheckBox *> enabled;

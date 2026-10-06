@@ -61,7 +61,7 @@ endif(NOT COMPILER_IS_MSVC)
 # The version number.
 set(ANTIMICROX_MAJOR_VERSION 0)
 set(ANTIMICROX_MINOR_VERSION 1)
-set(ANTIMICROX_PATCH_VERSION 4)
+set(ANTIMICROX_PATCH_VERSION 5)
 
 if(UNIX)
     option(WITH_X11 "Compile with support for X11." ON)
@@ -560,12 +560,13 @@ else()
 endif()
 message("Found QT: ${QT_VERSION}")
 
-add_subdirectory("share/antimicrox/translations")
+# Upstream translation sources remain in the repository; Bifrost ships English only.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # SDL
-set(SDL_REQUIRED_VERSION 2.0.6)
-find_package(SDL2 REQUIRED)
+option(BIFROST_SDL3_COMPAT "Package the SDL3 physical-controller runtime behind the SDL2 API" OFF)
+set(SDL_REQUIRED_VERSION 2.0.14)
+find_package(SDL2 2.0.14 REQUIRED)
 
 # Others
 if(WITH_X11)
@@ -656,6 +657,7 @@ target_link_libraries(antimicrox
 set_target_properties(antimicrox PROPERTIES OUTPUT_NAME "bifrost-controller")
 target_sources(antimicrox PRIVATE
     src/troa/identity.h
+    src/troa/controllersupport.h src/troa/controllersupport.cpp
     src/troa/profilestore.h src/troa/profilestore.cpp
     src/troa/localapi.h src/troa/localapi.cpp
     src/troa/modernshell.h src/troa/modernshell.cpp
@@ -735,6 +737,14 @@ if(WIN32)
         )
 
     find_path(SDL2_DLL_LOCATION_DIR "SDL2.dll" HINTS "${SDL2_LIBRARY_DIRS}/../bin")
+    if(BIFROST_SDL3_COMPAT)
+        find_file(BIFROST_SDL3_DLL "SDL3.dll" HINTS "${SDL2_DLL_LOCATION_DIR}" REQUIRED)
+        list(APPEND DLL_FILES "${BIFROST_SDL3_DLL}")
+        install(FILES "${PROJECT_SOURCE_DIR}/.deps/SDL/LICENSE.txt"
+            DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/bifrost-controller/licenses" RENAME SDL3-LICENSE.txt)
+        install(FILES "${PROJECT_SOURCE_DIR}/.deps/sdl2-compat/LICENSE.txt"
+            DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/bifrost-controller/licenses" RENAME SDL2-COMPAT-LICENSE.txt)
+    endif()
 
     #these three lines assume SDL2 in standard location TODO do it better
     find_path(GCC_DLL "libgcc_s_seh-1.dll" HINTS "${SDL2_LIBRARY_DIRS}/../bin")

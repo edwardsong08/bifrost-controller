@@ -25,7 +25,7 @@ int WinExtras::originalMouseAccel = 0;
 
 static const QString ROOTASSOCIATIONKEY("HKEY_CURRENT_USER\\Software\\Classes");
 static const QString FILEASSOCIATIONKEY(QString("%1\\%2").arg(ROOTASSOCIATIONKEY).arg(".amgp"));
-static const QString PROGRAMASSOCIATIONKEY(QString("%1\\%2").arg(ROOTASSOCIATIONKEY).arg("AntiMicro.amgp"));
+static const QString PROGRAMASSOCIATIONKEY(QString("%1\\%2").arg(ROOTASSOCIATIONKEY).arg("Bifrost.Controller.amgp"));
 
 WinExtras WinExtras::_instance;
 
@@ -283,8 +283,8 @@ bool WinExtras::containsFileAssociationinRegistry()
 {
     bool result = false;
 
-    QSettings associationReg(FILEASSOCIATIONKEY, QSettings::NativeFormat);
-    QString temp = associationReg.value("Default", "").toString();
+    QSettings associationReg(PROGRAMASSOCIATIONKEY, QSettings::NativeFormat);
+    QString temp = associationReg.value("shell/open/command/Default", "").toString();
     if (!temp.isEmpty())
     {
         result = true;
@@ -293,34 +293,40 @@ bool WinExtras::containsFileAssociationinRegistry()
     return result;
 }
 
-void WinExtras::writeFileAssocationToRegistry()
+bool WinExtras::writeFileAssocationToRegistry()
 {
     QSettings fileAssociationReg(FILEASSOCIATIONKEY, QSettings::NativeFormat);
-    fileAssociationReg.setValue("Default", "AntiMicro.amgp");
+    // Register Open with support without replacing another application's default.
+    fileAssociationReg.setValue("OpenWithProgids/Bifrost.Controller.amgp", "");
+    if (fileAssociationReg.value("Default").toString().isEmpty())
+        fileAssociationReg.setValue("Default", "Bifrost.Controller.amgp");
     fileAssociationReg.sync();
 
     QSettings programAssociationReg(PROGRAMASSOCIATIONKEY, QSettings::NativeFormat);
-    programAssociationReg.setValue("Default", tr("AntiMicro Profile"));
+    programAssociationReg.setValue("Default", tr("Bifrost Controller profile"));
     programAssociationReg.setValue(
         "shell/open/command/Default",
         QString("\"%1\" \"%2\"").arg(QDir::toNativeSeparators(qApp->applicationFilePath())).arg("%1"));
     programAssociationReg.setValue("DefaultIcon/Default",
-                                   QString("%1,%2").arg(QDir::toNativeSeparators(qApp->applicationFilePath())).arg("0"));
+                                   QString("\"%1\",0").arg(QDir::toNativeSeparators(qApp->applicationFilePath())));
     programAssociationReg.sync();
 
     // Required to refresh settings used in Windows Explorer
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+    return fileAssociationReg.status() == QSettings::NoError && programAssociationReg.status() == QSettings::NoError;
 }
 
-void WinExtras::removeFileAssociationFromRegistry()
+bool WinExtras::removeFileAssociationFromRegistry()
 {
     QSettings fileAssociationReg(FILEASSOCIATIONKEY, QSettings::NativeFormat);
     QString currentValue = fileAssociationReg.value("Default", "").toString();
-    if (currentValue == "AntiMicro.amgp")
+    if (currentValue == "Bifrost.Controller.amgp")
     {
         fileAssociationReg.remove("Default");
         fileAssociationReg.sync();
     }
+    fileAssociationReg.remove("OpenWithProgids/Bifrost.Controller.amgp");
+    fileAssociationReg.sync();
 
     QSettings programAssociationReg(PROGRAMASSOCIATIONKEY, QSettings::NativeFormat);
     programAssociationReg.remove("");
@@ -328,6 +334,7 @@ void WinExtras::removeFileAssociationFromRegistry()
 
     // Required to refresh settings used in Windows Explorer
     SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);
+    return fileAssociationReg.status() == QSettings::NoError && programAssociationReg.status() == QSettings::NoError;
 }
 
 // This functions works only with QT6 and newer C++

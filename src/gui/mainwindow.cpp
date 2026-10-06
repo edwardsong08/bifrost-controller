@@ -18,15 +18,18 @@
  */
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "joysensor.h"
+#include "troa/applicationcontext.h"
+#include "troa/controllersupport.h"
 #include "troa/identity.h"
 #include "troa/localapi.h"
 #include "troa/modernshell.h"
 #include "troa/profilestore.h"
-#include "troa/applicationcontext.h"
-#include <QJsonArray>
+#include "ui_mainwindow.h"
 #include <QGuiApplication>
+#include <QJsonArray>
 #include <QKeySequence>
+#include <QThread>
 #include <QVersionNumber>
 
 #include "aboutdialog.h"
@@ -72,11 +75,12 @@
 #include <QMapIterator>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMutexLocker>
 #include <QPointer>
 #include <QRegularExpression>
 #include <QResource>
-#include <QShowEvent>
 #include <QScreen>
+#include <QShowEvent>
 #include <QTextStream>
 #include <QTranslator>
 #include <QUrl>
@@ -103,6 +107,7 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     , trayIconMenu(nullptr)
 {
     ui->setupUi(this);
+    polishMenus();
 
     setWindowIcon(Troa::ModernShell::applicationIcon());
     qApp->setWindowIcon(windowIcon());
@@ -220,17 +225,19 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
     ui->updateButton->setVisible(false);
 #ifdef CHECK_FOR_UPDATES
     connect(&m_network_manager, &QNetworkAccessManager::finished, this, &MainWindow::networkManagerFinished);
-    QNetworkRequest request(QUrl("https://api.github.com/repos/edwardsong08/bifrost-controller/releases/latest"));
-    m_network_manager.get(request);
+    checkForUpdates();
+    auto updateTimer = new QTimer(this);
+    connect(updateTimer, &QTimer::timeout, this, [this]() { checkForUpdates(); });
+    updateTimer->start(6 * 60 * 60 * 1000);
 #endif
 
-    bool notify_low = m_settings->value("Notifications/notify_about_low_battery", true).toBool();
-    bool notify_empty = m_settings->value("Notifications/notify_about_empty_battery", true).toBool();
-
-    if (notify_low || notify_empty)
     {
         QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, [this]() { this->checkEachTenMinutesBattery(m_joysticks); });
+        connect(timer, &QTimer::timeout, [this]() {
+            if (m_settings->value("Notifications/notify_about_low_battery", true).toBool() ||
+                m_settings->value("Notifications/notify_about_empty_battery", true).toBool())
+                this->checkEachTenMinutesBattery(m_joysticks);
+        });
         timer->start(CHECK_BATTERIES_MSEC);
     }
 
@@ -247,7 +254,7 @@ MainWindow::MainWindow(QMap<SDL_JoystickID, InputDevice *> *joysticks, CommandLi
         m_troaShell = new Troa::ModernShell(takeCentralWidget(), this, m_troaApi, settings, m_troaContext,
             [this](const QJsonObject &request) { return handleTroaRequest(request); });
         setCentralWidget(m_troaShell);
-        auto mcpMenu = new QMenu(tr("MCP & AI"), this);
+        auto mcpMenu = new QMenu(tr("Assistant · MCP"), this);
         ui->menuBar->insertMenu(ui->menuHelp->menuAction(), mcpMenu);
         auto setup = mcpMenu->addAction(tr("Open MCP setup"));
         setup->setShortcut(QKeySequence("Ctrl+Shift+M"));
@@ -294,12 +301,30 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
             if (!tab) continue;
             auto device = tab->getJoystick();
             const auto instance = m_joysticks->key(device, -1);
+            int availableButtons = device->getNumberButtons();
+            if (auto pad = qobject_cast<GameController *>(device))
+            {
+                availableButtons = 0;
+                for (int button = 0; button < pad->getNumberRawButtons(); ++button)
+                    if (pad->supportsButton(button))
+                        ++availableButtons;
+            }
             devices.append(QJsonObject{{"controller_id", QString("instance:%1").arg(instance)},
-                {"persistent_id", device->getStringIdentifier()}, {"name", device->getSDLName()},
-                {"guid", device->getGUIDString()}, {"standard_layout", device->isGameController()},
-                {"buttons", device->getNumberButtons()}, {"axes", device->getNumberAxes()}, {"sticks", device->getNumberSticks()},
-                {"active_profile_name", device->getProfileName()}, {"active_set", device->getActiveSetNumber() + 1},
-                {"unsaved_changes", device->isDeviceEdited()}});
+                                       {"persistent_id", device->getStringIdentifier()},
+                                       {"name", device->getSDLName()},
+                                       {"guid", device->getGUIDString()},
+                                       {"standard_layout", device->isGameController()},
+                                       {"controller_family", Troa::controllerFamily(device)},
+                                       {"available_inputs", QJsonArray::fromStringList(Troa::availableInputs(device))},
+                                       {"gyro", device->hasRawSensor(GYROSCOPE)},
+                                       {"accelerometer", device->hasRawSensor(ACCELEROMETER)},
+                                       {"buttons", availableButtons},
+                                       {"button_slots", device->getNumberButtons()},
+                                       {"axes", device->getNumberAxes()},
+                                       {"sticks", device->getNumberSticks()},
+                                       {"active_profile_name", device->getProfileName()},
+                                       {"active_set", device->getActiveSetNumber() + 1},
+                                       {"unsaved_changes", device->isDeviceEdited()}});
         }
         return {{"controllers", devices}};
     }
@@ -348,13 +373,35 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
         if (item.contains("error")) return item;
         if (arguments.value("expected_revision").toString() != item.value("revision").toString())
             return Troa::failure("Profile changed. Read it again and supply its current revision before activation.");
+        const auto profile = item.value("profile").toObject();
+        const auto compatibility = Troa::profileCompatibility(target->getJoystick(), profile);
+        if (!compatibility.isEmpty())
+            return Troa::failure(compatibility);
+        const int selectedSet = arguments.value("set").toInt(1);
+        bool layoutExists = selectedSet == 1 && profile.value("layouts").toArray().isEmpty();
+        for (const auto &layout : profile.value("layouts").toArray())
+            if (layout.toObject().value("set").toInt() == selectedSet)
+                layoutExists = true;
+        if (!layoutExists)
+            return Troa::failure("Choose a layout included in this profile.");
         const auto mapping = store.exportMapping(arguments.value("id").toString());
         if (mapping.isEmpty()) return Troa::failure("Could not compile the profile into a controller mapping.");
         if (!target->loadProfileNow(mapping)) return Troa::failure("The controller profile could not be loaded.");
         const auto activeName = target->getJoystick()->getProfileName();
         if (activeName != item.value("profile").toObject().value("name").toString())
             return Troa::failure("The profile did not become active. Check the controller mapping window.");
-        return {{"controller_id", controller}, {"active_profile_name", activeName}, {"revision", item.value("revision")}, {"applied", true}};
+        auto device = target->getJoystick();
+        QMetaObject::invokeMethod(device, "setActiveSetNumber",
+                                  device->thread() == QThread::currentThread() ? Qt::DirectConnection
+                                                                               : Qt::BlockingQueuedConnection,
+                                  Q_ARG(int, selectedSet - 1));
+        if (device->getActiveSetNumber() + 1 != selectedSet)
+            return Troa::failure("The profile loaded, but the selected layout could not be activated.");
+        return {{"controller_id", controller},
+                {"active_profile_name", activeName},
+                {"revision", item.value("revision")},
+                {"active_set", selectedSet},
+                {"applied", true}};
     }
     return Troa::failure("Unknown mapper operation.");
 }
@@ -1355,29 +1402,28 @@ void MainWindow::openMainSettingsDialog()
 {
     QList<InputDevice *> *devices = new QList<InputDevice *>(m_joysticks->values());
     MainSettingsDialog *dialog = new MainSettingsDialog(m_settings, devices, this);
-    connect(dialog, &MainSettingsDialog::changeLanguage, this, &MainWindow::changeLanguage);
 
     if (appWatcher != nullptr)
     {
 #if defined(WITH_X11)
         if (QApplication::platformName() == QStringLiteral("xcb"))
         {
-            connect(dialog, &MainSettingsDialog::accepted, appWatcher, &AutoProfileWatcher::syncProfileAssignment);
+            connect(dialog, &MainSettingsDialog::settingsApplied, appWatcher, &AutoProfileWatcher::syncProfileAssignment);
             connect(dialog, &MainSettingsDialog::accepted, this, &MainWindow::checkAutoProfileWatcherTimer);
             connect(dialog, &MainSettingsDialog::rejected, this, &MainWindow::checkAutoProfileWatcherTimer);
             appWatcher->stopTimer();
             qDebug() << "Stopping appWatcher in openMainSettingsDialog";
         }
 #elif defined(Q_OS_WIN)
-        connect(dialog, &MainSettingsDialog::accepted, appWatcher, &AutoProfileWatcher::syncProfileAssignment);
+        connect(dialog, &MainSettingsDialog::settingsApplied, appWatcher, &AutoProfileWatcher::syncProfileAssignment);
         connect(dialog, &MainSettingsDialog::accepted, this, &MainWindow::checkAutoProfileWatcherTimer);
         connect(dialog, &MainSettingsDialog::rejected, this, &MainWindow::checkAutoProfileWatcherTimer);
         appWatcher->stopTimer();
 #endif
     }
 
-    connect(dialog, &MainSettingsDialog::accepted, this, &MainWindow::populateTrayIcon);
-    connect(dialog, &MainSettingsDialog::accepted, this, &MainWindow::checkHideEmptyOption);
+    connect(dialog, &MainSettingsDialog::settingsApplied, this, &MainWindow::populateTrayIcon);
+    connect(dialog, &MainSettingsDialog::settingsApplied, this, &MainWindow::checkHideEmptyOption);
 
     dialog->show();
 }
@@ -1386,14 +1432,6 @@ void MainWindow::openMainSettingsDialog()
  * @brief Change language used by the application.
  * @param Language code
  */
-void MainWindow::changeLanguage(QString language)
-{
-    if ((m_translator != nullptr) && (m_appTranslator != nullptr))
-    {
-        PadderCommon::reloadTranslations(m_translator, m_appTranslator, language);
-    }
-}
-
 /**
  * @brief Check if the program should really quit or if it should
  *     be minimized.
@@ -1827,37 +1865,104 @@ void MainWindow::showBatteryLevel(SDL_JoystickPowerLevel powerLevSDL, QString ba
 }
 
 #ifdef CHECK_FOR_UPDATES
+void MainWindow::checkForUpdates(bool manual)
+{
+    if (!m_network_manager.findChildren<QNetworkReply *>().isEmpty())
+        return;
+    if (auto action = findChild<QAction *>("bifrostCheckUpdates"))
+        action->setEnabled(false);
+    QNetworkRequest request(QUrl("https://api.github.com/repos/edwardsong08/bifrost-controller/releases?per_page=10"));
+    request.setRawHeader("User-Agent", "Bifrost-Controller-Updates");
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+    auto reply = m_network_manager.get(request);
+    reply->setProperty("manual", manual);
+    reply->setReadBufferSize(256 * 1024 + 1);
+    QTimer::singleShot(15000, reply, [reply]() {
+        if (!reply->isFinished())
+            reply->abort();
+    });
+    connect(reply, &QNetworkReply::readyRead, this, [reply]() {
+        auto bytes = reply->property("release_bytes").toByteArray();
+        bytes += reply->readAll();
+        reply->setProperty("release_bytes", bytes);
+        if (bytes.size() > 256 * 1024)
+            reply->abort();
+    });
+}
 void MainWindow::networkManagerFinished(QNetworkReply *reply)
 {
-    int status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (status_code != 200)
+    if (auto action = findChild<QAction *>("bifrostCheckUpdates"))
+        action->setEnabled(true);
+    const bool manual = reply->property("manual").toBool();
+    const auto bytes = reply->property("release_bytes").toByteArray() + reply->readAll();
+    const bool success = reply->error() == QNetworkReply::NoError &&
+                         reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 200 &&
+                         bytes.size() <= 256 * 1024;
+    reply->deleteLater();
+    if (!success)
     {
-        WARN() << "Invalid REST response status code: " << status_code;
-        VERBOSE() << "Supports SSL: " << (QSslSocket::supportsSsl() ? "true " : "false ")
-                  << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
-        reply->deleteLater();
+        if (manual)
+            QMessageBox::warning(
+                this, "App updates",
+                "Could not check for app updates. Your installation and profiles are unchanged. Try again when online.");
         return;
     }
-    QJsonDocument json = QJsonDocument::fromJson(reply->readAll());
-    QJsonObject doc = json.object();
-    QString latest_version = doc["tag_name"].toString().split("-")[0]; // remove notes from versions like 3.2.1-debug
-    reply->deleteLater();
-    if (latest_version.startsWith('v')) latest_version.remove(0, 1);
-    DEBUG() << "Latest version: " << latest_version << " Installed version: " << PadderCommon::programVersion;
-    if (QVersionNumber::compare(QVersionNumber::fromString(latest_version),
-                               QVersionNumber::fromString(PadderCommon::programVersion)) > 0)
+    const auto json = QJsonDocument::fromJson(bytes);
+    QVersionNumber newest;
+    for (const auto &value : json.array())
     {
-        INFO() << "Update to: " << latest_version << " is available.";
+        const auto release = value.toObject();
+        const auto tag = release.value("tag_name").toString();
+        if (release.value("draft").toBool() ||
+            !QRegularExpression("^v[0-9]+\\.[0-9]+\\.[0-9]+(?:-preview)?$").match(tag).hasMatch())
+            continue;
+        const auto version = QVersionNumber::fromString(tag.mid(1));
+        if (QVersionNumber::compare(version, newest) > 0)
+            newest = version;
+    }
+    if (newest.isNull())
+    {
+        if (manual)
+            QMessageBox::warning(
+                this, "App updates",
+                "No usable Windows release information was returned. You can download updates from the TROA site.");
+        return;
+    }
+    if (QVersionNumber::compare(newest, QVersionNumber::fromString(PadderCommon::programVersion)) > 0)
+    {
         ui->updateButton->setVisible(true);
-        ui->updateButton->setText(tr("Update to %1 available").arg(latest_version));
-        connect(ui->updateButton, &QPushButton::clicked, this, &MainWindow::updateButtonPressed);
+        ui->updateButton->setText(tr("Download Bifrost %1").arg(newest.toString()));
+        connect(ui->updateButton, &QPushButton::clicked, this, &MainWindow::updateButtonPressed, Qt::UniqueConnection);
+        bool notify = manual;
+        {
+            QMutexLocker lock(m_settings->getLock());
+            if (m_settings->value("TROA/LastNotifiedAppVersion").toString() != newest.toString())
+            {
+                notify = true;
+                m_settings->setValue("TROA/LastNotifiedAppVersion", newest.toString());
+                m_settings->sync();
+            }
+        }
+        if (notify &&
+            QMessageBox::question(this, "Bifrost update available",
+                                  QString("Bifrost Controller %1 is available. Open the TROA download page?\n\nInstall "
+                                          "updates manually over your current installation; your saved profiles stay in "
+                                          "place. Community templates update separately in Profile library.")
+                                      .arg(newest.toString()),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+            updateButtonPressed();
+    } else if (manual)
+    {
+        QMessageBox::information(this, "App updates",
+                                 "You have the latest published Bifrost Controller version. Use Profile library > Update "
+                                 "profiles for community templates.");
     }
 }
 
 void MainWindow::updateButtonPressed()
 {
     INFO() << "Opening update website";
-    QDesktopServices::openUrl(QUrl(Troa::projectUrl() + "/releases/latest"));
+    QDesktopServices::openUrl(QUrl("https://therealmsofasgard.com/gaming-hub/bifrost-controller#install"));
 }
 
 #endif
@@ -1940,6 +2045,60 @@ void MainWindow::retranslateUi()
     ui->retranslateUi(this);
     setWindowTitle(Troa::name());
     ui->label->setText(tr("Connect a controller to get started.\nUse Rescan controllers if your device does not appear automatically."));
+    polishMenus();
+}
+
+void MainWindow::polishMenus()
+{
+    ui->menuQuit->setTitle("&Bifrost");
+    ui->menuOptions->setTitle("&Controllers");
+    ui->menuQuit->clear();
+    ui->actionOptions->setText("Settings…");
+    ui->actionOptions->setShortcut(QKeySequence("Ctrl+,"));
+    ui->menuQuit->addAction(ui->actionOptions);
+#ifdef CHECK_FOR_UPDATES
+    auto updates = findChild<QAction *>("bifrostCheckUpdates");
+    if (!updates)
+    {
+        updates = new QAction("Check for app updates…", this);
+        updates->setObjectName("bifrostCheckUpdates");
+        connect(updates, &QAction::triggered, this, [this]() { checkForUpdates(true); });
+    }
+    ui->menuQuit->addAction(updates);
+#endif
+    ui->menuQuit->addSeparator();
+    ui->menuQuit->addAction(ui->actionHide);
+    ui->menuQuit->addAction(ui->actionQuit);
+    ui->menuOptions->clear();
+    ui->actionUpdate_Joysticks->setText("Rescan controllers");
+    ui->actionUpdate_Joysticks->setShortcut(QKeySequence("Ctrl+Shift+R"));
+    ui->menuOptions->addAction(ui->actionUpdate_Joysticks);
+    ui->menuOptions->addSeparator();
+    ui->actionProperties->setText("Controller information…");
+    ui->actionProperties->setShortcut(QKeySequence());
+    ui->actionCalibration->setText("Calibrate controller…");
+    ui->actionCalibration->setShortcut(QKeySequence());
+    ui->actionKeyValue->setText("Keyboard key checker…");
+    ui->actionKeyValue->setShortcut(QKeySequence());
+    ui->menuOptions->addAction(ui->actionProperties);
+    ui->menuOptions->addAction(ui->actionCalibration);
+    ui->menuOptions->addSeparator();
+    ui->menuOptions->addAction(ui->actionKeyValue);
+    ui->actionGitHubPage->setText("Source code on GitHub");
+    ui->actionIssues->setText("Report a problem");
+    ui->actionWiki->setText("Mapping reference (AntiMicroX)");
+    for (auto action : {ui->actionGitHubPage, ui->actionIssues, ui->actionWiki, ui->actionAbout, ui->actionAbout_Qt})
+        action->setShortcut(QKeySequence());
+    if (!findChild<QAction *>("bifrostQuickStart"))
+    {
+        auto guide = new QAction("Bifrost quick start", this);
+        guide->setObjectName("bifrostQuickStart");
+        connect(guide, &QAction::triggered, this, []() {
+            QDesktopServices::openUrl(QUrl("https://therealmsofasgard.com/gaming-hub/bifrost-controller#install"));
+        });
+        ui->menuHelp->insertAction(ui->actionGitHubPage, guide);
+        ui->menuHelp->insertSeparator(ui->actionGitHubPage);
+    }
 }
 
 void MainWindow::refreshTabHelperThreads()

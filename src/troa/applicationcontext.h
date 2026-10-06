@@ -42,7 +42,7 @@ class ApplicationContext : public QObject, public QAbstractNativeEventFilter
   private:
     QJsonObject matchingRule(const QString &controller) const;
     QString revision() const;
-    void persist();
+    bool persist();
     void registerShortcuts();
     QString cycle(InputDevice *device, const QJsonObject &rule, bool controllerButton);
     void watch(JoyTabWidget *tab);

@@ -8,6 +8,7 @@ Build/
 repo/
 docs/*
 !docs/MCP.md
+!docs/UI-AUDIT.md
 !docs/profiles/
 docs/profiles/*
 !docs/profiles/star-trek-online-dualsense.md
@@ -15,6 +16,7 @@ docs/profiles/*
 # Local tooling and artifacts
 .tools/
 distribution/
+.deps/
 
 # Changelogs
 src/Changelog
