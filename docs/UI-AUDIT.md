@@ -83,3 +83,21 @@ Website PR #103 merged at 79fcea2faf10e2c93cbd150b3bd60165f189b947. At 2026-10-0
 the live page reported 0.1.5 and TROA's public download endpoint delivered HTTP 200
 with the exact installer bytes/hash. This verifies distribution, not new native
 UI/controller/gameplay acceptance. Edward's installed 0.1.4 app was not replaced.
+
+## 0.1.6 template regression correction
+
+The owner reported only Desktop/Browser in 0.1.5. Actual MCP read returned
+`Space: Unknown profile field: controller_family`. The final allowlist omitted
+a field checked earlier in validation. Accept that field, retain value/model
+checks, and show the exact ID/validation reason when a catalog is rejected.
+The legacy v1 catalog omits newer metadata for older client compatibility.
+
+0.1.6 compile/package succeeded from ec7955aa5d701172b01838c0f431fea0fcfc2e59
+in Windows Actions 37432156127 (artifact 11398151009), tests disabled.
+Published v0.1.6-preview includes installer, portable app, exact source and hashes.
+Installer: 17,813,326 bytes, SHA256 6ce203eaa13dba26947e695df721874c496dc54782cd5007186a02c07623b1ba.
+Source archive matches the build commit; static runtime/import/license inspection
+passed. Website PR #104 merged at 05356458aeb57752cd3e7d299f8d252bb30d8220. At 2026-10-06T08:05:09.792565+00:00,
+public page and TROA download readback confirmed 0.1.6 and the exact installer bytes.
+This verifies distribution. Owner manually installs; the running 0.1.5 app has not
+been replaced or restarted. No automated, visual, hardware or gameplay tests ran.

@@ -13,7 +13,16 @@ rejected, and catalog download fails atomically. Actual MCP read of the STO temp
 reports Unknown profile field: controller_family. Fix the allowed-field set and
 report the exact template/validation error for future rejected downloads. Preserve
 strict unknown-field rejection, atomic catalog persistence and controller-model
-compatibility. Prepare 0.1.6 installer; build/publication/site delivery are pending.
+compatibility. 0.1.6 compile/package succeeded from ec7955aa5d701172b01838c0f431fea0fcfc2e59
+in Windows Actions 37432156127 (artifact 11398151009), tests disabled.
+Published v0.1.6-preview includes installer, portable app, exact source and hashes.
+Installer: 17,813,326 bytes, SHA256 6ce203eaa13dba26947e695df721874c496dc54782cd5007186a02c07623b1ba.
+Source archive matches the build commit; static runtime/import/license inspection
+passed. Website PR #104 merged at 05356458aeb57752cd3e7d299f8d252bb30d8220. At 2026-10-06T08:05:09.792565+00:00,
+public page and TROA download readback confirmed 0.1.6 and the exact installer bytes.
+This verifies distribution. Owner manually installs; the running 0.1.5 app has not
+been replaced or restarted. No automated, visual, hardware or gameplay tests ran.
+
 No automated, visual, hardware or gameplay tests are authorized. Do not install or
 restart the owner's app; he upgrades manually. Native PR #1 remains draft.
 
