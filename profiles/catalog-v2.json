@@ -237,7 +237,7 @@
     "schema_version": 1,
     "id": "builtin-sto-dualsense",
     "name": "Star Trek Online - PS5-style (PC)",
-    "description": "DualSense starting template for default PC keyboard bindings. Layout 1 Space, 2 Ground, 3 Menus. This is console-inspired, not the console UI: no ability wheels or conditional power automation. Ground: Cross jumps; D-pad Up interacts. Hold L2 for ground camera drag, R3 for space camera drag, while moving the right stick. Ability buttons use numbered PC tray slots: arrange your powers to match the labels. Add an Applications rule for GameClient.exe and reserve Create (SDL button 4) to cycle these layouts; the template leaves Create unassigned. PC camera, pitch and keybind settings can differ. No game/hardware testing performed.",
+    "description": "DualSense starting template for default PC keyboard bindings. Layout 1 Space, 2 Ground, 3 Menus. This is console-inspired, not the console UI: no ability wheels or conditional power automation. Ground: Cross jumps; Circle and D-pad Up interact; R3 is unassigned. Left stick moves; right stick moves the mouse pointer. Hold L2 for ground camera drag, R3 for space camera drag, while moving the right stick. Ability buttons use numbered PC tray slots: arrange your powers to match the labels. Add an Applications rule for GameClient.exe and reserve Create (SDL button 4) to cycle these layouts; the template leaves Create unassigned. PC camera, pitch and keybind settings can differ. No game/hardware testing performed.",
     "category": "game",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -414,9 +414,9 @@
           },
           {
             "input": "b",
-            "label": "Melee / tray 1 slot 3",
+            "label": "Interact",
             "keys": [
-              "3"
+              "F"
             ]
           },
           {
@@ -471,13 +471,6 @@
             "label": "Hold to sprint",
             "keys": [
               "Shift"
-            ]
-          },
-          {
-            "input": "right_stick_press",
-            "label": "Crouch",
-            "keys": [
-              "C"
             ]
           },
           {

@@ -81,6 +81,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     verticalLayout = new QVBoxLayout(this);
     verticalLayout->setContentsMargins(4, 4, 4, 4);
+    mappingSummary = new QLabel(this);
+    mappingSummary->setTextFormat(Qt::PlainText);
+    mappingSummary->setWordWrap(true);
+    mappingSummary->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     configHorizontalLayout = new QHBoxLayout();
     configBox = new QComboBox(this);
@@ -152,6 +156,7 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     configHorizontalLayout->addWidget(profileTools);
 
     verticalLayout->addLayout(configHorizontalLayout);
+    verticalLayout->addWidget(mappingSummary);
     verticalLayout->setStretchFactor(configHorizontalLayout, 1);
 
     spacer2 = new QSpacerItem(20, 5, QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -542,6 +547,8 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     connect(this, &JoyTabWidget::joystickConfigChanged, this, &JoyTabWidget::refreshSetButtons);
     connect(this, &JoyTabWidget::joystickConfigChanged, this, &JoyTabWidget::refreshCopySetActions);
     connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::displayProfileEditNotification);
+    connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
+    connect(joystick, &InputDevice::profileNameEdited, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
 
     connect(joystick, &InputDevice::requestProfileLoad, this, &JoyTabWidget::loadConfigFile, Qt::QueuedConnection);
 
@@ -1382,6 +1389,7 @@ void JoyTabWidget::changeCurrentSet(int index)
         activeSetButton->style()->unpolish(activeSetButton);
         activeSetButton->style()->polish(activeSetButton);
     }
+    refreshMappingSummary();
 }
 
 void JoyTabWidget::changeSetOne() { m_joystick->setActiveSetNumber(0); }
@@ -1605,6 +1613,38 @@ void JoyTabWidget::refreshSetButtons()
             tempSetAction->setText(tr("Layout").append(" %1").arg(i + 1));
         }
     }
+    refreshMappingSummary();
+}
+
+void JoyTabWidget::refreshMappingSummary()
+{
+    const auto set = m_joystick->getActiveSetJoystick();
+    if (!set)
+        return;
+    const auto profile = m_joystick->getProfileName();
+    QStringList lines;
+    lines.append(tr("Active mapping: %1 · Layout: %2")
+                     .arg(profile.isEmpty() ? tr("Unsaved mapping") : profile)
+                     .arg(set->getName().isEmpty() ? QString::number(set->getIndex() + 1) : set->getName()));
+    const JoyControlStick::JoyStickDirections directions[] = {JoyControlStick::StickUp, JoyControlStick::StickRight,
+                                                              JoyControlStick::StickDown, JoyControlStick::StickLeft};
+    for (int index = 0; index < 2; ++index)
+    {
+        const auto stick = set->getJoyStick(index);
+        if (!stick)
+            continue;
+        QStringList assignments;
+        for (const auto direction : directions)
+        {
+            const auto button = stick->getDirectionButton(direction);
+            assignments.append(button && !button->getAssignedSlots()->isEmpty() ? button->getSlotsSummary()
+                                                                                : tr("Unassigned"));
+        }
+        lines.append(tr("%1 — Up: %2 · Right: %3 · Down: %4 · Left: %5")
+                         .arg(index == 0 ? tr("Left stick") : tr("Right stick"))
+                         .arg(assignments.at(0), assignments.at(1), assignments.at(2), assignments.at(3)));
+    }
+    mappingSummary->setText(lines.join('\n'));
 }
 
 void JoyTabWidget::displayProfileEditNotification()

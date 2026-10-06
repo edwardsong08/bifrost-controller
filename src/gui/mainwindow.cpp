@@ -402,6 +402,7 @@ QJsonObject MainWindow::handleTroaRequest(const QJsonObject &request)
                                   Q_ARG(int, selectedSet - 1));
         if (device->getActiveSetNumber() + 1 != selectedSet)
             return Troa::failure("The profile loaded, but the selected layout could not be activated.");
+        target->changeCurrentSet(selectedSet - 1);
         return {{"controller_id", controller},
                 {"active_profile_name", activeName},
                 {"revision", item.value("revision")},

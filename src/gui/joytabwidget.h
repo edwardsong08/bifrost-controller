@@ -151,6 +151,7 @@ class JoyTabWidget : public QWidget
     void performSetCopy();        // JoyTabWidgetSets class
     void disableCopyCurrentSet(); // JoyTabWidgetSets class
     void refreshSetButtons();     // JoyTabWidgetSets class
+    void refreshMappingSummary();
     void openGameControllerMappingWindow();
     void propogateMappingUpdate(QString mapping, InputDevice *device);
 
@@ -158,6 +159,7 @@ class JoyTabWidget : public QWidget
     QVBoxLayout *verticalLayout;
     QHBoxLayout *configHorizontalLayout;
     QLabel *batteryIcon;
+    QLabel *mappingSummary;
     QPushButton *removeButton;
     QPushButton *loadButton;
     QPushButton *saveButton;

@@ -8,7 +8,7 @@ No game or hardware-input tests have been performed.
 
 ## Install and select
 
-1. Install Bifrost Controller 0.1.5 or newer. This fixes false profile-load failure
+1. Install Bifrost Controller 0.1.8 or newer. This corrects stick directions and fixes false profile-load failure
    feedback and applies the selected Space/Ground/Menus layout. Version 0.1.2 cannot download
    catalogs or use triggers in managed profiles; 0.1.3 has a bundled-resource
    packaging issue and must also be upgraded.
@@ -43,11 +43,11 @@ settings, game preferences or account bindings for you.
 | L1 | Ship/item shortcut / slot 5 | Captain shortcut / slot 5 | Scroll up |
 | L2 | Captain shortcut / slot 6 | Camera drag (right mouse) | Right click |
 | Cross | Interact (F) | Jump (Space) | Left click |
-| Circle | Tactical shortcut / slot 3 | Melee / slot 3 | Cancel |
+| Circle | Tactical shortcut / slot 3 | Interact (F) | Cancel |
 | Square | Science shortcut / slot 1 | Kit/item shortcut / slot 4 | Interact |
 | Triangle | Engineering shortcut / slot 2 | Swap weapon (Z) | Map (M) |
 | L3 | Distribute shields (Delete) | Hold to sprint (Shift) | Enter |
-| R3 | Hold for camera drag | Crouch (C) | Tab |
+| R3 | Hold for camera drag | Unassigned | Tab |
 | D-pad Up / Down | Throttle + / - (E / Q) | Interact / holster (F / H) | Arrow navigation |
 | D-pad Left / Right | Scan / next target (V / Tab) | Scan / next target (V / Tab) | Arrow navigation |
 | Options | Escape | Escape | Escape |
@@ -59,12 +59,20 @@ not automatically discover powers. Ground RPG/Shooter settings and ship pitch
 inversion can change the expected actions. Check the game's Controls/Key Binds
 screen before relying on these assumptions; adjust a personal copy as needed.
 
+After updating from 0.1.7 or earlier, select the template again and press **Use
+this profile** to regenerate the mapping. Catalog refreshes do not overwrite your
+active or saved mapping files. Re-export/re-save the corrected mapping for any
+existing App rule. In **Map controls**, the active profile/layout banner and actual
+left/right stick direction summaries come from the loaded native mapping. Choose
+**Ground** there to inspect ground controls; changing the library preview alone
+does not switch the active controller layout.
+
 ## Differences from PlayStation STO
 
 - Console radial menus and its redesigned HUD belong to the game. This template
   cannot add them to the PC version or automate powers based on health/cooldowns.
 - Cross cannot conditionally choose jump versus interact; use Ground D-pad Up
-  for interact and Cross for jump. Ground R3 crouches; it does not infer a roll.
+  or Circle for interact and Cross for jump. Ground R3 is unassigned; no crouch binding.
 - Camera dragging is a PC mouse approximation. Native analog steering, console
   target-camera behavior, contextual input and touchpad gestures are not promised.
 - Abilities use explicit tray slots; hold-to-open wheels and contextual captain

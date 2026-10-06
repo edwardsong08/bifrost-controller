@@ -2,6 +2,7 @@
 #include "profilestore.h"
 #include "controllersupport.h"
 #include "identity.h"
+#include "joycontrolstickdirectionstype.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -19,6 +20,9 @@
 namespace {
 const QStringList buttons = Troa::buttonInputs();
 const QStringList directions = {"up", "right", "down", "left"};
+// Stick directions are ordinal positions around a compass, unlike D-pad bit masks.
+const int stickDirections[] = {JoyStickDirectionsType::StickUp, JoyStickDirectionsType::StickRight,
+                               JoyStickDirectionsType::StickDown, JoyStickDirectionsType::StickLeft};
 const QMap<QString, int> keys = {{"Enter", Qt::Key_Return},
                                  {"Escape", Qt::Key_Escape},
                                  {"Space", Qt::Key_Space},
@@ -508,7 +512,7 @@ QString ProfileStore::exportMapping(const QString &id) const
                 const auto input = prefixes.at(stick) + directions.at(direction);
                 for (const auto &value : bindings)
                     if (value.toObject().value("input").toString() == input)
-                        bindingXml(xml, value.toObject(), "stickbutton", 1 << direction);
+                        bindingXml(xml, value.toObject(), "stickbutton", stickDirections[direction]);
             }
             xml.writeEndElement();
         }

@@ -276,3 +276,22 @@ no automated, visual, installer execution, hardware or gameplay tests ran.
 Native PR #1 remains a draft and unmerged. Manual upgrade normally requires no
 uninstall; Codex may stay open. Legacy Close-to-tray may need Bifrost > Quit once.
 Old payloads remain retained; stable launchers must never be overwritten in place.
+
+## 2026-10-06 - 0.1.8 template and native-map consistency
+
+Owner requested DualSense STO Ground Circle -> F/Interact and no crouch binding.
+Update both downloadable catalogs and the bundled v2 template; Ground R3 becomes
+unassigned. Keep Space and Menus controls unchanged. Actual read-only MCP showed
+the owner's 0.1.7 DualSense using STO Space with no unsaved changes or App rules.
+Source/native XML inspection found a compiler bug: stickbutton indices used D-pad
+bit masks 1/2/4/8, but native sticks require compass ordinals 1/3/5/7. This affected
+all managed stick/touchpad templates and explains diagonal/wrong/absent assignments.
+Use engine enum constants for stick cardinal directions; leave D-pad/sensor masks
+unchanged. Compiler-output hashes create new immutable exports on reapplication.
+Map controls gains an active profile/layout banner and actual cardinal stick slot
+summaries, refreshed after loads, layout changes and edits. Explicit activation
+selects the editor's corresponding page immediately. Library feedback names Map
+controls and distinguishes template preview from applied layout. Existing personal
+copies/saved/App rule mapping files are not silently rewritten. Owner must reapply
+the updated template and save/repoint rules as needed. Compile/release pending;
+no automated, visual, installer execution or hardware/gameplay tests authorized.

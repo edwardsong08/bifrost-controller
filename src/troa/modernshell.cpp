@@ -1105,7 +1105,8 @@ void ModernShell::applyProfile()
         libraryFeedback(result.value("error").toString(), true);
     else
         libraryFeedback("Profile applied to " + m_controller->currentText() + " · " + m_layout->currentText() +
-                        ". Open Controllers to view or customize its assignments.");
+                        ". Open Map controls to view or customize its assignments. Use its layout buttons to view Space, "
+                        "Ground, or Menus; the library layout selector previews a template until you apply it.");
 }
 void ModernShell::copyProfile()
 {
