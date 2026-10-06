@@ -368,8 +368,8 @@ Native-controller App rules release held actions and temporarily gate Bifrost
 output without clearing mappings or edits; output resumes when the game loses
 focus. The native mode does not emulate or hide a physical controller. MCP accepts
 native_controls and reports mapping_suspended. Existing STO rule remains untouched.
-Version bumped to 0.1.9. Compile/package and delivery pending; no automated,
-visual, installer execution, hardware or gameplay tests authorized or performed.
+Version bumped to 0.1.9. Compilation/package and public delivery completed as
+recorded below; no automated, visual, installer-execution, hardware or gameplay tests.
 
 ## 2026-10-06 - Owner-reported formatting CI failure
 
@@ -382,4 +382,25 @@ changes. Applied clang-format 14 to those nine files; no inherited files changed
 Then inspected every tracked C/C++ source using exact clang-format 14.0.0:
 zero formatting differences. Recorded the required formatter version in AGENTS.md.
 These are source-layout changes only. No application, installer, visual, hardware
-or gameplay tests. Fresh GitHub formatting result and final Windows build pending.
+or gameplay tests. GitHub formatting CI 37450635216 passed and final Windows build 37450629508 succeeded.
+
+## 2026-10-06 - Controller 0.1.9 delivery
+
+Windows Actions 37450629508 compiled and packaged aa98b6b4d7af5289119ed8b1f4f828f7f1c33ddb with tests disabled.
+Source formatting CI 37450635216 passed with clang-format 14.0.0.
+Preview artifact 11406653556; installer-layout artifact 11406389209.
+Published v0.1.9-preview contains installer, portable app, exact GPL source and
+SHA256SUMS.txt. Installer: 18,417,249 bytes; SHA256 6960c6df53f945683e8cf1db8940f4e871ae846430168dacd223a610d8e329f7.
+Corresponding source bytes match the exact build commit. Runtime imports,
+licenses, generated NSIS versioned payloads, stable system-only launchers and
+uploaded asset digests were inspected without executing the binaries.
+Website PR #107 merged at a5590b9de99355040e0afe7252718e8ab30f5588. Fresh live page/download
+readback at 2026-10-06T10:50:14.916005+00:00 confirmed 0.1.9 and exact installer bytes.
+Published catalog-v2 contains 22 templates; HTTP 200 definitions matched the
+committed feed (SHA256 1adaac624e556c790c5e1c73ef6bab2c217c4764d021513ea713290715bb05cd).
+No automated, visual, installer-execution, hardware or gameplay tests. The owner's
+app and personal configuration were not changed. Install manually from TROA,
+normally over the existing version, then restart the mapper. No uninstall usually
+needed; Codex can remain open. Existing explicit CloseToTray opt-out is respected.
+Templates are untested console-inspired PC starting mappings; native controls
+are preferred where supported. Native PR #1 remains draft and unmerged.
