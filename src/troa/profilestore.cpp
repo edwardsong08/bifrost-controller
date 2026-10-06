@@ -202,7 +202,8 @@ QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
         return failure("Could not create the community cache folder.");
     const auto path = QDir(dataDirectory()).filePath("community-catalog-v2.json");
     QFile existing(path);
-    const auto normalized = document.toJson(QJsonDocument::Indented);
+    // Cache formatting must not inflate a valid bounded download past the same size limit.
+    const auto normalized = document.toJson(QJsonDocument::Compact);
     if (normalized.size() > 256 * 1024)
         return failure("Community download is too large. Existing profiles were kept.");
     const bool unchanged = existing.open(QIODevice::ReadOnly) && existing.readAll() == normalized;

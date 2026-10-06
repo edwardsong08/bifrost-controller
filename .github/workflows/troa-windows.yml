@@ -75,7 +75,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          git archive --format=zip --output=build/bifrost-controller-0.1.9-source.zip HEAD
+          git archive --format=zip --output=build/bifrost-controller-0.1.10-source.zip HEAD
           if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
           $checksums = Get-ChildItem build/bifrost-controller*.exe, build/bifrost-controller*.zip |
             Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }

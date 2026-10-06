@@ -404,3 +404,16 @@ normally over the existing version, then restart the mapper. No uninstall usuall
 needed; Codex can remain open. Existing explicit CloseToTray opt-out is respected.
 Templates are untested console-inspired PC starting mappings; native controls
 are preferred where supported. Native PR #1 remains draft and unmerged.
+
+## 2026-10-06 - Community catalog cache size fix
+
+Owner reported Update profiles rejecting the 22-template catalog as too large.
+The wire feed is 203,809 bytes, below the 262,144-byte download limit, but the
+installer's ProfileStore reserialized it with four-space indentation before
+checking the same limit. Static JSON sizing estimates 291,220 bytes expanded
+versus 104,168 bytes compact. Previous delivery inspections covered the wire
+feed, but missed this second size check. Cache serialization now uses Compact;
+network bounds, validation, atomic save, saved personal profiles and active
+mappings remain unchanged. Preparing 0.1.10 because installed 0.1.9 contains
+this cache bug. No app, visual, hardware or gameplay tests; manual acceptance
+remains with the owner. Compilation/package and release delivery pending.
