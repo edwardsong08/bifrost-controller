@@ -34,13 +34,16 @@ Owner's upgraded and reopened app reports 0.1.4; its read-only library lists
 Desktop, Browser and the STO template with three layouts. Existing data stayed
 in place. The temporary hidden 0.1.3 instance and stateless MCP companions were
 stopped solely for file replacement. No controller or application rule is present;
-no mapping was activated. Website PR #102 merged at 781d2fb; live readback pending.
+no mapping was activated. Website PR #102 merged at 781d2fb; the public page
+reports 0.1.4 and its TROA endpoint delivered the checksum-matched 17,255,095-byte
+installer at 2026-10-06T06:07:04Z. The app is open on the STO profile page.
 Do not describe 0.1.3 profile delivery as working.
 Gameplay is untested. See docs/profiles/star-trek-online-dualsense.md
 for keyboard assumptions, camera/ability differences and the Create-button rule.
 Read-only metadata through the installed local companion confirmed assistant
 access and an empty application-rule list; no controller was detected during
-that read. This is not a Codex-native tool connection or gameplay test.
+that read. Reconnect the DualSense before profile activation and Applications
+rule setup. This is not a Codex-native tool connection or gameplay test.
 
 ## Product direction - 2026-10-05
 

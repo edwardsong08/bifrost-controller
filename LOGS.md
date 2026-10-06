@@ -19,7 +19,10 @@
   Read-only MCP metadata reports 0.1.4 and three community templates, including
   STO with three layouts. Existing data is preserved; no controller or rule is
   present, so no profile was activated. Codex-native tools still need restart.
-- Website PR #102 merged at 781d2fb; live download readback remains pending.
+- Website PR #102 merged at 781d2fb. Public page reports 0.1.4 and TROA download
+  endpoint delivered the checksum-matched 17,255,095-byte installer at 06:07Z.
+  User's app is open on the STO profile page. Reconnect DualSense before rule
+  setup/activation; no game or Steam settings were changed.
   No gameplay, automated, visual or hardware tests ran.
 
 ## 2026-10-06 - STO template and independent community updates
