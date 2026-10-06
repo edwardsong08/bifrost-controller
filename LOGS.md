@@ -431,3 +431,28 @@ scroll template settings are unchanged. Other legacy stick modes retain their
 existing response. Export hashes change, so use the template again after updating
 to get the new settings; active mappings and manually saved files are preserved.
 This extends the 0.1.10 cache fix before release. No application/hardware tests.
+
+## 2026-10-06 - Controller 0.1.10 delivery
+
+Windows Actions 37455435150 compiled and packaged 3d68d57982f7c24bf69d54cf48ef030d3bd74116 with tests disabled.
+Source formatting CI 37455440477 passed with clang-format 14.0.0.
+Preview artifact 11409414440; installer-layout artifact 11409254613.
+Published v0.1.10-preview contains installer, portable app, exact GPL source and
+SHA256SUMS.txt. Installer: 18,420,791 bytes; SHA256 6517c98ee4c4e83b542ca5eeaee643552dd336224a01015c786f7f6be2cc714b.
+Corresponding source bytes match the exact build commit. Runtime imports,
+licenses, generated NSIS versioned payloads, stable system-only launchers and
+uploaded asset digests were inspected without executing the binaries.
+Website PR #108 merged at d013dd4c05f77d934fbbc6e28094e55defcb0136. Fresh live page/download
+readback at 2026-10-06T11:36:26.534266+00:00 confirmed 0.1.10 and exact installer bytes.
+Catalog storage now uses compact JSON to avoid download cache expansion beyond the size limit.
+Complete template pointer sticks export diagonalRange 90 and linear acceleration;
+continuous mouse interpolation projects the radial speed onto each axis. Use the
+template again after installation to obtain these settings. Saved mapping files
+remain user controlled. Published catalog-v2 contains 22 templates; HTTP 200 definitions matched the
+committed feed (SHA256 1adaac624e556c790c5e1c73ef6bab2c217c4764d021513ea713290715bb05cd).
+No automated, visual, installer-execution, hardware or gameplay tests. The owner's
+app and personal configuration were not changed. Install manually from TROA,
+normally over the existing version, then restart the mapper. No uninstall usually
+needed; Codex can remain open. Existing explicit CloseToTray opt-out is respected.
+Templates are untested console-inspired PC starting mappings; native controls
+are preferred where supported. Native PR #1 remains draft and unmerged.
