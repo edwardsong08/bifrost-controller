@@ -102,11 +102,13 @@ void slot(QXmlStreamWriter &xml, const QString &mode, int code)
     xml.writeTextElement("mode", mode);
     xml.writeEndElement();
 }
-void bindingXml(QXmlStreamWriter &xml, const QJsonObject &binding, const QString &tag, int index)
+void bindingXml(QXmlStreamWriter &xml, const QJsonObject &binding, const QString &tag, int index, bool linearPointer = false)
 {
     xml.writeStartElement(tag);
     xml.writeAttribute("index", QString::number(index));
     xml.writeTextElement("actionname", binding.value("label").toString());
+    if (linearPointer)
+        xml.writeTextElement("mouseacceleration", "linear");
     xml.writeStartElement("slots");
     const auto chord = binding.value("keys").toArray();
     if (chord.size() > 1)
@@ -508,12 +510,28 @@ QString ProfileStore::exportMapping(const QString &id) const
             xml.writeStartElement("stick");
             xml.writeAttribute("index", QString::number(stick + 1));
             xml.writeTextElement("deadZone", QString::number(profile.value("dead_zone").toInt(8000)));
+            // Only complete, direction-matched mouse sticks get continuous radial pointer movement.
+            bool pointerStick = true;
+            for (const auto &direction : directions)
+            {
+                bool pointerDirection = false;
+                for (const auto &value : bindings)
+                {
+                    const auto binding = value.toObject();
+                    if (binding.value("input").toString() == prefixes.at(stick) + direction &&
+                        binding.value("mouse_move").toString() == direction)
+                        pointerDirection = true;
+                }
+                pointerStick = pointerStick && pointerDirection;
+            }
+            if (pointerStick)
+                xml.writeTextElement("diagonalRange", "90");
             for (int direction = 0; direction < directions.size(); ++direction)
             {
                 const auto input = prefixes.at(stick) + directions.at(direction);
                 for (const auto &value : bindings)
                     if (value.toObject().value("input").toString() == input)
-                        bindingXml(xml, value.toObject(), "stickbutton", stickDirections[direction]);
+                        bindingXml(xml, value.toObject(), "stickbutton", stickDirections[direction], pointerStick);
             }
             xml.writeEndElement();
         }

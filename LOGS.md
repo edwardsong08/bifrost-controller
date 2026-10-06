@@ -417,3 +417,17 @@ network bounds, validation, atomic save, saved personal profiles and active
 mappings remain unchanged. Preparing 0.1.10 because installed 0.1.9 contains
 this cache bug. No app, visual, hardware or gameplay tests; manual acceptance
 remains with the owner. Compilation/package and release delivery pending.
+
+## 2026-10-06 - Continuous template pointer sticks
+
+Owner reports diagonal pointer slowdown on the desktop left stick. Existing
+exports inherited narrowed diagonal zones and the precision mouse curve, applied
+per axis. Complete four-direction sticks mapped to matching mouse directions now
+export diagonalRange 90 and linear mouse acceleration. In that continuous mode,
+mouse distance uses the radially dead-zoned vector projected onto each axis;
+equal deflection has equal total speed with equal X/Y mouse speed settings.
+Square-gate adjustment is preserved. Non-interpolated keyboard/axis behavior and
+scroll template settings are unchanged. Other legacy stick modes retain their
+existing response. Export hashes change, so use the template again after updating
+to get the new settings; active mappings and manually saved files are preserved.
+This extends the 0.1.10 cache fix before release. No application/hardware tests.
