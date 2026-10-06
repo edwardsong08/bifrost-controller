@@ -295,3 +295,23 @@ controls and distinguishes template preview from applied layout. Existing person
 copies/saved/App rule mapping files are not silently rewritten. Owner must reapply
 the updated template and save/repoint rules as needed. Compile/release pending;
 no automated, visual, installer execution or hardware/gameplay tests authorized.
+
+## 2026-10-06 - Corrected 0.1.8 mapping release delivered
+
+Windows Actions 37442115967 compiled/packaged 28c04f0707e09d99b8509784fb76900aafc34b49
+with tests disabled; preview artifact 11401569571, installer layout artifact
+11401514641. Published v0.1.8-preview includes installer, portable app,
+exact corresponding GPL source and SHA256SUMS.txt. Installer: 18,388,789
+bytes; SHA256 a0aec9f71edbdb034da34f1b09d7d5aaea3c510b6871f0efae0cd76ffb73f362. Source archive matches the exact build commit;
+static runtime/import/license and NSIS versioned-layout/launcher checks passed.
+Both stable launcher sources are unchanged from 0.1.7; imports are system-only.
+Website PR #106 merged at bfd24147218f02871354ad8ae7949b76574ae14a. Public page and TROA download
+readback at 2026-10-06T09:33:31.080576+00:00 confirmed 0.1.8 and the exact installer bytes.
+Read-only MCP diagnosis confirmed installed 0.1.7 with STO Space active; no owner
+profile activation, installation, restart or configuration changes were performed.
+Owner should install 0.1.8, Update profiles, deliberately reapply the STO template,
+and view Ground in Map controls. Re-save/re-export and repoint existing App rules
+if they reference a previous compiled file. Existing personal/active/saved mappings
+are preserved. No automated, visual, installer execution, hardware or gameplay
+tests ran. Native PR #1 remains draft and unmerged. Public website design/copy and
+artwork stay unchanged, per owner preference; only the release pin was updated.
