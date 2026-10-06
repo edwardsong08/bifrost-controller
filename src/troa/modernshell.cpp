@@ -279,7 +279,7 @@ void ModernShell::applyAppearance(bool dark)
         QScrollBar:vertical { background: transparent; width: 10px; }
         QScrollBar::handle:vertical { background: %5; border-radius: 5px; min-height: 24px; }
         QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-        FlashButtonWidget[isflashing="true"] { background: %9; color: %10; border-color: %9; }
+        JoyButtonStatusBox[isflashing="true"], FlashButtonWidget[isflashing="true"] { background: %9; color: %10; border-color: %9; }
         QPushButton[setActive="true"] { background: %9; color: %10; }
         QPushButton[isDisplayingNames="true"] { border-color: %9; }
         QPushButton#setPushButton1, QPushButton#setPushButton2, QPushButton#setPushButton3, QPushButton#setPushButton4,

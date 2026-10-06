@@ -19,10 +19,12 @@
 #include "calibration.h"
 #include "ui_calibration.h"
 
+#include "gamecontroller/gamecontroller.h"
 #include "globalvariables.h"
 #include "inputdevice.h"
 #include "joycontrolstick.h"
 #include "joysensor.h"
+#include "troa/controllersupport.h"
 
 #include <QCloseEvent>
 #include <QDebug>
@@ -54,6 +56,14 @@ Calibration::Calibration(InputDevice *joystick, QDialog *parent)
     QHash<int, JoyControlStick *> sticks = m_joystick->getActiveSetJoystick()->getSticks();
     for (auto iter = sticks.cbegin(); iter != sticks.cend(); ++iter)
     {
+        if (auto pad = qobject_cast<GameController *>(m_joystick))
+        {
+            const int index = iter.key();
+            if (index >= 2 || (index == 1 && Troa::controllerFamily(pad) == "steam-2015") ||
+                !SDL_GameControllerHasAxis(pad->getController(), SDL_GameControllerAxis(index * 2)) ||
+                !SDL_GameControllerHasAxis(pad->getController(), SDL_GameControllerAxis(index * 2 + 1)))
+                continue;
+        }
         dropdown_sticks.insert(iter.value()->getPartialName(), CAL_STICK | (iter.key() << CAL_INDEX_POS));
     }
 
@@ -85,6 +95,8 @@ Calibration::Calibration(InputDevice *joystick, QDialog *parent)
     if (device_count == 0)
     {
         m_ui->steps->setText(tr("Selected device doesn't have any inputs to calibrate."));
+        m_ui->saveBtn->setEnabled(false);
+        m_ui->resetBtn->setEnabled(false);
     } else
     {
         int index = m_ui->deviceComboBox->currentIndex();

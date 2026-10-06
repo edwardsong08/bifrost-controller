@@ -126,6 +126,14 @@ GameControllerMappingDialog::GameControllerMappingDialog(InputDevice *device, An
     if (controller != nullptr)
     {
         usingGameController = true;
+        if (char *mapping = SDL_GameControllerMapping(controller->getController()))
+        {
+            const QStringList extra = {"misc1", "paddle1", "paddle2", "paddle3", "paddle4", "touchpad"};
+            for (const auto &entry : QString::fromUtf8(mapping).split(','))
+                if (extra.contains(entry.section(':', 0, 0)))
+                    extraMappings.append(entry);
+            SDL_free(mapping);
+        }
         populateGameControllerBindings(controller);
         ui->mappingStringPlainTextEdit->document()->setPlainText(generateSDLMappingString());
     }
@@ -346,8 +354,10 @@ void GameControllerMappingDialog::populateGameControllerBindings(GameController 
     if (controller != nullptr)
     {
 
-        for (int i = 0; i < controller->getNumberButtons(); i++)
+        for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
         {
+            if (!buttonPlacement.contains(static_cast<SDL_GameControllerButton>(i)))
+                continue;
             int associatedRow = buttonPlacement.value(static_cast<SDL_GameControllerButton>(i));
             SDL_GameControllerButtonBind bind = controller->getBindForButton(i);
             QString temptext = bindingString(bind);
@@ -364,7 +374,7 @@ void GameControllerMappingDialog::populateGameControllerBindings(GameController 
             }
         }
 
-        for (int i = 0; i < controller->getNumberAxes(); i++)
+        for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; i++)
         {
             int associatedRow = axisPlacement.value(static_cast<SDL_GameControllerAxis>(i));
             SDL_GameControllerButtonBind bind = controller->getBindForAxis(i);
@@ -558,6 +568,7 @@ QString GameControllerMappingDialog::generateSDLMappingString()
         }
     }
 
+    templist.append(extraMappings);
     return templist.join(",").append(",");
 }
 

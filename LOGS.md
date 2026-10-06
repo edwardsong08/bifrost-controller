@@ -184,3 +184,12 @@
 - Source formatting and Windows compile/package are next. No automated, visual,
   hardware or game tests were added or run. App remains untouched; owner installs
   the forthcoming public installer manually from TROA.
+
+- Follow-up source review covered device information, calibration and controller
+  layout normalization. Filter unavailable logical slots, avoid calibrating virtual
+  touchpads as sticks, and preserve extra bindings when editing standard layouts.
+  Fixed missing normalization-table indices that otherwise fell back to row zero.
+- Controller information's reject override previously deleted the dialog without
+  emitting finished, leaving mapping output ignored. Restore normal dialog reject
+  completion, handle both normal result codes, avoid destroyed-device access, and
+  explain the temporary pause in the dialog. Its legacy blue-only style is removed.

@@ -20,12 +20,14 @@
 #include "ui_joystickstatuswindow.h"
 
 #include "common.h"
+#include "gamecontroller/gamecontroller.h"
 #include "globalvariables.h"
 #include "inputdevice.h"
 #include "joybuttonstatusbox.h"
 #include "joybuttontypes/joydpadbutton.h"
 #include "joydpad.h"
 #include "joysensor.h"
+#include "troa/controllersupport.h"
 
 #include <QDebug>
 #include <QGridLayout>
@@ -42,6 +44,12 @@ JoystickStatusWindow::JoystickStatusWindow(InputDevice *joystick, QWidget *paren
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+    setStyleSheet(QString());
+    auto notice =
+        new QLabel(tr("Mapping output is paused while this information window is open. Close it to resume."), this);
+    notice->setWordWrap(true);
+    notice->setProperty("role", "muted");
+    ui->verticalLayout_11->insertWidget(0, notice);
 
     this->joystick = joystick;
 
@@ -94,7 +102,23 @@ JoystickStatusWindow::JoystickStatusWindow(InputDevice *joystick, QWidget *paren
     ui->joystickNameLabel->setText(joystick->getSDLName());
     ui->joystickNumberLabel->setText(QString::number(joystick->getRealJoyNumber()));
     ui->joystickAxesLabel->setText(QString::number(joystick->getNumberRawAxes()));
-    ui->joystickButtonsLabel->setText(QString::number(joystick->getNumberRawButtons()));
+    int buttons = joystick->getNumberRawButtons();
+    int axes = joystick->getNumberRawAxes();
+    if (auto pad = qobject_cast<GameController *>(joystick))
+    {
+        buttons = 0;
+        axes = 2 * pad->touchpadCount();
+        for (int i = 0; i < pad->getNumberRawButtons(); ++i)
+            if (pad->supportsButton(i))
+                ++buttons;
+        for (int i = 0; i < SDL_CONTROLLER_AXIS_MAX; ++i)
+            if (SDL_GameControllerHasAxis(pad->getController(), SDL_GameControllerAxis(i)))
+                ++axes;
+    }
+    ui->joystickButtonsLabel->setText(QString::number(buttons));
+    ui->joystickAxesLabel->setText(QString::number(axes));
+    ui->joystickButtonsLabel->setToolTip(
+        tr("Available mapping inputs, including driver-exposed extras and touchpad clicks."));
     ui->joystickHatsLabel->setText(QString::number(joystick->getNumberRawHats()));
 
     if (joystick->hasRawSensor(ACCELEROMETER) && joystick->hasRawSensor(GYROSCOPE))
@@ -114,6 +138,9 @@ JoystickStatusWindow::JoystickStatusWindow(InputDevice *joystick, QWidget *paren
     axesBox->setSpacing(4);
     for (int i = 0; i < joystick->getNumberAxes(); i++)
     {
+        if (auto pad = qobject_cast<GameController *>(joystick))
+            if (i < SDL_CONTROLLER_AXIS_MAX && !SDL_GameControllerHasAxis(pad->getController(), SDL_GameControllerAxis(i)))
+                continue;
         JoyAxis *axis = joystick->getActiveSetJoystick()->getJoyAxis(i);
 
         if (axis != nullptr)
@@ -146,11 +173,20 @@ JoystickStatusWindow::JoystickStatusWindow(InputDevice *joystick, QWidget *paren
     int currentColumn = 0;
     for (int i = 0; i < joystick->getNumberButtons(); i++)
     {
+        if (auto pad = qobject_cast<GameController *>(joystick))
+            if (!pad->supportsButton(i))
+                continue;
         JoyButton *button = joystick->getActiveSetJoystick()->getJoyButton(i);
         if (button != nullptr)
         {
             JoyButtonStatusBox *statusbox = new JoyButtonStatusBox(button);
             statusbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            if (joystick->isGameController())
+            {
+                const auto name = Troa::inputName(Troa::buttonInput(i), Troa::controllerFamily(joystick));
+                statusbox->setText(name);
+                statusbox->setToolTip(name);
+            }
 
             buttonsGrid->addWidget(statusbox, currentRow, currentColumn);
             currentColumn++;
@@ -302,13 +338,13 @@ JoystickStatusWindow::JoystickStatusWindow(InputDevice *joystick, QWidget *paren
     connect(this, &JoystickStatusWindow::finished, this, &JoystickStatusWindow::restoreButtonStates);
 }
 
-void JoystickStatusWindow::reject() { this->deleteLater(); }
+void JoystickStatusWindow::reject() { QDialog::reject(); }
 
 JoystickStatusWindow::~JoystickStatusWindow() { delete ui; }
 
 void JoystickStatusWindow::restoreButtonStates(int code)
 {
-    if (code == QDialogButtonBox::AcceptRole)
+    if (joystick && code != QDialogButtonBox::DestructiveRole)
     {
         PadderCommon::inputDaemonMutex.lock();
 
@@ -319,7 +355,11 @@ void JoystickStatusWindow::restoreButtonStates(int code)
     }
 }
 
-void JoystickStatusWindow::obliterate() { this->done(QDialogButtonBox::DestructiveRole); }
+void JoystickStatusWindow::obliterate()
+{
+    joystick = nullptr;
+    this->done(QDialogButtonBox::DestructiveRole);
+}
 
 /**
  * @brief Accelerometer "moved" event handler
