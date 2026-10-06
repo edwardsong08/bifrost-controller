@@ -206,7 +206,12 @@ int run()
     const DWORD length = GetModuleFileNameW(nullptr, executable, 32768);
     if (!length || length >= 32768)
         return fail(L"The installation path could not be read.");
-    root = std::wstring(executable, length);
+    wchar_t absolute[32768] = {};
+    const DWORD absoluteLength = GetFullPathNameW(executable, 32768, absolute, nullptr);
+    if (!absoluteLength || absoluteLength >= 32768)
+        return fail(L"The installation path could not be resolved.");
+    // NSIS shortcuts may contain \\.\\; process image paths are normalized.
+    root = std::wstring(absolute, absoluteLength);
     root.resize(root.find_last_of(L"\\/"));
     const HANDLE marker =
         CreateFileW((root + L"\\current.txt").c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
