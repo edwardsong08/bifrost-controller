@@ -1,5 +1,15 @@
 # Work log
 
+## 2026-10-06 - Bifrost Controller preview installed and opened
+
+- Renamed the personal fork to edwardsong08/bifrost-controller and updated origin, product URLs, and draft PR #1; permissions remain unchanged.
+- Final runtime source c0a8d9837ebf743107ca52fa52cbbbe773855184 adds scrollable application-rule editing on smaller screens. Windows compilation/installer/portable/source packaging succeeded in Actions run 37411297952 with WITH_TESTS=OFF, artifact 11390075068.
+- Downloaded to ignored distribution/bifrost-preview-0.1.2. Installer SHA256 d38fd60c9e68fc820404b0e94cae4333e73b7027577d5b23ab810fce2b9d9b75; portable faa6edce0b2c2c6607f18e9eecf323317ced79283b84725b16e8f29219f46919; source 875aa034612015942eb0758cdfbaa2981442a6458a042049ab31a6f3fd4a5edb. All matched SHA256SUMS.txt.
+- Read-only old-preview metadata confirmed no unsaved controller edits; closed it gracefully and backed up its user data. Installed Bifrost Controller (exit 0), uninstalled obsolete TROA preview (exit 0), and confirmed shared settings preserved exactly. Official AntiMicroX remains separately installed.
+- Windows registry lists Bifrost Controller 0.1.2 and the MCP companion is present. Used the supported --show command; process 48124 reports the Bifrost Controller main window and Responding=true. This confirms launch only.
+- No automated, visual, or hardware tests ran. Game-specific mappings, switching behavior, overlay behavior, and real AI-client connection remain untested/unconfigured. Exclusive fullscreen can obscure desktop notices.
+- No public GitHub Release or website deployment. Edward subsequently authorized main-site pages/menu and a local installer download for review before any website push; that work is tracked in the main-site repository.
+
 ## 2026-10-05 - Fork and Windows installation
 
 - Created edwardsong08/antimicrox as a fork of AntiMicroX/antimicrox through GitHub's API using the existing authenticated account.

@@ -27,11 +27,12 @@ Build Bifrost Controller, TROA's modern desktop controller mapping app alongside
 
 ## Apps installed for inspection
 
-- TROA preview 0.1.0 from GitHub Actions run 37406545582, built from 49d81549239fcde1aa09e55c7a9fa305208983a3.
-- Executable: C:\Users\edwar\AppData\Local\Programs\TROA PC Controller Mapper\bin\troa-pc-controller-mapper.exe
-- MCP companion: same bin directory, troa-controller-mcp.exe. A client connection has not been configured or exercised.
-- Installer, portable ZIP, source ZIP, and checksums: distribution/preview (ignored local artifacts).
-- Installer exit code 0; Windows uninstall registry lists version 0.1.0. The launched process has window title TROA PC Controller Mapper and is responding.
+- Bifrost Controller preview 0.1.2 from successful GitHub Actions run 37411297952, built from c0a8d9837ebf743107ca52fa52cbbbe773855184.
+- Executable: C:\Users\edwar\AppData\Local\Programs\Bifrost Controller\bin\bifrost-controller.exe
+- MCP companion: same bin directory, bifrost-controller-mcp.exe. A client connection has not been configured or exercised.
+- Installer, portable ZIP, source ZIP, and checksums: distribution/bifrost-preview-0.1.2 (ignored local artifacts). All three hashes matched the manifest; installer SHA256 d38fd60c9e68fc820404b0e94cae4333e73b7027577d5b23ab810fce2b9d9b75.
+- Installer exit code 0; Windows uninstall registry lists version 0.1.2. The built-in --show command exposed the branded main window; process 48124 reports title Bifrost Controller and is responding.
+- Replaced the obsolete TROA 0.1.0 preview (uninstaller exit 0). Backed up shared user data under distribution/bifrost-preview-0.1.2/previous-user-data; existing settings matched exactly after install/uninstall. The compatibility data folder and settings filename remain unchanged. Historical 0.1.0 packages remain under distribution/preview.
 - No automated, visual, or hardware tests were run. An open process is not controller/profile/MCP acceptance.
 
 - Official upstream Windows release 3.6.1, downloaded from GitHub Releases.
@@ -56,14 +57,14 @@ These remain future work unless Edward authorizes the next implementation phase.
 
 1. Collect Edward's feedback on the installed preview and choose which inherited mapping dialogs to modernize next.
 2. Connect a compatible MCP client and collaboratively author game-specific and controller-specific profiles.
-3. Extend the managed profile schema to triggers, advanced macros, and automatic application switching as needed.
-4. Build the TROA website product/download page and publish versioned installer, portable, and corresponding source assets together.
+3. Extend the managed profile schema to triggers and advanced macros as needed; application switching and named layouts are now implemented in the preview.
+4. Review the separately authorized local TROA website pages/menu, then obtain release/push approval before publishing versioned installer, portable, and corresponding source assets together.
 5. Establish the release/update process, including curated catalog changes and Windows signing when available.
 6. Finish Linux branding and packaging before treating it as a supported product platform.
 
 ## Verification limits
 
-Windows compilation and packaging succeeded in GitHub Actions run 37406545582. Downloaded installer, portable, and source archive hashes matched the included manifest. No automated, visual, or hardware tests are authorized for this preview. Desktop screenshot automation timed out during upstream installation. Edward requested the actual app rather than opening the source in VS Code.
+Windows 0.1.2 compilation and packaging succeeded in GitHub Actions run 37411297952 with WITH_TESTS=OFF. Downloaded installer, portable, and source archive hashes matched the included manifest. Installation, registry metadata, settings preservation, and a responding branded window were confirmed. No automated, visual, or hardware tests are authorized for this preview; game bindings, switching behavior, and an actual AI-client connection remain untested. Desktop screenshot automation timed out during upstream installation. Edward requested the actual app rather than opening the source in VS Code.
 
 ## Authorized implementation - 2026-10-05
 
@@ -102,4 +103,10 @@ Windows compilation and packaging succeeded in GitHub Actions run 37406545582. D
 - Preview settings filename, data folder, and internal TROA settings keys remain compatible with 0.1.0, preserving existing profiles/history/settings. The code folder and codex/troa-controller-mapper branch remain in place for continuity.
 - Personal ownership and collaborator permissions stay unchanged. TROA logo and main-site/Bifrost styling stay in use. This branding does not claim a new Server Manager API integration.
 - The renamed 0.1.2 package is pending compilation and local installation. No tests, public release, or website deployment are performed.
+
+## Current delivery - 2026-10-06
+
+- Personal repository is now edwardsong08/bifrost-controller; draft PR #1 remains open and attached. Ownership/collaborator access is unchanged.
+- Bifrost Controller 0.1.2 compiled, packaged, installed, and opened as detailed above. Earlier pending-build notes describe their historical state.
+- Edward authorized two new main-site pages and a final Gaming > Bifrost Downloads submenu for local review before pushing. Server Manager is a coming-soon overview; Controller is Windows-only with installer setup and GitHub access. This website work is separate and does not authorize a public release or site deployment.
 
