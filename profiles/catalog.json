@@ -34,7 +34,7 @@
     "schema_version": 1,
     "id": "builtin-browser",
     "name": "Browser Essentials",
-    "description": "A starting browser layout: right stick for the pointer, A/B for clicks, X for the address bar, Y for find, shoulders for scrolling, and the D-pad for history and tab navigation. Works at the browser application level.",
+    "description": "A starting browser layout: right stick for the pointer, face buttons for clicks, the address bar and find, shoulders for scrolling, and the D-pad for history and tab navigation. See the assignments below for your controller's button names. Works at the browser application level.",
     "category": "browser",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
