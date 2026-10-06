@@ -473,3 +473,25 @@ Update app, reapply template and save/export App-rule mappings to opt in. Person
 files, active mappings and installed app are not changed by this work.
 Formatting: clang-format 14.0.0. No automated, visual, hardware or gameplay tests.
 Compilation, release packaging and manual game acceptance remain pending.
+
+## 2026-10-06 — Controller 0.1.11 delivery
+
+Windows Actions 37471421454 and formatting 37471427071 passed for
+335c5c7eb952482ef47cc8a533daab011b6711a8; tests disabled. Published v0.1.11-preview
+release 404770459 contains installer, portable package, exact GPL source and
+SHA256SUMS. Preview artifact 11417587497; upgrade evidence 11418200226. Source bytes,
+PE runtime imports, versioned installer manifest and uploaded hashes inspected
+without binary execution. Native PR #1 remains draft/unmerged.
+Website PR #111 merged at 2871e6a5a118cfee17cbbac258522fbc067f4b27.
+Public page and exact download verified 2026-10-06T13:47:47.645084+00:00: HTTP 200,
+18,420,650 bytes, SHA256 023153b806ab708fd386c448c5b66dbfcc6305624a66abf39a811ff33140d606.
+Published catalog-v3 matches exact build-commit bytes: SHA256 126efed1149cb2bf62cab4b5dbbfea0d83deebd0b833d8a707b693478a516ebb.
+Working file uses CRLF while Git/published source use LF; read-only comparison
+confirmed normalization-only differences and identical JSON definitions.
+STO Space direct camera applies to all four hardware variants; Ground RPG keeps
+explicit camera hold to avoid Shooter secondary fire. Other game, desktop and
+browser definitions remain unchanged. v2 remains available for older clients.
+User must install manually, restart Bifrost, reapply the template and save/export
+again for App rules. No uninstall normally required. Installed app and personal
+configuration were not changed. No automated, visual, installer-execution,
+hardware or gameplay tests; manual acceptance remains with the owner.
