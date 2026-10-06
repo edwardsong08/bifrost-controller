@@ -34,7 +34,9 @@ in-place repair of a corrupt, running payload.
 Keep the mapper open. Choose **Assistant · MCP** in the header/sidebar,
 or **Assistant · MCP > Open MCP setup** in the menu (Ctrl+Shift+M). Enable **local MCP access** and copy
 JSON or Codex TOML settings into a compatible MCP client's configuration. The command is the absolute path
-to the installed bifrost-controller-mcp.exe, with no arguments. The copied JSON uses the
+shown in the setup page, with no arguments (`bifrost-mcp-host.exe` for installed
+Windows releases from 0.1.7, `bifrost-controller-mcp.exe` for portable/Linux copies).
+The copied JSON uses the
 common `mcpServers` format; clients with another configuration format should use the
 same command and empty argument list.
 

@@ -2,10 +2,12 @@
 // Stable launcher format 1. Installed once; never replace a live MCP host.
 // All Qt/runtime files belong to immutable, versioned payload directories.
 #define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+// Shell declarations require Windows types first (keep this include block separate).
 #include <shellapi.h>
 #include <string>
 #include <vector>
-#include <windows.h>
 
 namespace {
 std::wstring root;

@@ -59,8 +59,11 @@ for upgrade compatibility. Rebranding preserves personal profiles, revisions, an
 The 0.1.5 app checks published releases on startup and every six hours while open.
 It shows a popup for a new version and provides **Bifrost > Check for app updates**.
 The popup opens the TROA download page; installation requires running the Windows
-installer. Close Bifrost and install over the existing copy; uninstalling is not
-normally needed. Existing users need one manual upgrade to gain these prompts.
+installer. From 0.1.7, install over the existing copy while Codex stays open;
+setup installs a separate release and offers to restart Bifrost safely.
+Save/Discard/Cancel protects unsaved mappings. A legacy Close-to-tray app may
+need **Bifrost > Quit** once, then the updated Start menu shortcut. Uninstalling
+is not normally needed. Existing users need one upgrade to gain update prompts.
 Community-profile refreshes remain separate and do not replace personal mappings.
 
 ## Development
