@@ -43,20 +43,20 @@ Build toward TROA PC Controller Mapper, a modern controller mapping app for TROA
 - CMakeLists.txt and .github/workflows/: build, packaging, and CI.
 - tests/: Qt GUI test sources; CMake currently requests Qt5Test.
 
-## Candidate action list for discussion
+## Next action list for discussion
 
-These are inspection targets, not approved changes or confirmed runtime bugs.
+These remain future work unless Edward authorizes the next implementation phase.
 
-1. Establish a baseline with Edward's controller: detection, mapping, mouse movement, dead zones, calibration, profile save/load, reconnect, tray behavior, and automatic profiles.
-2. Choose a repeatable local Windows build setup aligned with existing CI; add clear developer instructions once the setup is verified.
-3. Review controller mapping usability: first-run guidance, controller layout, terminology, accessibility, and high-DPI behavior after inspecting the running app.
-4. Assess test viability: Qt5Test is requested despite Qt6 being preferred, and GuiTests linkage is commented out. Existing CI builds without enabling WITH_TESTS. Reproduce before fixing.
-5. Review Windows input diagnostics: SendInput return values are ignored at several call sites. Consider reporting failures once user impact is established.
-6. Decide fork identity, release packaging, and update behavior before shipping: the current update check points to upstream AntiMicroX releases.
+1. Collect Edward's feedback on the installed preview and choose which inherited mapping dialogs to modernize next.
+2. Connect a compatible MCP client and collaboratively author game-specific and controller-specific profiles.
+3. Extend the managed profile schema to triggers, advanced macros, and automatic application switching as needed.
+4. Build the TROA website product/download page and publish versioned installer, portable, and corresponding source assets together.
+5. Establish the release/update process, including curated catalog changes and Windows signing when available.
+6. Finish Linux branding and packaging before treating it as a supported product platform.
 
 ## Verification limits
 
-No local source build or hardware controller acceptance test has been completed. Desktop screenshot automation timed out during setup. Edward requested the actual app rather than opening the source in VS Code.
+Windows compilation and packaging run in GitHub Actions. No automated, visual, or hardware tests are authorized for this preview. Desktop screenshot automation timed out during upstream installation. Edward requested the actual app rather than opening the source in VS Code.
 
 ## Authorized implementation - 2026-10-05
 

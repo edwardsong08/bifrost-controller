@@ -56,10 +56,14 @@ jobs:
       - name: Compile and package portable app
         run: cmake --build build --parallel 4 --target package
       - name: Package corresponding source and checksums
+        shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           git archive --format=zip --output=build/troa-pc-controller-mapper-0.1.0-source.zip HEAD
-          cd build
-          sha256sum troa-pc-controller-mapper*.exe troa-pc-controller-mapper*.zip > SHA256SUMS.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Corresponding source archive failed.' }
+          $checksums = Get-ChildItem build/troa-pc-controller-mapper*.exe, build/troa-pc-controller-mapper*.zip |
+            Sort-Object Name | ForEach-Object { '{0}  {1}' -f (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name }
+          $checksums | Set-Content -LiteralPath build/SHA256SUMS.txt -Encoding utf8
       - name: Save preview artifacts
         uses: actions/upload-artifact@v4
         with:
