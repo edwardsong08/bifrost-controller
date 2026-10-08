@@ -542,3 +542,18 @@ source archive name. Only app UI sizing/version metadata changes; personal STO
 Shooter profile remains a local personal mapping, not a bundled catalog change.
 Formatting 14.0.0 and diff whitespace checks passed; Windows compilation and
 packaging pending. No application, visual, hardware or gameplay tests.
+
+## 2026-10-07 - Owner expands 0.1.12 to all STO default templates
+
+Owner requested personal DualSense corrections become defaults for all four
+controller families. v3 Ground now uses left trigger X Aim, right trigger left
+mouse primary fire, right shoulder right mouse secondary fire, direct look via
+right stick/pad in STO Shooter mode. Right face button F Interact and no crouch
+now match across all four; Steam camera-click/grip shortcuts use Aim instead.
+Space automatic camera, movement, Menus, and three named layouts retained.
+Original Steam uses its right pad; other templates retain supported hardware
+inputs. User must enable Ground Shooter mode inside STO (default keyboard B).
+Personal profiles are preserved; library refresh requires reapply/export for
+existing mappings. v2 remains compatible for older clients. Documented the new
+defaults. Supersedes the layout-only 0.1.12 build before publishing; rebuild now
+includes both requested changes. No automated, visual or gameplay tests.

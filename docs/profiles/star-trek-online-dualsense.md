@@ -37,11 +37,11 @@ settings, game preferences or account bindings for you.
 | Control | Space | Ground | Menus |
 | --- | --- | --- | --- |
 | Left stick | Ship pitch/turn (S/W/A/D) | Movement/strafe (W/S/Q/E) | Unassigned |
-| Right stick | Camera look directly while deflected | RPG: hold L2 for camera; Shooter: direct aim | Pointer |
-| R2 | Energy weapons (Space) | Primary attack / slot 1 | Left click |
-| R1 | Torpedoes (Ctrl+Space) | Secondary attack / slot 2 | Scroll down |
+| Right stick | Camera look directly while deflected | Direct look/aim in Ground Shooter mode | Pointer |
+| R2 | Energy weapons (Space) | Primary fire (left mouse) | Left click |
+| R1 | Torpedoes (Ctrl+Space) | Secondary fire (right mouse) | Scroll down |
 | L1 | Ship/item shortcut / slot 5 | Captain shortcut / slot 5 | Scroll up |
-| L2 | Captain shortcut / slot 6 | Camera drag (right mouse) | Right click |
+| L2 | Captain shortcut / slot 6 | Aim (X) | Right click |
 | Cross | Interact (F) | Jump (Space) | Left click |
 | Circle | Tactical shortcut / slot 3 | Interact (F) | Cancel |
 | Square | Science shortcut / slot 1 | Kit/item shortcut / slot 4 | Interact |
@@ -65,11 +65,18 @@ button through the existing mapping engine. No R3 hold or extra toggle is needed
 Menus keeps ordinary pointer movement. This also applies to the Xbox and both
 Valve Steam Controller Space templates; the original model uses its right pad.
 
-Ground has two game control schemes. Keyboard B switches RPG/Shooter mode with
-default game binds. In RPG mode, hold L2 while moving the stick for camera drag.
-In Shooter mode, mouse movement aims directly; do not hold L2 for looking because
-right mouse fires the secondary attack there. Bifrost cannot detect this in-game
-setting, so Ground retains the explicit camera binding rather than auto-firing.
+Ground requires the game's Shooter control scheme. Keyboard B switches
+RPG/Shooter mode with default game binds; enable Shooter mode in the game.
+Right stick looks directly, L2 sends X for Aim, R2 sends left mouse for primary
+fire and R1 sends right mouse for secondary fire. These fire bindings use the
+game's Shooter actions rather than assuming weapon attacks occupy tray slots 1/2.
+Bifrost cannot detect or automatically select the game's Ground control scheme.
+The Xbox and both Steam Controller templates use the same actions, with LT/RT/RB
+or equivalent physical controls. Original Steam hardware looks with its right
+touchpad; Steam touchpad click and camera grip are Aim shortcuts, not camera holds.
+All four templates use the right face button for Interact and omit crouch.
+Version 0.1.12 bundles these defaults; an updated v3 library also serves compatible
+0.1.11 clients. Reapply/export to update existing App rule mappings.
 Older app versions keep the v2 feed; update the app and reapply the template to
 obtain the v3 Space camera mappings. Save/export again for existing App rules.
 

@@ -261,7 +261,7 @@
     "schema_version": 1,
     "id": "builtin-sto-dualsense",
     "name": "Star Trek Online - PS5-style (PC)",
-    "description": "DualSense starting template for default PC keyboard bindings. Layout 1 Space, 2 Ground, 3 Menus. This is console-inspired, not the console UI: no ability wheels or conditional power automation. Ground: Cross jumps; Circle and D-pad Up interact; R3 is unassigned. Left stick moves. Space: right stick looks around automatically while deflected; no R3 hold. Ground RPG: hold L2 for camera drag; Ground Shooter: mouse movement aims without L2. Menus: right stick moves the pointer. Keyboard B switches Ground RPG/Shooter mode; right-click is secondary fire in Shooter mode. Ability buttons use numbered PC tray slots: arrange your powers to match the labels. Add an Applications rule for GameClient.exe and reserve Create (SDL button 4) to cycle these layouts; the template leaves Create unassigned. PC camera, pitch and keybind settings can differ. No game/hardware testing performed. Direct Space camera requires Bifrost 0.1.11 or newer. Reapply and save/export after updating; existing mappings stay unchanged.",
+    "description": "Console-inspired template for default PC bindings: 1 Space, 2 Ground, 3 Menus. Space: left stick flies the ship; right stick looks around automatically while deflected, without a camera-button hold. Ground requires STO Shooter mode: enable it in the game (default keyboard B switches RPG/Shooter). Left stick moves; right stick looks/aims directly. Left trigger is Aim (X), right trigger primary fire (left mouse), right shoulder secondary fire (right mouse). Bottom face button jumps; right face button and D-pad/left-pad Up interact (F). No crouch binding; right stick click is unassigned on Ground. Menus uses pointer controls. Reserve Create / Share (SDL button 4) in a GameClient.exe Applications rule to cycle only Space/Ground/Menus. Other powers use numbered tray slots; arrange them in STO. Console radial menus and ability automation are not reproduced. Steam models use SDL3; avoid simultaneous Steam keyboard/mouse emulation. Hardware and gameplay are untested. Requires Bifrost 0.1.11 or newer; 0.1.12 bundles these defaults. Update profiles, reapply, and save/export again for existing App rules. Existing personal and saved mappings remain unchanged.",
     "category": "game",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -430,17 +430,17 @@
         "bindings": [
           {
             "input": "a",
-            "label": "Jump (use F / menu layout to interact)",
+            "label": "Jump",
             "keys": [
               "Space"
             ]
           },
           {
             "input": "b",
-            "label": "Interact",
             "keys": [
               "F"
-            ]
+            ],
+            "label": "Interact"
           },
           {
             "input": "x",
@@ -472,22 +472,20 @@
           },
           {
             "input": "left_trigger",
-            "label": "Hold for camera drag with right stick",
-            "mouse_button": 3
+            "keys": [
+              "X"
+            ],
+            "label": "Aim (X; Ground Shooter mode)"
           },
           {
             "input": "right_shoulder",
-            "label": "Secondary attack / tray 1 slot 2",
-            "keys": [
-              "2"
-            ]
+            "mouse_button": 3,
+            "label": "Secondary fire (Ground Shooter mode)"
           },
           {
             "input": "right_trigger",
-            "label": "Primary attack / tray 1 slot 1",
-            "keys": [
-              "1"
-            ]
+            "mouse_button": 1,
+            "label": "Primary fire (Ground Shooter mode)"
           },
           {
             "input": "left_stick_press",
@@ -554,22 +552,22 @@
           },
           {
             "input": "right_stick_up",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "up"
           },
           {
             "input": "right_stick_right",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "right"
           },
           {
             "input": "right_stick_down",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "down"
           },
           {
             "input": "right_stick_left",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "left"
           }
         ]
@@ -702,7 +700,7 @@
     "schema_version": 1,
     "id": "builtin-sto-xbox",
     "name": "Star Trek Online - Xbox-style (PC)",
-    "description": "Xbox starting template for default PC keyboard bindings: Space, Ground and Menus. Console-inspired PC mapping; no console ability wheels or conditional automation. A jumps on Ground; D-pad Up interacts. Space: right stick looks around automatically while deflected. Ground RPG: hold LT for camera drag; Ground Shooter: stick mouse movement aims without LT. Keyboard B switches Ground RPG/Shooter mode; right-click is secondary fire in Shooter mode. Menus use pointer movement. Powers use numbered tray slots; arrange them to match the labels. Reserve View / Back (SDL button 4) in an Applications rule for GameClient.exe to cycle layouts. Standard Xbox controls work without Elite paddles. Hardware and gameplay are untested. Direct Space camera requires Bifrost 0.1.11 or newer. Reapply and save/export after updating; existing mappings stay unchanged.",
+    "description": "Console-inspired template for default PC bindings: 1 Space, 2 Ground, 3 Menus. Space: left stick flies the ship; right stick looks around automatically while deflected, without a camera-button hold. Ground requires STO Shooter mode: enable it in the game (default keyboard B switches RPG/Shooter). Left stick moves; right stick looks/aims directly. Left trigger is Aim (X), right trigger primary fire (left mouse), right shoulder secondary fire (right mouse). Bottom face button jumps; right face button and D-pad/left-pad Up interact (F). No crouch binding; right stick click is unassigned on Ground. Menus uses pointer controls. Reserve View / Back (SDL button 4) in a GameClient.exe Applications rule to cycle only Space/Ground/Menus. Other powers use numbered tray slots; arrange them in STO. Console radial menus and ability automation are not reproduced. Steam models use SDL3; avoid simultaneous Steam keyboard/mouse emulation. Hardware and gameplay are untested. Requires Bifrost 0.1.11 or newer; 0.1.12 bundles these defaults. Update profiles, reapply, and save/export again for existing App rules. Existing personal and saved mappings remain unchanged.",
     "category": "game",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -871,17 +869,17 @@
         "bindings": [
           {
             "input": "a",
-            "label": "Jump (use F / menu layout to interact)",
+            "label": "Jump",
             "keys": [
               "Space"
             ]
           },
           {
             "input": "b",
-            "label": "Melee / tray 1 slot 3",
             "keys": [
-              "3"
-            ]
+              "F"
+            ],
+            "label": "Interact"
           },
           {
             "input": "x",
@@ -913,35 +911,26 @@
           },
           {
             "input": "left_trigger",
-            "label": "Hold for camera drag with right stick",
-            "mouse_button": 3
+            "keys": [
+              "X"
+            ],
+            "label": "Aim (X; Ground Shooter mode)"
           },
           {
             "input": "right_shoulder",
-            "label": "Secondary attack / tray 1 slot 2",
-            "keys": [
-              "2"
-            ]
+            "mouse_button": 3,
+            "label": "Secondary fire (Ground Shooter mode)"
           },
           {
             "input": "right_trigger",
-            "label": "Primary attack / tray 1 slot 1",
-            "keys": [
-              "1"
-            ]
+            "mouse_button": 1,
+            "label": "Primary fire (Ground Shooter mode)"
           },
           {
             "input": "left_stick_press",
             "label": "Hold to sprint",
             "keys": [
               "Shift"
-            ]
-          },
-          {
-            "input": "right_stick_press",
-            "label": "Crouch",
-            "keys": [
-              "C"
             ]
           },
           {
@@ -1002,22 +991,22 @@
           },
           {
             "input": "right_stick_up",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "up"
           },
           {
             "input": "right_stick_right",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "right"
           },
           {
             "input": "right_stick_down",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "down"
           },
           {
             "input": "right_stick_left",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "left"
           }
         ]
@@ -1150,7 +1139,7 @@
     "schema_version": 1,
     "id": "builtin-sto-steam-2015",
     "name": "Star Trek Online - Steam Controller (2015)",
-    "description": "Physical Valve Steam Controller (2015) starting template for default PC bindings: Space, Ground and Menus. Reserve Back / Menu (SDL button 4) to cycle layouts through a GameClient.exe Applications rule. Space: right touchpad looks around automatically while deflected. Ground RPG: hold LT or the camera grip for camera drag; Ground Shooter: touchpad mouse movement aims without camera hold. Keyboard B switches Ground RPG/Shooter mode; right-click is secondary fire in Shooter mode. Menus use pointer movement and touchpad click to select. Numbered tray powers need arrangement in STO. Console radial menus and automation are not reproduced. Use Bifrost 0.1.5 or newer with its SDL3 runtime; avoid a simultaneous Steam keyboard/mouse layout. Hardware and gameplay are untested. Direct Space camera requires Bifrost 0.1.11 or newer. Reapply and save/export after updating; existing mappings stay unchanged.",
+    "description": "Console-inspired template for default PC bindings: 1 Space, 2 Ground, 3 Menus. Space: left stick flies the ship; right touchpad looks around automatically while deflected, without a camera-button hold. Ground requires STO Shooter mode: enable it in the game (default keyboard B switches RPG/Shooter). Left stick moves; right touchpad looks/aims directly. Left trigger is Aim (X), right trigger primary fire (left mouse), right shoulder secondary fire (right mouse). Bottom face button jumps; right face button and D-pad/left-pad Up interact (F). No crouch binding; right stick click is unassigned on Ground. Menus uses pointer controls. Reserve Back / Menu (SDL button 4) in a GameClient.exe Applications rule to cycle only Space/Ground/Menus. Other powers use numbered tray slots; arrange them in STO. Console radial menus and ability automation are not reproduced. Steam models use SDL3; avoid simultaneous Steam keyboard/mouse emulation. Hardware and gameplay are untested. Requires Bifrost 0.1.11 or newer; 0.1.12 bundles these defaults. Update profiles, reapply, and save/export again for existing App rules. Existing personal and saved mappings remain unchanged.",
     "category": "game",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -1333,17 +1322,17 @@
         "bindings": [
           {
             "input": "a",
-            "label": "Jump (use F / menu layout to interact)",
+            "label": "Jump",
             "keys": [
               "Space"
             ]
           },
           {
             "input": "b",
-            "label": "Melee / tray 1 slot 3",
             "keys": [
-              "3"
-            ]
+              "F"
+            ],
+            "label": "Interact"
           },
           {
             "input": "x",
@@ -1375,22 +1364,20 @@
           },
           {
             "input": "left_trigger",
-            "label": "Hold for camera drag with right stick",
-            "mouse_button": 3
+            "keys": [
+              "X"
+            ],
+            "label": "Aim (X; Ground Shooter mode)"
           },
           {
             "input": "right_shoulder",
-            "label": "Secondary attack / tray 1 slot 2",
-            "keys": [
-              "2"
-            ]
+            "mouse_button": 3,
+            "label": "Secondary fire (Ground Shooter mode)"
           },
           {
             "input": "right_trigger",
-            "label": "Primary attack / tray 1 slot 1",
-            "keys": [
-              "1"
-            ]
+            "mouse_button": 1,
+            "label": "Primary fire (Ground Shooter mode)"
           },
           {
             "input": "left_stick_press",
@@ -1457,28 +1444,30 @@
           },
           {
             "input": "right_touchpad_up",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "up"
           },
           {
             "input": "right_touchpad_right",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "right"
           },
           {
             "input": "right_touchpad_down",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "down"
           },
           {
             "input": "right_touchpad_left",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "left"
           },
           {
             "input": "right_touchpad_click",
-            "mouse_button": 3,
-            "label": "Hold for camera drag"
+            "keys": [
+              "X"
+            ],
+            "label": "Aim shortcut (X; Ground Shooter mode)"
           },
           {
             "input": "left_touchpad_click",
@@ -1489,8 +1478,10 @@
           },
           {
             "input": "paddle1",
-            "mouse_button": 3,
-            "label": "Hold for camera drag / context menu"
+            "keys": [
+              "X"
+            ],
+            "label": "Aim shortcut (X; Ground Shooter mode)"
           },
           {
             "input": "paddle2",
@@ -1937,7 +1928,7 @@
     "schema_version": 1,
     "id": "builtin-sto-steam-2026",
     "name": "Star Trek Online - Steam Controller (2026)",
-    "description": "Physical Valve Steam Controller (2026) starting template for default PC bindings: Space, Ground and Menus. Reserve Back / Menu (SDL button 4) to cycle layouts through a GameClient.exe Applications rule. Space: right stick and right touchpad look around automatically while deflected. Ground RPG: hold LT or the camera grip for camera drag; Ground Shooter: touchpad mouse movement aims without camera hold. Keyboard B switches Ground RPG/Shooter mode; right-click is secondary fire in Shooter mode. Menus use pointer movement and touchpad click to select. Numbered tray powers need arrangement in STO. Console radial menus and automation are not reproduced. Use Bifrost 0.1.5 or newer with its SDL3 runtime; avoid a simultaneous Steam keyboard/mouse layout. Hardware and gameplay are untested. Direct Space camera requires Bifrost 0.1.11 or newer. Reapply and save/export after updating; existing mappings stay unchanged.",
+    "description": "Console-inspired template for default PC bindings: 1 Space, 2 Ground, 3 Menus. Space: left stick flies the ship; right stick looks around automatically while deflected, without a camera-button hold. Ground requires STO Shooter mode: enable it in the game (default keyboard B switches RPG/Shooter). Left stick moves; right stick looks/aims directly. Left trigger is Aim (X), right trigger primary fire (left mouse), right shoulder secondary fire (right mouse). Bottom face button jumps; right face button and D-pad/left-pad Up interact (F). No crouch binding; right stick click is unassigned on Ground. Menus uses pointer controls. Reserve Back / Menu (SDL button 4) in a GameClient.exe Applications rule to cycle only Space/Ground/Menus. Other powers use numbered tray slots; arrange them in STO. Console radial menus and ability automation are not reproduced. Steam models use SDL3; avoid simultaneous Steam keyboard/mouse emulation. Hardware and gameplay are untested. Requires Bifrost 0.1.11 or newer; 0.1.12 bundles these defaults. Update profiles, reapply, and save/export again for existing App rules. Existing personal and saved mappings remain unchanged.",
     "category": "game",
     "controller": "sdl-gamecontroller",
     "dead_zone": 8000,
@@ -2186,17 +2177,17 @@
         "bindings": [
           {
             "input": "a",
-            "label": "Jump (use F / menu layout to interact)",
+            "label": "Jump",
             "keys": [
               "Space"
             ]
           },
           {
             "input": "b",
-            "label": "Melee / tray 1 slot 3",
             "keys": [
-              "3"
-            ]
+              "F"
+            ],
+            "label": "Interact"
           },
           {
             "input": "x",
@@ -2228,35 +2219,26 @@
           },
           {
             "input": "left_trigger",
-            "label": "Hold for camera drag with right stick",
-            "mouse_button": 3
+            "keys": [
+              "X"
+            ],
+            "label": "Aim (X; Ground Shooter mode)"
           },
           {
             "input": "right_shoulder",
-            "label": "Secondary attack / tray 1 slot 2",
-            "keys": [
-              "2"
-            ]
+            "mouse_button": 3,
+            "label": "Secondary fire (Ground Shooter mode)"
           },
           {
             "input": "right_trigger",
-            "label": "Primary attack / tray 1 slot 1",
-            "keys": [
-              "1"
-            ]
+            "mouse_button": 1,
+            "label": "Primary fire (Ground Shooter mode)"
           },
           {
             "input": "left_stick_press",
             "label": "Hold to sprint",
             "keys": [
               "Shift"
-            ]
-          },
-          {
-            "input": "right_stick_press",
-            "label": "Crouch",
-            "keys": [
-              "C"
             ]
           },
           {
@@ -2317,43 +2299,43 @@
           },
           {
             "input": "right_stick_up",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "up"
           },
           {
             "input": "right_stick_right",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "right"
           },
           {
             "input": "right_stick_down",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "down"
           },
           {
             "input": "right_stick_left",
-            "label": "Pointer / camera while camera drag is held",
+            "label": "Camera / aim direction (Ground Shooter mode)",
             "mouse_move": "left"
           },
           {
             "input": "right_touchpad_up",
             "mouse_move": "up",
-            "label": "Touchpad pointer / camera"
+            "label": "Camera / aim direction (Ground Shooter mode)"
           },
           {
             "input": "right_touchpad_right",
             "mouse_move": "right",
-            "label": "Touchpad pointer / camera"
+            "label": "Camera / aim direction (Ground Shooter mode)"
           },
           {
             "input": "right_touchpad_down",
             "mouse_move": "down",
-            "label": "Touchpad pointer / camera"
+            "label": "Camera / aim direction (Ground Shooter mode)"
           },
           {
             "input": "right_touchpad_left",
             "mouse_move": "left",
-            "label": "Touchpad pointer / camera"
+            "label": "Camera / aim direction (Ground Shooter mode)"
           },
           {
             "input": "left_touchpad_up",
@@ -2399,8 +2381,10 @@
           },
           {
             "input": "right_touchpad_click",
-            "mouse_button": 3,
-            "label": "Hold for camera drag"
+            "keys": [
+              "X"
+            ],
+            "label": "Aim shortcut (X; Ground Shooter mode)"
           },
           {
             "input": "left_touchpad_click",
@@ -2411,8 +2395,10 @@
           },
           {
             "input": "paddle1",
-            "mouse_button": 3,
-            "label": "Hold for camera drag / context menu"
+            "keys": [
+              "X"
+            ],
+            "label": "Aim shortcut (X; Ground Shooter mode)"
           },
           {
             "input": "paddle2",
