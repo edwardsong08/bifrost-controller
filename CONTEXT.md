@@ -613,3 +613,21 @@ Existing catalog-v3 STO defaults already contain all requested corrections in
 0.1.12. No new variant added, installed app restarted, personal copy deleted or
 saved mapping overwritten. Clarified the STO guide's Bifrost ownership wording.
 Static catalog inspection only; no app, automated or gameplay tests.
+
+## 2026-10-07 - Consolidate owner STO mapping and prepare fixed page headers
+
+Connected DualSense had no unsaved changes. Exported the shared default revision
+76b8bff4a83e126716a6c2e174d4647141be04c1eac8b7f2190cf8fe2d873aae,
+updated star-trek-online-dualsense rule to its compiled native mapping, and
+activated Space set 1. Create/Share still cycles only Space/Ground/Menus.
+Moved redundant personal-sto-dualsense-shooter.json into profiles/archived
+with dated filename, preserving compiled files/history. MCP list confirms only
+the four shared STO variants remain; context confirms active/shared rule path.
+Re-entering Profile library refreshes the visible list without restarting.
+
+Owner screenshot shows partially clipped page-introduction text below the app
+header when scrolled. Shared scrollPage now keeps section heading/description
+outside its scroll viewport, preventing those header fragments across workspace
+pages. Exact clang-format 14 and whitespace inspection passed. Source fix only;
+not compiled, visually tested, published or included in installed 0.1.12 yet.
+No app restart or gameplay tests.

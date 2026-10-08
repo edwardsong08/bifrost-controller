@@ -93,13 +93,35 @@ QVBoxLayout *cardLayout(QWidget *widget)
 }
 QWidget *scrollPage(QWidget *content)
 {
+    auto page = new QWidget;
+    auto layout = new QVBoxLayout(page);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(12);
+    // Keep the page identity outside the viewport so scrolling cannot leave
+    // clipped title/description fragments immediately below the app header.
+    auto contentLayout = content->layout();
+    if (contentLayout && contentLayout->count() >= 2)
+    {
+        auto heading = qobject_cast<QLabel *>(contentLayout->itemAt(0)->widget());
+        auto description = qobject_cast<QLabel *>(contentLayout->itemAt(1)->widget());
+        if (heading && heading->property("role").toString() == "section" && description)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                auto item = contentLayout->takeAt(0);
+                layout->addWidget(item->widget());
+                delete item;
+            }
+        }
+    }
     auto scroll = new QScrollArea;
     scroll->setObjectName("troaPageScroll");
     scroll->setFrameShape(QFrame::NoFrame);
     scroll->setWidgetResizable(true);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroll->setWidget(content);
-    return scroll;
+    layout->addWidget(scroll, 1);
+    return page;
 }
 QWidget *step(const QString &number, const QString &title, const QString &description)
 {
