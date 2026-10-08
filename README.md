@@ -1,299 +1,103 @@
-# <img src="./src/images/antimicrox.png" alt="Icon" width="60"/> AntiMicroX
-
-1. [Description](#description)  
-2. [License](#license)  
-3. [Installation](#installation)
-4. [Wiki](#wiki)
-5. [Command Line](#command-line) 
-6. [D-Bus](#d-bus)
-7. [Testing Under Linux](#testing-under-linux)
-8. [AntiMicroX Profiles](#antimicrox-profiles)
-9. [Support](#support)
-
-## ❗Looking for a new maintainer❗
-
-Due to lack of time and shifting focus of its developer AntiMicroX is looking for a new maintainer willing to continue development.   
-For now, this app will have only limited support and will not get any new features (unless coded by external contributors).   
-[Link to discussion](https://github.com/AntiMicroX/antimicrox/discussions/1171)
-
-## Description
-
-AntiMicroX is a graphical program used to map gamepad keys to keyboard, mouse, scripts and macros. You can use this program to control any desktop application with a gamepad on Linux🐧 and Windows 🪟.  
-It can be also used for generating SDL2 configuration (useful for mapping atypical gamepads to generic ones like xbox360).
-
-We support X.org and Wayland.
-
-Features:
-
-- Mapping of gamepads/joystick buttons to:
-  - keyboard buttons
-  - mouse buttons and moves
-  - scripts and executables
-  - macros consisting of elements mentioned above
-- Assigning multiple switchable sets of mappings to gamepad.
-- Auto profiles - assign profile to active application window (not in Wayland [note](https://github.com/AntiMicroX/antimicrox/issues/303)).
-
-This program is currently supported under various Linux
-distributions.
-
-This application is continuation of project called `AntiMicro`, which was later abandoned and revived by juliagoda.
-
-Legacy repositories:
-- First AntiMicroX repository: https://github.com/juliagoda/antimicroX
-- Second, maintained by organization: https://github.com/AntiMicro/antimicro
-- First, original AntiMicro repository: https://github.com/Ryochan7/antimicro
-
-**Screenshots:**  
-Disclaimer: Theme may depend on your system configuration.
-
-<table border="0px" >
-  <tr>
-    <td>
-      <img src="./other/appdata/screenshots/app_light.png" alt="Main Window" />
-    </td>
-    <td>
-      <img src="./other/appdata/screenshots/controllermapping.png" alt="Mapping" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img src="./other/appdata/screenshots/calibration.png" alt="Calibration" />
-    </td>
-    <td>
-    <img src="./other/appdata/screenshots/advanced.png" alt="Advanced settings" />
-    </td>
-  </tr>
-</table>
-
-## License
-
-This program is licensed under the GPL v.3. Please read the LICENSE text document
-included with the source code if you would like to read the terms of the license.
-The license can also be found online at
-http://www.gnu.org/licenses/gpl.txt
-
-## Installation
-
-### Windows
-
-Just download `antimicrox-X.X.X-AMD64.exe` from [Release site](https://github.com/AntiMicroX/antimicrox/releases/latest) and install it.
-
-### Flatpak
-
-The flatpak version is distributed on Flathub, and runs on most major Linux distributions. See instructions here: [Flathub application page](https://flathub.org/apps/details/io.github.antimicrox.antimicrox)
-
-If you have Flathub [set up](https://flatpak.org/setup/) already:
-
-```bash
-flatpak install flathub io.github.antimicrox.antimicrox
-```
-
-❕ Flatpak package may not work correctly with wayland [(Fix available here)](https://github.com/AntiMicroX/antimicrox/wiki/Open-uinput-error)
-
-### AppImage
-
-Download from the [release site](https://github.com/AntiMicroX/antimicrox/releases).
-
-It is recommended to use [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher) with this package.
-
-### Debian/Ubuntu-based distributions
-
-Download from the [release site](https://github.com/AntiMicroX/antimicrox/releases) and install `.deb` package.
-
-### Fedora
-
-```
-dnf install antimicrox
-```
-
-### openSUSE
-
-A [package](https://software.opensuse.org/package/antimicrox) is available.
-
-```
-zypper install antimicrox
-```
-
-### Arch Linux or Arch Linux based distributions:
-
-```
-trizen -S antimicrox
-```
-**or**
-
-pre-built version can de downloaded from unofficial repository called [chaotic-aur](https://lonewolf.pedrohlc.com/chaotic-aur/).
-
-Append (one of listed mirrors) to `/etc/pacman.conf`:
-```bash
-# Brazil
-Server = http://lonewolf-builder.duckdns.org/$repo/$arch
-# Germany
-Server = http://chaotic.bangl.de/$repo/$arch
-# USA (Cloudflare cached)
-Server = https://repo.kitsuna.net/$arch
-# Netherlands
-Server = https://chaotic.tn.dedyn.io/$arch
-```
-To check signature, add keys:
-```bash
-sudo pacman-key --keyserver hkp://keyserver.ubuntu.com -r 3056513887B78AEB 8A9E14A07010F7E3
-sudo pacman-key --lsign-key 3056513887B78AEB
-sudo pacman-key --lsign-key 8A9E14A07010F7E3
-```
-Install package
-```bash
-pacman -S antimicrox
-```
-
-### Building Yourself
-
-List of required dependencies and build instructions can be found [here](./BUILDING.md).
-
-### Packages status
-
-Status of package `antimicrox`:  
-[![Packaging status](https://repology.org/badge/vertical-allrepos/antimicrox.svg?columns=3&minversion=3.1)](https://repology.org/project/antimicrox/versions)
-
-## Command Line
-
-Run `antimicrox --help` or read `man antimicrox` for command-line parameters.
-
-<details>
-  <summary>Commandline for flatpak</summary>
-  In case of flatpak package AntiMicroX can be launched with command:
-  <br>
-  <code>flatpak run io.github.antimicrox.antimicrox</code> instead of just <code>antimicrox</code>
-  <br>
-  In some cases it may be good to add alias
-  <br>
-  <code>alias antimicrox='flatpak run io.github.antimicrox.antimicrox'</code><br>
-  fo file <code>~/.bashrc</code>
-</details>
-
-## D-Bus
-
-AntiMicroX provides a D-Bus service, io.github.antimicrox. You can control some
-aspects of AntiMicroX using D-Bus, such as selecting the current control set.
-
-For example, to select set 0 for input device 0 with dbus-send:
-
-```
-dbus-send --print-reply --dest=io.github.antimicrox /InputDevice/0 io.github.antimicrox.InputDevice.setActiveSetNumber int32:0
-```
-
-### Objects
-
-AntiMicroX provides InputDevice objects with paths `/InputDevice/<N>`, where
-`<N>` is the device index.
-
-To find a device of interest, enumerate those objects and use `getSDLName` and
-`getDescription` to identify the device.
-
-### Interfaces
-
-InputDevice objects support the [io.github.antimicrox.InputDevice](other/io.github.antimicrox.inputdevice.xml) interface.
-
-#### Method: io.github.antimicrox.InputDevice.getSDLName()
-
-`getSDLName()` provides the human-readable name of the device, such as "Microsoft Xbox 360 Controller" or "HORIPAD FPS for Nintendo Switch".
-
-#### Method: io.github.antimicrox.InputDevice.getDescription()
-
-`getDescription()` provides a detailed description of the device:
-
-```
-Index:            1
-  UniqueID:         030081b85e0400008e020000100100001118654
-  GUID:             030081b85e0400008e02000010010000
-  VendorID:         1118
-  ProductID:        654
-  Serial:
-  Product Version:  272
-  Name:             Xbox 360 Controller
-  Game Controller: Yes
-  # of RawAxes:    6
-  # of Axes:       6
-  # of RawButtons: 21
-  # of Buttons:    21
-  # of Hats:       0
-  Accelerometer:   0
-  Gyroscope:       0
-```
-
-This includes:
-
-* The controller's `UniqueID` assigned by AntiMicroX
-* The controller's `GUID` assigned by SDL
-* The controller's USB `VendorID`, `ProductID`, `Serial`, `ProductVersion`, and
-  `Name`
-* Whether the device is a `Game Controller`
-* The controller's input features: `# of RawAxes`, `# of Axes`,
-  `# of RawButtons`, `# of Buttons`, `# of Hats`, `Accelerometer`, and
-  `Gysroscope`
-
-#### Method: io.github.antimicrox.InputDevice.getActiveSetNumber()
-
-`getActiveSetNumber()` returns the current set number for this device.
-
-API set indices are 0-based, but they are displayed in the UI with 1-based
-labels.
-
-#### Method: io.github.antimicrox.InputDevice.getActiveSetName()
-
-`getActiveSetName()` returns the name of the current set for this device.
-
-This is empty if the set was not given a name.  In that case, AntiMicroX
-displays a default name: `Set <N>` with a 1-based index.
-
-#### Method: io.github.antimicrox.InputDevice.setActiveSetNumber()
-
-`setActiveSetNumber()` changes the active set for this device to the set
-specified, as a 0-based index.
-
-### Test
-
-Use [D-Spy](https://gitlab.gnome.org/GNOME/d-spy) to inspect and test the D-Bus
-interface.
-
-## Wiki
-
-[Look here](https://github.com/AntiMicroX/antimicrox/wiki)
-
-## Testing Under Linux
-
-If you are having problems with antimicrox detecting a controller or
-detecting all axes and buttons, you should test the controller outside of
-antimicrox to check if the problem is with antimicrox or not. The two endorsed
-programs for testing gamepads outside of antimicrox are **sdl-jstest**
-(**sdl2-jstest**) and **evtest**. SDL2 utilizes evdev on Linux so performing
-testing with older programs that use joydev won't be as helpful since some
-devices behave a bit differently between the two systems. Another method also exists, 
-which can be found [here](https://github.com/juliagoda/SDL_JoystickButtonNames).
-
-## AntiMicroX Profiles
-
-If you would like to send the profile you are using for your application or find something 
-for yourself, [here](https://github.com/AntiMicroX/antimicrox-profiles) is the forked repository. If you want to report a bug, ask 
-a question or share a suggestion, you can do that on the antimicrox page or on the
-[antimicrox-profiles](https://github.com/AntiMicroX/antimicrox-profiles) page.
-
-## Support
-
-There are several ways to get help with AntiMicroX. The easiest way is to upvote (with 👍) issues you thing are the most important ones.
-
-### Contributing
-
-Any contributions into codebase are welcome. You can find contribution guide [here](./CONTRIBUTING.md).  
-Some issues are may have bounties which are meant to attract contributors.
-
-### Translation
-
-Translation process is handled via [Weblate](https://weblate.org/). If you want to help just click this [link](https://hosted.weblate.org/engage/antimicrox).
-
-Translation status
-
-<a href="https://hosted.weblate.org/engage/antimicrox/">
-<img src="https://hosted.weblate.org/widgets/antimicrox/-/gui/multi-auto.svg" alt="Translation status" />
-</a>
-
-More information about translating can be found [here](https://github.com/AntiMicroX/antimicrox/wiki/Translating-AntiMicroX).
+# Bifrost Controller
+
+Bifrost Controller is TROA's Windows-first desktop controller mapping app, alongside
+Bifrost Server Manager in the TROA gaming software ecosystem. It is based on AntiMicroX.
+
+This initial preview keeps the native C++/Qt/SDL input engine and introduces a refreshed
+workspace, a managed profile library, and a local MCP companion for creating profiles
+with a compatible assistant. Linux remains a future product target.
+
+## In this preview
+
+- Controller mappings, calibration, profiles, and advanced assignments inherited from AntiMicroX.
+- A new workspace with clear navigation, light/dark appearance, and live controller status.
+- Twenty-two desktop/browser/game templates, including console-inspired STO, Minecraft Java, Palworld and Space Engineers 1 layouts for DualSense, Xbox and both Steam Controller hardware generations. Gameplay remains untested.
+- A library grouped by game/application with controller filters, favorites, personal collections, JSON import/export and backups, and native `.amgp` export.
+- Closing the window keeps the app in the tray by default; use **Bifrost > Quit** or the tray's **Quit** action to exit. Settings can change this behavior.
+- Application rules can pause keyboard/mouse output for a game's native controller controls without clearing the saved mapping.
+- Community templates download at startup or through **Profile library > Update profiles**, with a local cache for offline use.
+- Personal profile copies with atomic saving, revision conflict checks, and preserved history.
+- Local MCP tools to inspect controllers and create, read, validate, save, restore, activate, or unload profiles.
+- Per-application profile rules, named layouts (such as Space/Ground), keyboard/controller switching, and monitor-aware switch notices.
+- The deployed TROA logo, TROA ivory/charcoal/gold colors, and Bifrost-inspired navy panels.
+- A separate app identity, settings, installer, and update destination so AntiMicroX can remain installed.
+
+## Downloads
+
+Windows installer and portable ZIP are built by **Bifrost Controller Windows preview** in GitHub Actions.
+They are preview artifacts until a release is published. Corresponding source and SHA256
+checksums are included. Published previews are linked from
+[TROA's Controller page](https://therealmsofasgard.com/gaming-hub/bifrost-controller).
+
+Install the branded Windows package and open **Bifrost Controller**. Use the sidebar
+for Overview, Map controls, Profile library, App rules, and Assistant · MCP. The desktop/browser catalog
+is a starting point to customize, rather than a claim of controller or game compatibility.
+
+## MCP & AI setup
+
+The package includes `bifrost-controller-mcp.exe`; no Python or Node runtime is required.
+Choose **Assistant · MCP** in the header/sidebar or **Assistant · MCP > Open MCP setup**
+in the menu (Ctrl+Shift+M). Enable local access and copy JSON or Codex TOML connection settings
+into a compatible MCP client. The page distinguishes an available server from requests actually
+received; enabling access does not automatically connect an AI app. See [MCP tools and profile workflow](docs/MCP.md).
+
+MCP configuration remains separate from the input loop. Normal controller mapping does not
+require an AI service or internet connection. Version 0.1.5 adds English-only operation, a task-focused overview, Settings Apply,
+controller capability checks and periodic app-update popups. Native profile saves
+use atomic replacement. See [the source audit and limits](docs/UI-AUDIT.md). Older apps need
+upgrading once to gain working template delivery. Disable
+startup downloads in Profile library if desired, or use **Update profiles** manually. Downloads
+are validated before atomic caching, never activate mappings or replace personal copies,
+and retain existing templates on failure. The preview catalog is maintained at
+`profiles/catalog-v2.json` on `codex/troa-controller-mapper`; future catalog revisions must
+remain compatible or require an app upgrade. Personal copies are stored separately.
+GUI edits to generated mappings remain legacy .amgp
+files and are not automatically converted back to managed JSON definitions.
+
+The initial TROA preview's settings and user-data folder names are intentionally retained
+for upgrade compatibility. Rebranding preserves personal profiles, revisions, and settings.
+
+## App updates
+
+The 0.1.5 app checks published releases on startup and every six hours while open.
+It shows a popup for a new version and provides **Bifrost > Check for app updates**.
+The popup opens the TROA download page; installation requires running the Windows
+installer. From 0.1.7, install over the existing copy while Codex stays open;
+setup installs a separate release and offers to restart Bifrost safely.
+Save/Discard/Cancel protects unsaved mappings. A legacy Close-to-tray app may
+need **Bifrost > Quit** once, then the updated Start menu shortcut. Uninstalling
+is not normally needed. Existing users need one upgrade to gain update prompts.
+Community-profile refreshes remain separate and do not replace personal mappings.
+
+## Development
+
+The application uses C++17, Qt Widgets, the SDL2 API, and CMake. Windows 0.1.5
+bundles pinned SDL3 3.4.18 with sdl2-compat 2.32.74 for current controller drivers. The refreshed interface deliberately
+reuses the existing mapping widgets and dialogs while the profile/API layer is kept separate.
+Qt6 is the first preview build target; inherited Qt5 and Linux build paths remain in source.
+
+See [build instructions](BUILDING.md), [repository context](CONTEXT.md), and
+[upstream contribution guidance](CONTRIBUTING.md). The CMake application target remains
+`antimicrox` internally but produces `bifrost-controller.exe`. The companion target
+is `bifrost-controller-mcp`.
+
+No automated, visual, or hardware tests are run for this preview, at the project owner's
+request. Compilation and packaging results are recorded separately from runtime acceptance.
+Managed profiles cover exposed triggers, touchpad directions/clicks, extra buttons
+and gyro/accelerometer directions. Timed macros and legacy import remain native
+editor features. Touchpad mapping uses directional zones. Hardware/gameplay
+behavior is untested. Bifrost currently ships English only.
+
+See [Star Trek Online setup and control differences](docs/profiles/star-trek-online-dualsense.md)
+before using its starting template. This does not reproduce the console UI or ability
+automation, and gameplay has not been tested.
+
+## Attribution and license
+
+This is an independently maintained derivative of [AntiMicroX](https://github.com/AntiMicroX/antimicrox),
+initially based on commit `dbb6349603e6ee2426d300eee9570e1ed44fb9f5`.
+Original copyright notices and GPL licensing are retained. See [NOTICE](NOTICE.md),
+[LICENSE](LICENSE), and the [original README](UPSTREAM_README.md).
+
+The repository remains owned by Edward's personal GitHub account. TROA may distribute
+public releases; collaborator permissions are managed separately from website distribution.

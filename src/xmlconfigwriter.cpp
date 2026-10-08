@@ -22,9 +22,10 @@
 #include "inputdevice.h"
 #include "xml/inputdevicexml.h"
 
+#include "troa/identity.h"
 #include <QDebug>
 #include <QDir>
-#include <QFile>
+#include <QSaveFile>
 #include <QXmlStreamWriter>
 
 XMLConfigWriter::XMLConfigWriter(QObject *parent)
@@ -42,9 +43,6 @@ XMLConfigWriter::~XMLConfigWriter()
 {
     if (configFile != nullptr)
     {
-        if (configFile->isOpen())
-            configFile->close();
-
         delete configFile;
         configFile = nullptr;
     }
@@ -63,32 +61,35 @@ XMLConfigWriter::~XMLConfigWriter()
 void XMLConfigWriter::write(InputDeviceXml *joystickXml)
 {
     writerError = false;
-
-    if (!configFile->isOpen())
-    {
-        if (configFile->open(QFile::WriteOnly | QFile::Text))
-        {
-            xml->setDevice(configFile);
-        } else
-        {
-            writerError = true;
-            writerErrorString = tr("Could not write to profile at %1.").arg(configFile->fileName());
-        }
-    } else
+    writerErrorString.clear();
+    const auto cache = QDir::cleanPath(Troa::profileDirectory() + "/compiled") + "/";
+    if (!configFile || !joystickXml || QDir::cleanPath(fileName).startsWith(cache, Qt::CaseInsensitive))
     {
         writerError = true;
-        writerErrorString = tr("Could not write to profile at %1.").arg(configFile->fileName());
+        writerErrorString = tr("Choose a personal profile file outside the managed profile cache.");
+        return;
     }
-
-    if (!writerError)
+    if (!configFile->open(QIODevice::WriteOnly))
     {
-        xml->writeStartDocument();
-        joystickXml->writeConfig(xml);
-        xml->writeEndDocument();
+        writerError = true;
+        writerErrorString = tr("Could not write profile %1: %2").arg(fileName, configFile->errorString());
+        return;
     }
-
-    if (configFile->isOpen())
-        configFile->close();
+    delete xml;
+    xml = new QXmlStreamWriter(configFile);
+    xml->setAutoFormatting(true);
+    xml->writeStartDocument();
+    joystickXml->writeConfig(xml);
+    xml->writeEndDocument();
+    if (xml->hasError())
+    {
+        configFile->cancelWriting();
+        writerError = true;
+    } else if (!configFile->commit())
+        writerError = true;
+    if (writerError)
+        writerErrorString =
+            tr("Could not save profile %1: %2. The previous file was kept.").arg(fileName, configFile->errorString());
 }
 
 /**
@@ -96,9 +97,9 @@ void XMLConfigWriter::write(InputDeviceXml *joystickXml)
  */
 void XMLConfigWriter::setFileName(QString filename)
 {
-    QFile *temp = new QFile(filename);
+    delete configFile;
     fileName = filename;
-    configFile = temp;
+    configFile = new QSaveFile(filename);
 }
 
 bool XMLConfigWriter::hasError() { return writerError; }
@@ -109,6 +110,6 @@ const QXmlStreamWriter *XMLConfigWriter::getXml() { return xml; }
 
 QString const &XMLConfigWriter::getFileName() { return fileName; }
 
-const QFile *XMLConfigWriter::getConfigFile() { return configFile; }
+const QSaveFile *XMLConfigWriter::getConfigFile() { return configFile; }
 
 const InputDevice *XMLConfigWriter::getJoystick() { return m_joystick; }

@@ -6,7 +6,17 @@ build-dir/
 Build/
 .flatpak-builder/
 repo/
-docs/
+docs/*
+!docs/MCP.md
+!docs/UI-AUDIT.md
+!docs/profiles/
+docs/profiles/*
+!docs/profiles/star-trek-online-dualsense.md
+
+# Local tooling and artifacts
+.tools/
+distribution/
+.deps/
 
 # Changelogs
 src/Changelog

@@ -70,7 +70,9 @@ class JoyTabWidget : public QWidget
 
     QHash<int, QString> *recentConfigs(); // JoyTabSettings class
 
-    QString getCurrentConfigName(); // JoyTabSettings class
+    QString getCurrentConfigName();           // JoyTabSettings class
+    QString currentProfilePath();             // Only report successfully loaded native mappings.
+    bool loadProfileNow(const QString &path); // GUI-thread load for APIs and application rules.
     QString getConfigName(int index);
 
     InputDevice *getJoystick();
@@ -107,7 +109,7 @@ class JoyTabWidget : public QWidget
     void refreshButtons();
 
   private slots:
-    void saveConfigFile(); // JoyTabSettings class
+    bool saveConfigFile(); // False on cancellation or write failure; callers must preserve edits.
     void resetJoystick();
     void saveAsConfig();             // JoyTabSettings class
     void removeConfig();             // JoyTabSettings class
@@ -149,6 +151,7 @@ class JoyTabWidget : public QWidget
     void performSetCopy();        // JoyTabWidgetSets class
     void disableCopyCurrentSet(); // JoyTabWidgetSets class
     void refreshSetButtons();     // JoyTabWidgetSets class
+    void refreshMappingSummary();
     void openGameControllerMappingWindow();
     void propogateMappingUpdate(QString mapping, InputDevice *device);
 
@@ -156,6 +159,7 @@ class JoyTabWidget : public QWidget
     QVBoxLayout *verticalLayout;
     QHBoxLayout *configHorizontalLayout;
     QLabel *batteryIcon;
+    QLabel *mappingSummary;
     QPushButton *removeButton;
     QPushButton *loadButton;
     QPushButton *saveButton;

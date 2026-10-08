@@ -35,6 +35,21 @@
 
 #include <math.h>
 
+namespace {
+double radialMouseComponent(int x, int y, int component, int deadZone, int maxZone, double circle)
+{
+    const double radius = hypot(static_cast<double>(x), static_cast<double>(y));
+    if (radius <= deadZone || maxZone <= deadZone)
+        return 0.0;
+    // Preserve square-gate calibration, but apply the dead zone to the vector rather than each axis.
+    const double largest = qMax(fabs(static_cast<double>(x)), fabs(static_cast<double>(y)));
+    const double fullRange = 1.0 + (radius / largest - 1.0) * circle;
+    const double adjustedDeadZone = deadZone / fullRange;
+    const double speed = qBound(0.0, (radius / fullRange - adjustedDeadZone) / (maxZone - adjustedDeadZone), 1.0);
+    return speed * fabs(static_cast<double>(component)) / radius;
+}
+} // namespace
+
 const JoyControlStick::JoyMode JoyControlStick::DEFAULTMODE = JoyControlStick::StandardMode;
 
 JoyControlStick::JoyControlStick(JoyAxis *axis1, JoyAxis *axis2, int index, int originset, QObject *parent)
@@ -444,6 +459,8 @@ double JoyControlStick::calculateYDistanceFromDeadZone(bool interpolate)
  */
 double JoyControlStick::calculateYDistanceFromDeadZone(int axisXValue, int axisYValue, bool interpolate)
 {
+    if (interpolate && diagonalRange == 90)
+        return radialMouseComponent(axisXValue, axisYValue, axisYValue, deadZone, maxZone, circle);
     double distance = 0.0;
 
     int axis1Value = axisXValue;
@@ -574,6 +591,8 @@ double JoyControlStick::calculateXDistanceFromDeadZone(bool interpolate)
  */
 double JoyControlStick::calculateXDistanceFromDeadZone(int axisXValue, int axisYValue, bool interpolate)
 {
+    if (interpolate && diagonalRange == 90)
+        return radialMouseComponent(axisXValue, axisYValue, axisXValue, deadZone, maxZone, circle);
     double distance = 0.0;
 
     int axis1Value = axisXValue;

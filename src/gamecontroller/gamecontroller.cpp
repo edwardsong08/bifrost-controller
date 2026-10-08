@@ -28,11 +28,14 @@
 
 #include <cmath>
 
+#include "troa/controllersupport.h"
 #include <QDebug>
 #include <QRegularExpression>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <utility>
+static_assert(SDL_CONTROLLER_BUTTON_MAX == Troa::RawButtonBase, "Preserve SDL2 profile button indices");
+static_assert(SDL_CONTROLLER_AXIS_MAX == Troa::TouchpadAxisBase, "Preserve SDL2 profile axis indices");
 
 GameController::GameController(SDL_GameController *controller, int deviceIndex, AntiMicroSettings *settings,
                                int counterUniques, QObject *parent)
@@ -40,6 +43,11 @@ GameController::GameController(SDL_GameController *controller, int deviceIndex, 
 {
     this->controller = controller;
     this->counterUniques = counterUniques;
+    if (QString::fromUtf8(SDL_GameControllerName(controller)).contains("Steam Controller", Qt::CaseInsensitive))
+    {
+        m_touchpadCount = qBound(0, SDL_GameControllerGetNumTouchpads(controller), 2);
+        m_steam2026 = SDL_JoystickNumButtons(SDL_GameControllerGetJoystick(controller)) >= 22;
+    }
 
     SDL_Joystick *joyhandle = SDL_GameControllerGetJoystick(controller);
     joystickID = SDL_JoystickInstanceID(joyhandle);
@@ -183,9 +191,39 @@ void GameController::closeSDLDevice()
     }
 }
 
-int GameController::getNumberRawButtons() { return SDL_CONTROLLER_BUTTON_MAX; }
+int GameController::getNumberRawButtons()
+{
+    const int raw = qBound(0, SDL_JoystickNumButtons(SDL_GameControllerGetJoystick(controller)), 64);
+    return qMax(Troa::RawButtonBase + raw, m_touchpadCount ? Troa::TouchpadClickBase + m_touchpadCount : 0);
+}
 
-int GameController::getNumberRawAxes() { return SDL_CONTROLLER_AXIS_MAX; }
+int GameController::getNumberRawAxes() { return SDL_CONTROLLER_AXIS_MAX + 2 * m_touchpadCount; }
+
+int GameController::extraButtonForRaw(int index) const
+{
+    if (index < 0 || index >= qMin(64, SDL_JoystickNumButtons(SDL_GameControllerGetJoystick(controller))))
+        return -1;
+    if (m_steam2026 && (index == 16 || index == 17))
+        return -1; // The dedicated touchpad click inputs cover these physical buttons.
+    for (int button = 0; button < SDL_CONTROLLER_BUTTON_MAX; ++button)
+    {
+        const auto binding = SDL_GameControllerGetBindForButton(controller, SDL_GameControllerButton(button));
+        if (binding.bindType == SDL_CONTROLLER_BINDTYPE_BUTTON && binding.value.button == index)
+            return -1; // Do not create a second binding for an already standardized button.
+    }
+    return Troa::RawButtonBase + index;
+}
+
+bool GameController::supportsButton(int index) const
+{
+    if (index < 0)
+        return false;
+    if (index >= 0 && index < SDL_CONTROLLER_BUTTON_MAX)
+        return SDL_GameControllerHasButton(controller, SDL_GameControllerButton(index));
+    if (index >= Troa::TouchpadClickBase)
+        return index < Troa::TouchpadClickBase + m_touchpadCount;
+    return extraButtonForRaw(index - Troa::RawButtonBase) == index;
+}
 
 /**
  * @brief Queries the data rate of the given sensor from SDL.
@@ -228,8 +266,7 @@ QString GameController::getBindStringForAxis(int index, bool)
 {
     QString temp = QString();
 
-    SDL_GameControllerButtonBind bind =
-        SDL_GameControllerGetBindForAxis(controller, static_cast<SDL_GameControllerAxis>(index));
+    SDL_GameControllerButtonBind bind = getBindForAxis(index);
 
     if (bind.bindType == SDL_CONTROLLER_BINDTYPE_BUTTON)
     {
@@ -246,8 +283,7 @@ QString GameController::getBindStringForButton(int index, bool trueIndex)
 {
     QString temp = QString();
 
-    SDL_GameControllerButtonBind bind =
-        SDL_GameControllerGetBindForButton(controller, static_cast<SDL_GameControllerButton>(index));
+    SDL_GameControllerButtonBind bind = getBindForButton(index);
 
     int offset = trueIndex ? 0 : 1;
     int bindInt = static_cast<int>(bind.bindType);
@@ -272,11 +308,23 @@ QString GameController::getBindStringForButton(int index, bool trueIndex)
 
 SDL_GameControllerButtonBind GameController::getBindForAxis(int index)
 {
+    if (index >= SDL_CONTROLLER_AXIS_MAX)
+        return {};
     return SDL_GameControllerGetBindForAxis(controller, static_cast<SDL_GameControllerAxis>(index));
 }
 
 SDL_GameControllerButtonBind GameController::getBindForButton(int index)
 {
+    if (index >= SDL_CONTROLLER_BUTTON_MAX)
+    {
+        SDL_GameControllerButtonBind binding{};
+        if (index < Troa::TouchpadClickBase && supportsButton(index))
+        {
+            binding.bindType = SDL_CONTROLLER_BINDTYPE_BUTTON;
+            binding.value.button = index - Troa::RawButtonBase;
+        }
+        return binding;
+    }
     return SDL_GameControllerGetBindForButton(controller, static_cast<SDL_GameControllerButton>(index));
 }
 

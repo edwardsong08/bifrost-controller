@@ -21,6 +21,8 @@
 
 #include "common.h"
 #include "eventhandlerfactory.h"
+#include "troa/identity.h"
+#include "troa/modernshell.h"
 
 #include <SDL2/SDL_gamecontroller.h>
 #include <SDL2/SDL_version.h>
@@ -38,6 +40,8 @@ AboutDialog::AboutDialog(QWidget *parent)
     , ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+    ui->titleLabel->setText(Troa::name());
+    ui->label_5->setPixmap(Troa::ModernShell::applicationIcon().pixmap(64, 64));
     ui->versionLabel->setText(PadderCommon::programVersion);
     fillInfoTextBrowser();
 }
@@ -47,6 +51,9 @@ AboutDialog::~AboutDialog() { delete ui; }
 void AboutDialog::fillInfoTextBrowser()
 {
     QStringList finalInfoText = QStringList();
+    finalInfoText.append(Troa::name());
+    finalInfoText.append(tr("Based on AntiMicroX 3.6.1. Original contributors retain their copyrights."));
+    finalInfoText.append(tr("TROA interface and MCP integration, 2026. Licensed under GPL version 3 or later."));
 
     finalInfoText.append(tr("Program Version %1").arg(PadderCommon::programVersion));
 #ifdef ANTIMICROX_PKG_VERSION
@@ -118,6 +125,7 @@ void AboutDialog::changeEvent(QEvent *event)
 void AboutDialog::retranslateUi()
 {
     ui->retranslateUi(this);
+    ui->titleLabel->setText(Troa::name());
 
     ui->versionLabel->setText(PadderCommon::programVersion);
 }

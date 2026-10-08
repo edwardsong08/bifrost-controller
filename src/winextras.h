@@ -18,8 +18,9 @@ class WinExtras : public QObject
     static const unsigned int EXTENDED_FLAG;
     static QString getForegroundWindowExePath();
     static bool containsFileAssociationinRegistry();
-    static void writeFileAssocationToRegistry();
-    static void removeFileAssociationFromRegistry();
+    static bool writeFileAssocationToRegistry();
+    static bool removeFileAssociationFromRegistry();
+    static void refreshInstalledLaunchPaths();
     static bool IsRunningAsAdmin();
     static bool elevateAntiMicro();
     static void disablePointerPrecision();

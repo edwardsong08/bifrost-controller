@@ -21,9 +21,16 @@
 
 #include <SDL2/SDL_joystick.h>
 
+#include <QJsonObject>
 #include <QMainWindow>
 #include <QMap>
 #include <QSystemTrayIcon>
+
+namespace Troa {
+class LocalApi;
+class ModernShell;
+class ApplicationContext;
+} // namespace Troa
 
 #ifdef CHECK_FOR_UPDATES
     #include <QNetworkAccessManager>
@@ -70,11 +77,19 @@ class MainWindow : public QMainWindow
     QMap<int, QList<QAction *>> const &getProfileActions();
 
     bool isKeypadUnlocked();
+    QJsonObject handleTroaRequest(const QJsonObject &request);
 
   protected:
     void showEvent(QShowEvent *event) override;
     void changeEvent(QEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
+#ifdef Q_OS_WIN
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override;
+    #else
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+    #endif
+#endif
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -133,7 +148,6 @@ class MainWindow : public QMainWindow
     void openWikiPage();
     void openCalibration();
     void propogateNameDisplayStatus(JoyTabWidget *tabwidget, bool displayNames);
-    void changeLanguage(QString language); // MainConfiguration class
     void openMainSettingsDialog();
     void showStickAssignmentDialog();
     void checkHideEmptyOption();
@@ -174,9 +188,14 @@ class MainWindow : public QMainWindow
     bool signalDisconnect;
     bool showTrayIcon;
     bool m_graphical;
+    Troa::LocalApi *m_troaApi = nullptr;
+    Troa::ModernShell *m_troaShell = nullptr;
+    Troa::ApplicationContext *m_troaContext = nullptr;
+    void polishMenus();
 
 #ifdef CHECK_FOR_UPDATES
     QNetworkAccessManager m_network_manager; // Used for checking updates
+    void checkForUpdates(bool manual = false);
     void networkManagerFinished(QNetworkReply *reply);
     void updateButtonPressed();
 #endif

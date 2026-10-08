@@ -32,6 +32,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QStringList>
 #include <QXmlStreamReader>
 
@@ -72,16 +73,9 @@ void XMLConfigReader::setJoystick(InputDevice *joystick) { m_joystick = joystick
  */
 void XMLConfigReader::setFileName(QString filename)
 {
-    QFile *temp = new QFile(filename);
-
-    if (temp->exists())
-    {
-        configFile = temp;
-    } else
-    {
-        delete temp;
-        temp = nullptr;
-    }
+    delete configFile;
+    fileName = QFileInfo(filename).absoluteFilePath();
+    configFile = new QFile(fileName);
 }
 
 /**
@@ -97,6 +91,12 @@ void XMLConfigReader::configJoystick(InputDevice *joystick)
 bool XMLConfigReader::read()
 {
     bool error = false;
+    xml->clear();
+    if (configFile == nullptr || !configFile->exists() || m_joystick == nullptr)
+    {
+        xml->raiseError(tr("The controller profile file is unavailable."));
+        return true;
+    }
 
     if ((configFile != nullptr) && configFile->exists() && (m_joystick != nullptr))
     {
@@ -107,7 +107,10 @@ bool XMLConfigReader::read()
             if (configFile->open(QFile::ReadOnly | QFile::Text))
                 xml->setDevice(configFile);
             else
-                WARN() << "Could not open file: " << configFile->fileName();
+            {
+                xml->raiseError(tr("Could not open profile: %1").arg(configFile->errorString()));
+                return true;
+            }
         }
 
         xml->readNextStartElement();

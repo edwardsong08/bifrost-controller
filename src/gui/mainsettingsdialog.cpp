@@ -18,6 +18,7 @@
  */
 
 #include "mainsettingsdialog.h"
+#include "troa/identity.h"
 
 #include "addeditautoprofiledialog.h"
 #include "antimicrosettings.h"
@@ -40,6 +41,7 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QDir>
+#include <QEvent>
 #include <QFileDialog>
 #include <QLabel>
 #include <QList>
@@ -48,6 +50,7 @@
 #include <QLocale>
 #include <QMapIterator>
 #include <QMessageBox>
+#include <QMutexLocker>
 #include <QPushButton>
 #include <QStringList>
 #include <QTableWidgetItem>
@@ -55,9 +58,9 @@
 #include <QVariant>
 #include <QWidget>
 
-static const QString RUNATSTARTUPREGKEY("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run");
-static const QString RUNATSTARTUPLOCATION(QString("%0\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\antimicrox.lnk")
-                                              .arg(QString::fromUtf8(qgetenv("AppData"))));
+static const QString
+    RUNATSTARTUPLOCATION(QString("%0\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\bifrost-controller.lnk")
+                             .arg(QString::fromUtf8(qgetenv("AppData"))));
 
 MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputDevice *> *devices, QWidget *parent)
     : QDialog(parent, Qt::Dialog)
@@ -65,6 +68,25 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+    applyStatus = new QLabel(this);
+    applyStatus->setWordWrap(true);
+    applyStatus->setTextFormat(Qt::PlainText);
+    applyStatus->hide();
+    ui->verticalLayout->insertWidget(ui->verticalLayout->count() - 1, applyStatus);
+    // These controls have no working repeat implementation or saved settings.
+    ui->keyRepeatGroupBox->hide();
+    ui->logLevelNoteLabel->setText(
+        "Apply changes the log level now. Changing the log file path requires reopening Bifrost.");
+    setWindowTitle("Bifrost settings");
+    ui->associateProfilesCheckBox->setText("Register .amgp profiles with Bifrost");
+    ui->associateProfilesCheckBox->setToolTip(
+        "Add Bifrost to Windows Open with. Existing defaults for other apps are preserved.");
+    ui->launchAtWinStartupCheckBox->setToolTip("Start Bifrost Controller when you sign in to Windows.");
+    ui->resetBtn->setText("Reset these settings");
+    ui->categoriesListWidget->item(2)->setText("Legacy app profiles");
+    ui->activeCheckBox->setText("Enable legacy app profiles");
+    ui->activeCheckBox->setToolTip("For native mapping files. Bifrost's Applications page has its own focused-app rules and "
+                                   "takes priority when a rule matches.");
 
     ui->profileOpenDirPushButton->setIcon(
         PadderCommon::loadIcon("document-open", ":/images/actions/document_open_folder.png"));
@@ -82,7 +104,7 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
     bool attachedNumKeypad = settings->value("AttachNumKeypad", false).toBool();
     QString defaultProfileDir = settings->value("DefaultProfileDir", "").toString();
     int numberRecentProfiles = settings->value("NumberRecentProfiles", 5).toInt();
-    bool closeToTray = settings->value("CloseToTray", false).toBool();
+    bool closeToTray = settings->value("CloseToTray", true).toBool();
 
     if (!defaultProfileDir.isEmpty() && QDir(defaultProfileDir).exists())
     {
@@ -99,8 +121,6 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
         ui->closeToTrayCheckBox->setChecked(true);
     }
 
-    changePresetLanguage();
-
 #ifdef Q_OS_WIN
     ui->autoProfileTableWidget->hideColumn(3);
 #endif
@@ -115,19 +135,20 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
         ui->autoProfileDisabledInfo->hide();
     } else
     {
-        delete ui->categoriesListWidget->item(3);
+        delete ui->categoriesListWidget->item(2);
         ui->stackedWidget->removeWidget(ui->autoProfileSettingsPage);
         ui->categoriesListWidget->addItem(tr("AutoProfile (disabled in Wayland)"));
         auto item = ui->categoriesListWidget->item(ui->categoriesListWidget->count() - 1);
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
     }
 #elif !defined(WITH_X11) && defined(Q_OS_UNIX)
-    delete ui->categoriesListWidget->item(3);
+    delete ui->categoriesListWidget->item(2);
     ui->stackedWidget->removeWidget(ui->autoProfileSettingsPage);
 #elif defined(Q_OS_WIN)
     populateAutoProfiles();
     fillAllAutoProfilesTable();
     fillGUIDComboBox();
+    ui->autoProfileDisabledInfo->hide();
 #endif
 
     QString autoProfileActive = settings->value("AutoProfiles/AutoProfilesActive", "").toString();
@@ -193,7 +214,7 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
     ui->showEmptyBatteryNotification->setChecked(settings->value("Notifications/notify_about_empty_battery", true).toBool());
 
 #ifdef Q_OS_WIN
-    bool associateProfiles = settings->value("AssociateProfiles", true).toBool();
+    bool associateProfiles = WinExtras::containsFileAssociationinRegistry();
     if (associateProfiles)
     {
         ui->associateProfilesCheckBox->setChecked(true);
@@ -296,7 +317,25 @@ MainSettingsDialog::MainSettingsDialog(AntiMicroSettings *settings, QList<InputD
             &MainSettingsDialog::mappingsTableItemChanged);
     connect(ui->mappingDeletePushButton, &QPushButton::clicked, this, &MainSettingsDialog::deleteMappingRow);
     connect(ui->mappngInsertPushButton, &QPushButton::clicked, this, &MainSettingsDialog::insertMappingRow);
-    connect(this, &MainSettingsDialog::accepted, this, &MainSettingsDialog::saveNewSettings);
+    const int legacyIndex = ui->stackedWidget->indexOf(ui->autoProfileSettingsPage);
+    if (legacyIndex >= 0)
+    {
+        auto legacy = new QCheckBox("Show legacy app profiles", this);
+        const bool configured = settings->value("AutoProfiles/AutoProfilesActive", false).toBool() ||
+                                !profileList.isEmpty() || !defaultList.isEmpty();
+        legacy->setChecked(configured);
+        legacy->setToolTip(
+            "Compatibility settings for existing AntiMicroX auto profiles. Use App rules for new Bifrost profiles.");
+        ui->categoriesListWidget->item(legacyIndex)->setHidden(!configured);
+        ui->verticalLayout_17->insertWidget(1, legacy);
+        connect(legacy, &QCheckBox::toggled, this, [this, legacyIndex](bool shown) {
+            if (!shown && ui->categoriesListWidget->currentRow() == legacyIndex)
+                ui->categoriesListWidget->setCurrentRow(0);
+            ui->categoriesListWidget->item(legacyIndex)->setHidden(!shown);
+        });
+    }
+    ui->categoriesListWidget->setCurrentRow(0);
+    connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, [this]() { saveNewSettings(); });
     connect(ui->profileOpenDirPushButton, &QPushButton::clicked, this, &MainSettingsDialog::selectDefaultProfileDir);
     connect(ui->activeCheckBox, &QCheckBox::toggled, ui->autoProfileTableWidget, &QTableWidget::setEnabled);
     connect(ui->activeCheckBox, &QCheckBox::toggled, this, &MainSettingsDialog::autoProfileButtonsActiveState);
@@ -504,9 +543,40 @@ void MainSettingsDialog::syncMappingSettings()
     settings->getLock()->unlock();
 }
 
-void MainSettingsDialog::saveNewSettings()
+void MainSettingsDialog::accept()
 {
+    if (saveNewSettings())
+        QDialog::accept();
+}
+
+bool MainSettingsDialog::saveNewSettings()
+{
+    QStringList errors;
+    const auto profileDir = ui->profileDefaultDirLineEdit->text();
+    if (!profileDir.isEmpty() && !QFileInfo(profileDir).isDir())
+    {
+        applyStatus->setText(tr("Choose an existing profile folder before applying settings."));
+        applyStatus->show();
+        return false;
+    }
+    QMap<QString, QVariant> mappingsBefore;
+    {
+        QMutexLocker lock(settings->getLock());
+        settings->beginGroup("Mappings");
+        for (const auto &key : settings->allKeys())
+            mappingsBefore.insert(key, settings->value(key));
+        settings->endGroup();
+    }
     syncMappingSettings();
+    QMap<QString, QVariant> mappingsAfter;
+    {
+        QMutexLocker lock(settings->getLock());
+        settings->beginGroup("Mappings");
+        for (const auto &key : settings->allKeys())
+            mappingsAfter.insert(key, settings->value(key));
+        settings->endGroup();
+    }
+    const bool mappingsChanged = mappingsBefore != mappingsAfter;
 
     settings->getLock()->lock();
     QString oldProfileDir = settings->value("DefaultProfileDir", "").toString();
@@ -531,16 +601,8 @@ void MainSettingsDialog::saveNewSettings()
     int numRecentProfiles = ui->numberRecentProfileSpinBox->value();
     settings->setValue("NumberRecentProfiles", numRecentProfiles);
 
-    if (closeToTray)
-    {
-        settings->setValue("CloseToTray", closeToTray ? "1" : "0");
-    } else
-    {
-        settings->remove("CloseToTray");
-    }
+    settings->setValue("CloseToTray", closeToTray);
     settings->getLock()->unlock();
-
-    checkLocaleChange();
 
 #if defined(WITH_X11)
 
@@ -559,14 +621,13 @@ void MainSettingsDialog::saveNewSettings()
 
     if (ui->launchAtWinStartupCheckBox->isChecked() && !tempFile.exists())
     {
-        if (tempFile.open(QFile::WriteOnly))
-        {
-            QFile currentAppLocation(qApp->applicationFilePath());
-            currentAppLocation.link(QFileInfo(tempFile).absoluteFilePath());
-        }
-    } else if (tempFile.exists() && QFileInfo(tempFile).isWritable())
+        QFile currentAppLocation(Troa::applicationCommand());
+        if (!currentAppLocation.link(QFileInfo(tempFile).absoluteFilePath()))
+            errors.append(tr("Windows startup could not be enabled: %1").arg(currentAppLocation.errorString()));
+    } else if (!ui->launchAtWinStartupCheckBox->isChecked() && tempFile.exists())
     {
-        tempFile.remove();
+        if (!tempFile.remove())
+            errors.append(tr("Windows startup could not be disabled: %1").arg(tempFile.errorString()));
     }
 
     BaseEventHandler *handler = EventHandlerFactory::getInstance()->handler();
@@ -603,12 +664,14 @@ void MainSettingsDialog::saveNewSettings()
     settings->setValue("AssociateProfiles", associateProfiles ? "1" : "0");
 
     bool associationExists = WinExtras::containsFileAssociationinRegistry();
-    if (associateProfiles && !associationExists)
+    if (associateProfiles)
     {
-        WinExtras::writeFileAssocationToRegistry();
+        if (!WinExtras::writeFileAssocationToRegistry())
+            errors.append(tr("Windows profile registration could not be saved."));
     } else if (!associateProfiles && associationExists)
     {
-        WinExtras::removeFileAssociationFromRegistry();
+        if (!WinExtras::removeFileAssociationFromRegistry())
+            errors.append(tr("Windows profile registration could not be removed."));
     }
 
     bool disableEnhancePoint = ui->disableWindowsEnhancedPointCheckBox->isChecked();
@@ -703,6 +766,7 @@ void MainSettingsDialog::saveNewSettings()
     }
 
     // Advanced Tab
+    const bool logFileChanged = settings->value("LogFile").toString() != ui->logFilePathEdit->text();
     settings->setValue("LogFile", ui->logFilePathEdit->text());
     int logLevel = ui->logLevelComboBox->currentIndex();
     if (logLevel < 0)
@@ -714,12 +778,27 @@ void MainSettingsDialog::saveNewSettings()
         logLevel = Logger::LOG_MAX;
     }
     settings->setValue("LogLevel", logLevel);
+    if (Logger::getInstance(false))
+        Logger::setLogLevel(static_cast<Logger::LogLevel>(logLevel));
     // End Advanced Tab
 
     PadderCommon::unlockInputDevices();
 
     settings->sync();
+    if (settings->status() != QSettings::NoError)
+        errors.append(tr("Settings could not be written to disk. Check the settings folder permissions."));
     settings->getLock()->unlock();
+    emit settingsApplied();
+    applyStatus->setText(
+        errors.isEmpty() ? tr("Settings applied. You can continue editing; Cancel keeps changes already applied.")
+                         : tr("Some settings were applied, but these changes need attention:\n%1").arg(errors.join('\n')));
+    if (mappingsChanged)
+        applyStatus->setText(applyStatus->text() + tr("\nDevice layout changes are saved. Close Settings and choose Rescan "
+                                                      "controllers to reconnect with the new layout."));
+    if (logFileChanged)
+        applyStatus->setText(applyStatus->text() + tr("\nThe log file path takes effect the next time Bifrost opens."));
+    applyStatus->show();
+    return errors.isEmpty();
 }
 
 void MainSettingsDialog::selectDefaultProfileDir()
@@ -729,82 +808,6 @@ void MainSettingsDialog::selectDefaultProfileDir()
     if (!directory.isEmpty() && QFileInfo(directory).exists())
     {
         ui->profileDefaultDirLineEdit->setText(directory);
-    }
-}
-
-void MainSettingsDialog::checkLocaleChange()
-{
-    settings->getLock()->lock();
-    int row = ui->localeListWidget->currentRow();
-    if (row == 0)
-    {
-        if (settings->contains("Language"))
-        {
-            settings->remove("Language");
-        }
-
-        settings->getLock()->unlock();
-        emit changeLanguage(QLocale::system().name());
-    } else
-    {
-        QString newLocale = "en";
-
-        switch (row)
-        {
-        case 1: {
-            newLocale = "br";
-            break;
-        }
-        case 2: {
-            newLocale = "en";
-            break;
-        }
-        case 3: {
-            newLocale = "fr";
-            break;
-        }
-        case 4: {
-            newLocale = "de";
-            break;
-        }
-        case 5: {
-            newLocale = "it";
-            break;
-        }
-        case 6: {
-            newLocale = "ja";
-            break;
-        }
-        case 7: {
-            newLocale = "ru";
-            break;
-        }
-        case 8: {
-            newLocale = "sr";
-            break;
-        }
-        case 9: {
-            newLocale = "zh_CN";
-            break;
-        }
-        case 10: {
-            newLocale = "es";
-            break;
-        }
-        case 11: {
-            newLocale = "uk";
-            break;
-        }
-        case 12: {
-            newLocale = "pl";
-            break;
-        }
-        }
-
-        settings->setValue("Language", newLocale);
-
-        settings->getLock()->unlock();
-        emit changeLanguage(newLocale);
     }
 }
 
@@ -1729,57 +1732,6 @@ void MainSettingsDialog::checkSmoothingWidgetStatus(bool enabled)
     }
 }
 
-void MainSettingsDialog::changePresetLanguage()
-{
-    if (settings->contains("Language"))
-    {
-        QString targetLang = settings->value("Language").toString();
-        if (targetLang == "br")
-        {
-            ui->localeListWidget->setCurrentRow(1);
-        } else if (targetLang == "en")
-        {
-            ui->localeListWidget->setCurrentRow(2);
-        } else if (targetLang == "fr")
-        {
-            ui->localeListWidget->setCurrentRow(3);
-        } else if (targetLang == "de")
-        {
-            ui->localeListWidget->setCurrentRow(4);
-        } else if (targetLang == "it")
-        {
-            ui->localeListWidget->setCurrentRow(5);
-        } else if (targetLang == "ja")
-        {
-            ui->localeListWidget->setCurrentRow(6);
-        } else if (targetLang == "ru")
-        {
-            ui->localeListWidget->setCurrentRow(7);
-        } else if (targetLang == "sr")
-        {
-            ui->localeListWidget->setCurrentRow(8);
-        } else if (targetLang == "zh_CN")
-        {
-            ui->localeListWidget->setCurrentRow(9);
-        } else if (targetLang == "es")
-        {
-            ui->localeListWidget->setCurrentRow(10);
-        } else if (targetLang == "uk")
-        {
-            ui->localeListWidget->setCurrentRow(11);
-        } else if (targetLang == "pl")
-        {
-            ui->localeListWidget->setCurrentRow(12);
-        } else
-        {
-            ui->localeListWidget->setCurrentRow(0);
-        }
-    } else
-    {
-        ui->localeListWidget->setCurrentRow(0);
-    }
-}
-
 void MainSettingsDialog::fillSpringScreenPresets()
 {
     ui->springScreenComboBox->clear();
@@ -1874,17 +1826,14 @@ void MainSettingsDialog::on_resetBtn_clicked()
         resetAutoProfSett();
         resetMouseSett();
         resetAdvancedSett();
-        ui->localeListWidget->setCurrentRow(0);
 
         break;
 
     case QMessageBox::Cancel:
-
-        break;
+        return;
 
     default:
-
-        break;
+        return;
     }
 
     QMessageBox msgBox2;
@@ -1920,7 +1869,7 @@ void MainSettingsDialog::resetGeneralSett()
         ui->gamepadPollRateComboBox->setCurrentIndex(gamepadPollIndex);
     }
 
-    ui->closeToTrayCheckBox->setChecked(false);
+    ui->closeToTrayCheckBox->setChecked(true);
     ui->attachNumKeypadCheckbox->setChecked(false);
     ui->launchAtWinStartupCheckBox->setChecked(false);
     ui->traySingleProfileListCheckBox->setChecked(false);

@@ -23,6 +23,7 @@
 #include "uihelpers/gamecontrollermappingdialoghelper.h"
 
 #include <QDialog>
+#include <QStringList>
 
 class InputDevice;
 class AntiMicroSettings;
@@ -88,6 +89,7 @@ class GameControllerMappingDialog : public QDialog
     GameControllerMappingDialogHelper helper;
     int currentDeadZoneValue;
     bool usingGameController;
+    QStringList extraMappings;
 };
 
 #endif // GAMECONTROLLERMAPPINGDIALOG_H

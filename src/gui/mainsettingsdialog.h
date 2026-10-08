@@ -29,6 +29,7 @@ class InputDevice;
 class QWidget;
 class AutoProfileInfo;
 class QTableWidgetItem;
+class QLabel;
 class EditAllDefaultAutoProfileDialog;
 class AddEditAutoProfileDialog;
 
@@ -57,28 +58,29 @@ class MainSettingsDialog : public QDialog
     AutoProfileInfo *getAllDefaultProfile() const;
     QList<InputDevice *> *getConnectedDevices() const;
 
+  public slots:
+    void accept() override;
+
   protected:
+    bool saveNewSettings();
     void fillControllerMappingsTable();                                                       // MainSettingsMapping class
     void insertTempControllerMapping(QHash<QString, QList<QVariant>> &hash, QString newGUID); // MainSettingsMapping class
-    void checkLocaleChange();                                                                 // MainSettingsLang class
     void populateAutoProfiles();                                                              // MainSettingsProfile class
     void fillAutoProfilesTable(QString guid);                                                 // MainSettingsProfile class
     void fillAllAutoProfilesTable();                                                          // MainSettingsProfile class
     void clearAutoProfileData();                                                              // MainSettingsProfile class
-    void changePresetLanguage();                                                              // MainSettingsLang class
     void fillSpringScreenPresets();                                                           // MainSettingsMouse class
     void refreshExtraMouseInfo();                                                             // MainSettingsMouse class
     void convToUniqueIDAutoProfGroupSett(QSettings *sett, QString guidAutoProfSett, QString uniqueAutoProfSett);
 
   signals:
-    void changeLanguage(QString language); // MainSettingsLang class
+    void settingsApplied();
 
   protected slots:
-    void mappingsTableItemChanged(QTableWidgetItem *item); // MainSettingsMapping class
-    void insertMappingRow();                               // MainSettingsMapping class
-    void deleteMappingRow();                               // MainSettingsMapping class
-    void syncMappingSettings();                            // MainSettingsMapping class
-    void saveNewSettings();
+    void mappingsTableItemChanged(QTableWidgetItem *item);                                 // MainSettingsMapping class
+    void insertMappingRow();                                                               // MainSettingsMapping class
+    void deleteMappingRow();                                                               // MainSettingsMapping class
+    void syncMappingSettings();                                                            // MainSettingsMapping class
     void selectDefaultProfileDir();                                                        // MainSettingsProfile class
     void fillGUIDComboBox();                                                               // MainSettingsProfile class
     void changeDeviceForProfileTable(int index);                                           // MainSettingsProfile class
@@ -102,6 +104,7 @@ class MainSettingsDialog : public QDialog
 
   private:
     Ui::MainSettingsDialog *ui;
+    QLabel *applyStatus;
 
     AntiMicroSettings *settings;
 

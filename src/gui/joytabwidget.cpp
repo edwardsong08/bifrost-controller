@@ -46,6 +46,7 @@
 
 #include "gamecontroller/gamecontroller.h"
 #include "gamecontrollermappingdialog.h"
+#include "troa/identity.h"
 
 #include <QAction>
 #include <QComboBox>
@@ -61,8 +62,10 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QStackedWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -78,6 +81,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     verticalLayout = new QVBoxLayout(this);
     verticalLayout->setContentsMargins(4, 4, 4, 4);
+    mappingSummary = new QLabel(this);
+    mappingSummary->setTextFormat(Qt::PlainText);
+    mappingSummary->setWordWrap(true);
+    mappingSummary->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     configHorizontalLayout = new QHBoxLayout();
     configBox = new QComboBox(this);
@@ -108,12 +115,12 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     removeButton = new QPushButton(tr("Remove"), this);
     removeButton->setObjectName(QString::fromUtf8("removeButton"));
-    removeButton->setToolTip(tr("Remove configuration from recent list."));
+    removeButton->setToolTip(tr("Remove this profile from the recent list. The saved file is kept."));
     removeButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     removeButton->setIcon(PadderCommon::loadIcon("user-trash", ":/images/actions/edit_clear_list.png"));
-    configHorizontalLayout->addWidget(removeButton);
+    removeButton->hide();
 
-    loadButton = new QPushButton(tr("Load"), this);
+    loadButton = new QPushButton(tr("Open profile"), this);
     loadButton->setObjectName(QString::fromUtf8("loadButton"));
     loadButton->setToolTip(tr("Load configuration file."));
     loadButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -123,20 +130,33 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     saveButton = new QPushButton(tr("Save"), this);
     saveButton->setObjectName(QString::fromUtf8("saveButton"));
+    saveButton->setProperty("role", "primary");
     saveButton->setToolTip(tr("Save changes to configuration file."));
     saveButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     saveButton->setIcon(PadderCommon::loadIcon("document-save", ":/images/actions/document_save.png"));
     configHorizontalLayout->addWidget(saveButton);
 
-    saveAsButton = new QPushButton(tr("Save As"), this);
+    saveAsButton = new QPushButton(tr("Save a copy"), this);
     saveAsButton->setObjectName(QString::fromUtf8("saveAsButton"));
     saveAsButton->setToolTip(tr("Save changes to a new configuration file."));
     saveAsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     saveAsButton->setIcon(PadderCommon::loadIcon("document-save-as", ":/images/actions/document_save_as.png"));
 
     configHorizontalLayout->addWidget(saveAsButton);
+    auto profileTools = new QToolButton(this);
+    profileTools->setText(tr("More"));
+    profileTools->setAccessibleName(tr("Profile file actions"));
+    profileTools->setPopupMode(QToolButton::InstantPopup);
+    auto profileMenu = new QMenu(profileTools);
+    auto removeRecent = profileMenu->addAction(tr("Remove from recent profiles"));
+    connect(removeRecent, &QAction::triggered, this, &JoyTabWidget::removeConfig);
+    connect(profileMenu, &QMenu::aboutToShow, this,
+            [this, removeRecent]() { removeRecent->setEnabled(configBox->currentIndex() > 0); });
+    profileTools->setMenu(profileMenu);
+    configHorizontalLayout->addWidget(profileTools);
 
     verticalLayout->addLayout(configHorizontalLayout);
+    verticalLayout->addWidget(mappingSummary);
     verticalLayout->setStretchFactor(configHorizontalLayout, 1);
 
     spacer2 = new QSpacerItem(20, 5, QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -319,10 +339,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     horizontalLayout_2->setSpacing(6);
     horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
 
-    setsMenuButton = new QPushButton(tr("Sets"), this);
+    setsMenuButton = new QPushButton(tr("Layouts"), this);
     QMenu *setMenu = new QMenu(setsMenuButton);
-    copySetMenu = new QMenu(tr("Copy from Set"), setMenu);
-    QAction *setSettingsAction = new QAction(tr("Settings"), setMenu);
+    copySetMenu = new QMenu(tr("Copy from layout"), setMenu);
+    QAction *setSettingsAction = new QAction(tr("Name layouts…"), setMenu);
     connect(setSettingsAction, &QAction::triggered, this, &JoyTabWidget::showSetNamesDialog);
     setMenu->addAction(setSettingsAction);
     setMenu->addMenu(copySetMenu);
@@ -432,8 +452,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     stickAssignPushButton->setIcon(icon7);
     horizontalLayout_3->addWidget(stickAssignPushButton);
 
-    gameControllerMappingPushButton = new QPushButton(tr("Controller Mapping"), this);
+    gameControllerMappingPushButton = new QPushButton(tr("Controller layout"), this);
     gameControllerMappingPushButton->setObjectName(QString::fromUtf8("gameControllerMappingPushButton"));
+    gameControllerMappingPushButton->setToolTip(
+        tr("Identify the physical buttons and sticks so standard controller profiles work correctly."));
     gameControllerMappingPushButton->setIcon(
         QIcon::fromTheme(QString::fromUtf8("games_config_options"), QIcon(":/images/actions/games_config_options.png")));
 
@@ -441,15 +463,16 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     gameControllerMappingPushButton->setVisible(false);
     horizontalLayout_3->addWidget(gameControllerMappingPushButton);
 
-    quickSetPushButton = new QPushButton(tr("Quick Set"), this);
+    quickSetPushButton = new QPushButton(tr("Quick assign"), this);
     quickSetPushButton->setObjectName(QString::fromUtf8("quickSetPushButton"));
+    quickSetPushButton->setToolTip(tr("Assign actions by pressing controller inputs in sequence."));
     horizontalLayout_3->addWidget(quickSetPushButton);
 
     QSpacerItem *horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
-    namesPushButton = new QPushButton(tr("Names"), this);
+    namesPushButton = new QPushButton(tr("Action names"), this);
     namesPushButton->setObjectName(QString::fromUtf8("namesPushButton"));
     namesPushButton->setToolTip(tr("Toggle button name displaying."));
     namesPushButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -457,13 +480,13 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     horizontalLayout_3->addWidget(namesPushButton);
 
-    delayButton = new QPushButton(tr("Pref"), this);
+    delayButton = new QPushButton(tr("Profile options"), this);
     delayButton->setObjectName(QString::fromUtf8("delayButton"));
     delayButton->setToolTip(tr("Change global profile settings."));
     delayButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     horizontalLayout_3->addWidget(delayButton);
 
-    resetButton = new QPushButton(tr("Reset"), this);
+    resetButton = new QPushButton(tr("Revert changes"), this);
     resetButton->setObjectName(QString::fromUtf8("resetButton"));
     resetButton->setToolTip(tr("Revert changes to the configuration. Reload configuration file."));
     resetButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -471,6 +494,23 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
 
     horizontalLayout_3->addWidget(resetButton);
 
+    delayButton->hide();
+    resetButton->hide();
+    auto mappingTools = new QToolButton(this);
+    mappingTools->setText(tr("Mapping tools"));
+    mappingTools->setPopupMode(QToolButton::InstantPopup);
+    auto mappingMenu = new QMenu(mappingTools);
+    auto layoutAction = mappingMenu->addAction(tr("Configure controller layout…"));
+    connect(layoutAction, &QAction::triggered, this, &JoyTabWidget::openGameControllerMappingWindow);
+    connect(mappingMenu, &QMenu::aboutToShow, this,
+            [this, layoutAction]() { layoutAction->setEnabled(gameControllerMappingPushButton->isEnabled()); });
+    auto optionsAction = mappingMenu->addAction(tr("Profile options…"));
+    connect(optionsAction, &QAction::triggered, this, &JoyTabWidget::showKeyDelayDialog);
+    mappingMenu->addSeparator();
+    auto revertAction = mappingMenu->addAction(tr("Revert mapping changes…"));
+    connect(revertAction, &QAction::triggered, this, &JoyTabWidget::resetJoystick);
+    mappingTools->setMenu(mappingMenu);
+    horizontalLayout_3->addWidget(mappingTools);
     verticalLayout->addLayout(horizontalLayout_3);
 
     displayingNames = false;
@@ -479,7 +519,7 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     stickAssignPushButton->setVisible(false);
 
     gameControllerMappingPushButton->setEnabled(true);
-    gameControllerMappingPushButton->setVisible(true);
+    gameControllerMappingPushButton->setVisible(false);
 
     checkHideEmptyOption();
 
@@ -507,6 +547,10 @@ JoyTabWidget::JoyTabWidget(InputDevice *joystick, AntiMicroSettings *settings, Q
     connect(this, &JoyTabWidget::joystickConfigChanged, this, &JoyTabWidget::refreshSetButtons);
     connect(this, &JoyTabWidget::joystickConfigChanged, this, &JoyTabWidget::refreshCopySetActions);
     connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::displayProfileEditNotification);
+    connect(joystick, &InputDevice::profileUpdated, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
+    connect(joystick, &InputDevice::mappingSuspensionChanged, this, &JoyTabWidget::refreshMappingSummary,
+            Qt::QueuedConnection);
+    connect(joystick, &InputDevice::profileNameEdited, this, &JoyTabWidget::refreshMappingSummary, Qt::QueuedConnection);
 
     connect(joystick, &InputDevice::requestProfileLoad, this, &JoyTabWidget::loadConfigFile, Qt::QueuedConnection);
 
@@ -624,7 +668,7 @@ void JoyTabWidget::showAxisDialog()
     axisDialog->show();
 }
 
-void JoyTabWidget::saveConfigFile()
+bool JoyTabWidget::saveConfigFile()
 {
     int index = configBox->currentIndex();
 
@@ -632,7 +676,10 @@ void JoyTabWidget::saveConfigFile()
 
     int numberRecentProfiles = m_settings->value("NumberRecentProfiles", DEFAULTNUMBERPROFILES).toInt();
     QString filename = QString();
-    if (index == 0)
+    const auto compiledDir = QDir::cleanPath(Troa::profileDirectory() + "/compiled/") + "/";
+    const bool compiled =
+        QDir::cleanPath(configBox->itemData(index).toString()).startsWith(compiledDir, Qt::CaseInsensitive);
+    if (index == 0 || compiled)
     {
         QString lookupDir = PadderCommon::preferredProfileDir(m_settings);
         m_settings->getLock()->unlock();
@@ -718,8 +765,10 @@ void JoyTabWidget::saveConfigFile()
 
                 emit joystickConfigChanged(m_joystick->getJoyNumber());
             }
+            return true;
         }
     }
+    return false;
 }
 
 void JoyTabWidget::resetJoystick()
@@ -1232,6 +1281,38 @@ int JoyTabWidget::getCurrentConfigIndex() { return configBox->currentIndex(); }
 
 QString JoyTabWidget::getCurrentConfigName() { return configBox->currentText(); }
 
+QString JoyTabWidget::currentProfilePath()
+{
+    auto reader = tabHelper.getReader();
+    const auto path = configBox->currentData().toString();
+    return configBox->currentIndex() > 0 && reader && !reader->hasError() &&
+                   QFileInfo(reader->getFileName())
+                           .absoluteFilePath()
+                           .compare(QFileInfo(path).absoluteFilePath(), Qt::CaseInsensitive) == 0
+               ? path
+               : QString();
+}
+
+bool JoyTabWidget::loadProfileNow(const QString &path)
+{
+    if (m_joystick->isDeviceEdited())
+        return false;
+    const auto absolute = QFileInfo(path).absoluteFilePath();
+    if (currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0)
+        return true;
+    {
+        // Keep the inherited user's combo-box flow queued. Only explicit API/application loads
+        // block its signals, then load synchronously so status never claims a pending selection.
+        const QSignalBlocker blocker(configBox);
+        loadConfigFile(absolute);
+    }
+    if (configBox->currentData().toString().compare(absolute, Qt::CaseInsensitive) != 0)
+        return false;
+    changeJoyConfig(configBox->currentIndex());
+    emit joystickConfigChanged(m_joystick->getJoyNumber());
+    return currentProfilePath().compare(absolute, Qt::CaseInsensitive) == 0;
+}
+
 QString JoyTabWidget::getConfigName(int index) { return configBox->itemText(index); }
 
 // Switch widget to currently selected Set
@@ -1316,6 +1397,7 @@ void JoyTabWidget::changeCurrentSet(int index)
         activeSetButton->style()->unpolish(activeSetButton);
         activeSetButton->style()->polish(activeSetButton);
     }
+    refreshMappingSummary();
 }
 
 void JoyTabWidget::changeSetOne() { m_joystick->setActiveSetNumber(0); }
@@ -1350,7 +1432,7 @@ void JoyTabWidget::loadConfigFile(QString fileLocation)
     {
         int numberRecentProfiles = m_settings->value("NumberRecentProfiles", DEFAULTNUMBERPROFILES).toInt();
         QFileInfo fileinfo(fileLocation);
-        if (fileinfo.exists() && ((fileinfo.suffix() == "xml") || (fileinfo.suffix() == "amgp")))
+        if (fileinfo.exists() && ((fileinfo.suffix().toLower() == "xml") || (fileinfo.suffix().toLower() == "amgp")))
         {
             qDebug() << "Loading config file: " << fileLocation;
             int searchIndex = configBox->findData(fileinfo.absoluteFilePath());
@@ -1418,9 +1500,14 @@ InputDevice *JoyTabWidget::getJoystick() { return m_joystick; }
 
 void JoyTabWidget::removeConfig()
 {
-    int currentIndex = configBox->currentIndex();
-    if (currentIndex > 0)
+    const auto currentPath = configBox->currentData().toString();
+    if (configBox->currentIndex() > 0)
     {
+        if (!discardUnsavedProfileChanges())
+            return;
+        const int currentIndex = configBox->findData(currentPath);
+        if (currentIndex <= 0)
+            return;
         configBox->removeItem(currentIndex);
         saveDeviceSettings(true);
         emit joystickConfigChanged(m_joystick->getJoyNumber());
@@ -1525,15 +1612,49 @@ void JoyTabWidget::refreshSetButtons()
             tempSetButton->setText(tempNameEscaped);
             tempSetButton->setToolTip(tempName);
 
-            tempSetAction->setText(tr("Set").append(" %1: %2").arg(i + 1).arg(tempNameEscaped));
+            tempSetAction->setText(tr("Layout").append(" %1: %2").arg(i + 1).arg(tempNameEscaped));
         } else
         {
             tempSetButton->setText(QString::number(i + 1));
             tempSetButton->setToolTip("");
 
-            tempSetAction->setText(tr("Set").append(" %1").arg(i + 1));
+            tempSetAction->setText(tr("Layout").append(" %1").arg(i + 1));
         }
     }
+    refreshMappingSummary();
+}
+
+void JoyTabWidget::refreshMappingSummary()
+{
+    const auto set = m_joystick->getActiveSetJoystick();
+    if (!set)
+        return;
+    const auto profile = m_joystick->getProfileName();
+    QStringList lines;
+    if (m_joystick->isMappingSuspended())
+        lines.append(tr("Native controller mode · Keyboard/mouse output paused; assignments are preserved."));
+    lines.append(tr("Active mapping: %1 · Layout: %2")
+                     .arg(profile.isEmpty() ? tr("Unsaved mapping") : profile)
+                     .arg(set->getName().isEmpty() ? QString::number(set->getIndex() + 1) : set->getName()));
+    const JoyControlStick::JoyStickDirections directions[] = {JoyControlStick::StickUp, JoyControlStick::StickRight,
+                                                              JoyControlStick::StickDown, JoyControlStick::StickLeft};
+    for (int index = 0; index < 2; ++index)
+    {
+        const auto stick = set->getJoyStick(index);
+        if (!stick)
+            continue;
+        QStringList assignments;
+        for (const auto direction : directions)
+        {
+            const auto button = stick->getDirectionButton(direction);
+            assignments.append(button && !button->getAssignedSlots()->isEmpty() ? button->getSlotsSummary()
+                                                                                : tr("Unassigned"));
+        }
+        lines.append(tr("%1 — Up: %2 · Right: %3 · Down: %4 · Left: %5")
+                         .arg(index == 0 ? tr("Left stick") : tr("Right stick"))
+                         .arg(assignments.at(0), assignments.at(1), assignments.at(2), assignments.at(3)));
+    }
+    mappingSummary->setText(lines.join('\n'));
 }
 
 void JoyTabWidget::displayProfileEditNotification()
@@ -1561,18 +1682,18 @@ void JoyTabWidget::removeProfileEditNotification()
 void JoyTabWidget::retranslateUi()
 {
     removeButton->setText(tr("Remove"));
-    removeButton->setToolTip(tr("Remove configuration from recent list."));
+    removeButton->setToolTip(tr("Remove this profile from the recent list. The saved file is kept."));
 
-    loadButton->setText(tr("Load"));
+    loadButton->setText(tr("Open profile"));
     loadButton->setToolTip(tr("Load configuration file."));
 
     saveButton->setText(tr("Save"));
     saveButton->setToolTip(tr("Save changes to configuration file."));
 
-    saveAsButton->setText(tr("Save As"));
+    saveAsButton->setText(tr("Save a copy"));
     saveAsButton->setToolTip(tr("Save changes to a new configuration file."));
 
-    setsMenuButton->setText(tr("Sets"));
+    setsMenuButton->setText(tr("Layouts"));
     setAction1->setText(tr("Set 1"));
     setAction2->setText(tr("Set 2"));
     setAction3->setText(tr("Set 3"));
@@ -1585,24 +1706,25 @@ void JoyTabWidget::retranslateUi()
     refreshSetButtons();
     refreshCopySetActions();
 
-    gameControllerMappingPushButton->setText(tr("Controller Mapping"));
+    gameControllerMappingPushButton->setText(tr("Controller layout"));
     stickAssignPushButton->setText(tr("Stick/Pad Assign"));
-    quickSetPushButton->setText(tr("Quick Set"));
-    resetButton->setText(tr("Reset"));
+    quickSetPushButton->setText(tr("Quick assign"));
+    resetButton->setText(tr("Revert changes"));
 
-    namesPushButton->setText(tr("Names"));
+    namesPushButton->setText(tr("Action names"));
     namesPushButton->setToolTip(tr("Toggle button name displaying."));
 
-    delayButton->setText(tr("Pref"));
+    delayButton->setText(tr("Profile options"));
     delayButton->setToolTip(tr("Change global profile settings."));
 
-    resetButton->setText(tr("Reset"));
+    resetButton->setText(tr("Revert changes"));
     resetButton->setToolTip(tr("Revert changes to the configuration. Reload configuration file."));
     refreshButtons();
 }
 
 void JoyTabWidget::checkForUnsavedProfile(int newindex)
 {
+    const auto targetPath = configBox->itemData(newindex).toString();
     if (m_joystick->isDeviceEdited())
     {
         disconnectCheckUnsavedEvent();
@@ -1632,13 +1754,15 @@ void JoyTabWidget::checkForUnsavedProfile(int newindex)
         switch (status)
         {
         case QMessageBox::Save: {
-            saveConfigFile();
+            const bool saved = saveConfigFile();
             reconnectCheckUnsavedEvent();
             reconnectMainComboBoxEvents();
 
-            if (newindex > -1)
+            if (saved && newindex > -1)
             {
-                configBox->setCurrentIndex(newindex);
+                const int target = targetPath.isEmpty() ? 0 : configBox->findData(targetPath);
+                if (target >= 0)
+                    configBox->setCurrentIndex(target);
             }
 
             break;
@@ -1694,18 +1818,13 @@ bool JoyTabWidget::discardUnsavedProfileChanges()
         switch (status)
         {
         case QMessageBox::Save: {
-            saveConfigFile();
-            if ((currentIndex == 0) && (currentIndex == configBox->currentIndex()))
-            {
-                discarded = false;
-            }
+            discarded = saveConfigFile();
 
             break;
         }
         case QMessageBox::Discard: {
             m_joystick->revertProfileEdited();
             configBox->setItemText(currentIndex, oldProfileName);
-            resetJoystick();
 
             break;
         }
@@ -1947,6 +2066,10 @@ void JoyTabWidget::fillSetButtons(SetJoystick *set)
 
     for (int j = 0; j < m_joystick->getNumberSticks(); j++)
     {
+        if (auto controller = qobject_cast<GameController *>(m_joystick))
+            if (j < 2 && (!SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j * 2)) ||
+                          !SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j * 2 + 1))))
+                continue;
         JoyControlStick *stick = currentSet->getJoyStick(j);
         stick->establishPropertyUpdatedConnection();
         QHash<JoyControlStick::JoyStickDirections, JoyControlStickButton *> *stickButtons = stick->getButtons();
@@ -2203,6 +2326,10 @@ void JoyTabWidget::fillSetButtons(SetJoystick *set)
 
     for (int j = 0; j < m_joystick->getNumberAxes(); j++)
     {
+        if (auto controller = qobject_cast<GameController *>(m_joystick))
+            if (j < SDL_CONTROLLER_AXIS_MAX &&
+                !SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j)))
+                continue;
         JoyAxis *axis = currentSet->getJoyAxis(j);
 
         if (!axis->isPartControlStick() && axis->hasControlOfButtons())
@@ -2246,6 +2373,9 @@ void JoyTabWidget::fillSetButtons(SetJoystick *set)
 
     for (int j = 0; j < m_joystick->getNumberButtons(); j++)
     {
+        if (auto controller = qobject_cast<GameController *>(m_joystick))
+            if (!controller->supportsButton(j))
+                continue;
         JoyButton *button = currentSet->getJoyButton(j);
         if ((button != nullptr) && !button->isPartVDPad())
         {
@@ -2298,7 +2428,7 @@ void JoyTabWidget::fillSetButtons(SetJoystick *set)
 
     if (current_layout->count() == 0)
     {
-        QLabel *newlabel = new QLabel(tr("No buttons have been assigned. Please use Quick Set to assign keys\nto buttons or "
+        QLabel *newlabel = new QLabel(tr("No controls are visible. Use Quick assign to map inputs, or "
                                          "disable hiding empty buttons."));
         current_layout->addWidget(newlabel, 0, 0, Qt::AlignCenter);
     }
@@ -2360,6 +2490,10 @@ void JoyTabWidget::removeSetButtons(SetJoystick *set)
 
     for (int j = 0; j < m_joystick->getNumberSticks(); j++)
     {
+        if (auto controller = qobject_cast<GameController *>(m_joystick))
+            if (j < 2 && (!SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j * 2)) ||
+                          !SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j * 2 + 1))))
+                continue;
         JoyControlStick *stick = currentSet->getJoyStick(j);
         stick->disconnectPropertyUpdatedConnection();
         QHash<JoyControlStick::JoyStickDirections, JoyControlStickButton *> *stickButtons = stick->getButtons();
@@ -2408,6 +2542,10 @@ void JoyTabWidget::removeSetButtons(SetJoystick *set)
 
     for (int j = 0; j < m_joystick->getNumberAxes(); j++)
     {
+        if (auto controller = qobject_cast<GameController *>(m_joystick))
+            if (j < SDL_CONTROLLER_AXIS_MAX &&
+                !SDL_GameControllerHasAxis(controller->getController(), SDL_GameControllerAxis(j)))
+                continue;
         JoyAxis *axis = currentSet->getJoyAxis(j);
 
         if (!axis->isPartControlStick() && axis->hasControlOfButtons())

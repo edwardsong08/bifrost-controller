@@ -1,0 +1,26 @@
+; SPDX-License-Identifier: GPL-3.0-or-later
+; Publish the installed release only after required payload files exist.
+IfFileExists "$INSTDIR\versions\@BIFROST_RELEASE@\bin\bifrost-controller.exe" 0 bifrost_incomplete
+IfFileExists "$INSTDIR\versions\@BIFROST_RELEASE@\bin\bifrost-controller-mcp.exe" 0 bifrost_incomplete
+@BIFROST_NSIS_REQUIRED_FILES@
+IfFileExists "$INSTDIR\versions\@BIFROST_RELEASE@\bin\platforms\qwindows.dll" 0 bifrost_incomplete
+IfFileExists "$INSTDIR\versions\@BIFROST_RELEASE@\share\antimicrox\gamecontrollerdb.txt" 0 bifrost_incomplete
+IfFileExists "$INSTDIR\bifrost-launcher.exe" 0 bifrost_incomplete
+IfFileExists "$INSTDIR\bifrost-mcp-host.exe" 0 bifrost_incomplete
+ClearErrors
+FileOpen $0 "$INSTDIR\current.next" w
+IfErrors bifrost_incomplete
+FileWrite $0 "@BIFROST_RELEASE@"
+FileClose $0
+IfErrors bifrost_incomplete
+; REPLACE_EXISTING | WRITE_THROUGH. Open launchers allow delete sharing.
+System::Call 'kernel32::MoveFileExW(w "$INSTDIR\current.next", w "$INSTDIR\current.txt", i 9) i .r0'
+StrCmp $0 0 bifrost_incomplete
+DetailPrint "Bifrost @BIFROST_RELEASE@ installed. Codex can stay open."
+Goto bifrost_upgrade_done
+bifrost_incomplete:
+Delete "$INSTDIR\current.next"
+MessageBox MB_OK|MB_ICONSTOP "The new release is incomplete and was not activated. Your previous release and personal profiles were kept. Run setup again."
+Abort
+bifrost_upgrade_done:
+SetOverwrite on

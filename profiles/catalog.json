@@ -1,0 +1,1149 @@
+[
+  {
+    "schema_version": 1,
+    "id": "builtin-desktop",
+    "name": "Desktop Essentials",
+    "description": "A starting layout for desktop navigation: left stick moves the pointer, right stick scrolls vertically and horizontally, D-pad provides arrow keys, face buttons provide clicks and shortcuts, and shoulders also scroll. See the assignments below for your controller's button names.",
+    "category": "desktop",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [
+      {
+        "input": "a",
+        "label": "Select",
+        "mouse_button": 1
+      },
+      {
+        "input": "b",
+        "label": "Context menu",
+        "mouse_button": 3
+      },
+      {
+        "input": "x",
+        "label": "Confirm",
+        "keys": [
+          "Enter"
+        ]
+      },
+      {
+        "input": "y",
+        "label": "Next field",
+        "keys": [
+          "Tab"
+        ]
+      },
+      {
+        "input": "back",
+        "label": "Cancel",
+        "keys": [
+          "Escape"
+        ]
+      },
+      {
+        "input": "start",
+        "label": "Switch app",
+        "keys": [
+          "Alt",
+          "Tab"
+        ]
+      },
+      {
+        "input": "left_shoulder",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_shoulder",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "left_stick_up",
+        "label": "Move pointer",
+        "mouse_move": "up"
+      },
+      {
+        "input": "left_stick_right",
+        "label": "Move pointer",
+        "mouse_move": "right"
+      },
+      {
+        "input": "left_stick_down",
+        "label": "Move pointer",
+        "mouse_move": "down"
+      },
+      {
+        "input": "left_stick_left",
+        "label": "Move pointer",
+        "mouse_move": "left"
+      },
+      {
+        "input": "right_stick_up",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_stick_right",
+        "label": "Scroll right",
+        "mouse_button": 7
+      },
+      {
+        "input": "right_stick_down",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
+      },
+      {
+        "input": "dpad_up",
+        "keys": [
+          "Up"
+        ]
+      },
+      {
+        "input": "dpad_down",
+        "keys": [
+          "Down"
+        ]
+      },
+      {
+        "input": "dpad_left",
+        "keys": [
+          "Left"
+        ]
+      },
+      {
+        "input": "dpad_right",
+        "keys": [
+          "Right"
+        ]
+      }
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-browser",
+    "name": "Browser Essentials",
+    "description": "A starting browser layout: left stick moves the pointer, right stick scrolls vertically and horizontally, face buttons provide clicks, the address bar and find, shoulders also scroll, and the D-pad provides history and tab navigation. See the assignments below for your controller's button names. Works at the browser application level.",
+    "category": "browser",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [
+      {
+        "input": "a",
+        "label": "Select",
+        "mouse_button": 1
+      },
+      {
+        "input": "b",
+        "label": "Context menu",
+        "mouse_button": 3
+      },
+      {
+        "input": "x",
+        "label": "Address bar",
+        "keys": [
+          "Ctrl",
+          "L"
+        ]
+      },
+      {
+        "input": "y",
+        "label": "Find on page",
+        "keys": [
+          "Ctrl",
+          "F"
+        ]
+      },
+      {
+        "input": "back",
+        "label": "Cancel",
+        "keys": [
+          "Escape"
+        ]
+      },
+      {
+        "input": "start",
+        "label": "Confirm",
+        "keys": [
+          "Enter"
+        ]
+      },
+      {
+        "input": "left_shoulder",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_shoulder",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "dpad_left",
+        "label": "Previous page",
+        "keys": [
+          "Alt",
+          "Left"
+        ]
+      },
+      {
+        "input": "dpad_right",
+        "label": "Next page",
+        "keys": [
+          "Alt",
+          "Right"
+        ]
+      },
+      {
+        "input": "dpad_up",
+        "label": "Previous tab",
+        "keys": [
+          "Ctrl",
+          "Shift",
+          "Tab"
+        ]
+      },
+      {
+        "input": "dpad_down",
+        "label": "Next tab",
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ]
+      },
+      {
+        "input": "right_stick_up",
+        "label": "Scroll up",
+        "mouse_button": 4
+      },
+      {
+        "input": "right_stick_right",
+        "label": "Scroll right",
+        "mouse_button": 7
+      },
+      {
+        "input": "right_stick_down",
+        "label": "Scroll down",
+        "mouse_button": 5
+      },
+      {
+        "input": "right_stick_left",
+        "label": "Scroll left",
+        "mouse_button": 6
+      },
+      {
+        "input": "left_stick_up",
+        "label": "Move pointer",
+        "mouse_move": "up"
+      },
+      {
+        "input": "left_stick_right",
+        "label": "Move pointer",
+        "mouse_move": "right"
+      },
+      {
+        "input": "left_stick_down",
+        "label": "Move pointer",
+        "mouse_move": "down"
+      },
+      {
+        "input": "left_stick_left",
+        "label": "Move pointer",
+        "mouse_move": "left"
+      }
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-sto-dualsense",
+    "name": "Star Trek Online - PS5-style (PC)",
+    "description": "DualSense starting template for default PC keyboard bindings. Layout 1 Space, 2 Ground, 3 Menus. This is console-inspired, not the console UI: no ability wheels or conditional power automation. Ground: Cross jumps; Circle and D-pad Up interact; R3 is unassigned. Left stick moves; right stick moves the mouse pointer. Hold L2 for ground camera drag, R3 for space camera drag, while moving the right stick. Ability buttons use numbered PC tray slots: arrange your powers to match the labels. Add an Applications rule for GameClient.exe and reserve Create (SDL button 4) to cycle these layouts; the template leaves Create unassigned. PC camera, pitch and keybind settings can differ. No game/hardware testing performed.",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Space",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "b",
+            "label": "Tactical shortcut: tray 1 slot 3",
+            "keys": [
+              "3"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Science shortcut: tray 1 slot 1",
+            "keys": [
+              "1"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Engineering shortcut: tray 1 slot 2",
+            "keys": [
+              "2"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu / cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Ship/item shortcut: tray 1 slot 5",
+            "keys": [
+              "5"
+            ]
+          },
+          {
+            "input": "left_trigger",
+            "label": "Captain shortcut: tray 1 slot 6",
+            "keys": [
+              "6"
+            ]
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Fire torpedoes",
+            "keys": [
+              "Ctrl",
+              "Space"
+            ]
+          },
+          {
+            "input": "right_trigger",
+            "label": "Fire energy weapons",
+            "keys": [
+              "Space"
+            ]
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Distribute shield power",
+            "keys": [
+              "Delete"
+            ]
+          },
+          {
+            "input": "right_stick_press",
+            "label": "Hold for camera drag with right stick",
+            "mouse_button": 3
+          },
+          {
+            "input": "dpad_up",
+            "label": "Increase throttle",
+            "keys": [
+              "E"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Decrease throttle",
+            "keys": [
+              "Q"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Scan",
+            "keys": [
+              "V"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Cycle target",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "left_stick_up",
+            "label": "Pitch up (default non-inverted PC controls)",
+            "keys": [
+              "S"
+            ]
+          },
+          {
+            "input": "left_stick_down",
+            "label": "Pitch down",
+            "keys": [
+              "W"
+            ]
+          },
+          {
+            "input": "left_stick_left",
+            "label": "Turn left",
+            "keys": [
+              "A"
+            ]
+          },
+          {
+            "input": "left_stick_right",
+            "label": "Turn right",
+            "keys": [
+              "D"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Ground",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Jump (use F / menu layout to interact)",
+            "keys": [
+              "Space"
+            ]
+          },
+          {
+            "input": "b",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Kit/item shortcut: tray 1 slot 4",
+            "keys": [
+              "4"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Swap weapon",
+            "keys": [
+              "Z"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu / cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Captain shortcut: tray 1 slot 5",
+            "keys": [
+              "5"
+            ]
+          },
+          {
+            "input": "left_trigger",
+            "label": "Hold for camera drag with right stick",
+            "mouse_button": 3
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Secondary attack / tray 1 slot 2",
+            "keys": [
+              "2"
+            ]
+          },
+          {
+            "input": "right_trigger",
+            "label": "Primary attack / tray 1 slot 1",
+            "keys": [
+              "1"
+            ]
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Hold to sprint",
+            "keys": [
+              "Shift"
+            ]
+          },
+          {
+            "input": "dpad_up",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Holster / unholster",
+            "keys": [
+              "H"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Scan",
+            "keys": [
+              "V"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Cycle target",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "left_stick_up",
+            "label": "Move forward",
+            "keys": [
+              "W"
+            ]
+          },
+          {
+            "input": "left_stick_down",
+            "label": "Move backward",
+            "keys": [
+              "S"
+            ]
+          },
+          {
+            "input": "left_stick_left",
+            "label": "Strafe left",
+            "keys": [
+              "Q"
+            ]
+          },
+          {
+            "input": "left_stick_right",
+            "label": "Strafe right",
+            "keys": [
+              "E"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Select",
+            "mouse_button": 1
+          },
+          {
+            "input": "b",
+            "label": "Cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Map",
+            "keys": [
+              "M"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Scroll up",
+            "mouse_button": 4
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Scroll down",
+            "mouse_button": 5
+          },
+          {
+            "input": "left_trigger",
+            "label": "Context / camera drag",
+            "mouse_button": 3
+          },
+          {
+            "input": "right_trigger",
+            "label": "Select",
+            "mouse_button": 1
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Confirm",
+            "keys": [
+              "Enter"
+            ]
+          },
+          {
+            "input": "right_stick_press",
+            "label": "Next field",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "dpad_up",
+            "label": "Navigate",
+            "keys": [
+              "Up"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Navigate",
+            "keys": [
+              "Right"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Navigate",
+            "keys": [
+              "Down"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Navigate",
+            "keys": [
+              "Left"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "schema_version": 1,
+    "id": "builtin-sto-xbox",
+    "name": "Star Trek Online - Xbox-style (PC)",
+    "description": "Xbox starting template for default PC keyboard bindings: Space, Ground and Menus. Console-inspired PC mapping; no console ability wheels or conditional automation. A jumps on Ground; D-pad Up interacts. Hold LT for ground camera drag or right stick click in Space. Powers use numbered tray slots; arrange them to match the labels. Reserve View / Back (SDL button 4) in an Applications rule for GameClient.exe to cycle layouts. Standard Xbox controls work without Elite paddles. Hardware and gameplay are untested.",
+    "category": "game",
+    "controller": "sdl-gamecontroller",
+    "dead_zone": 8000,
+    "bindings": [],
+    "layouts": [
+      {
+        "set": 1,
+        "name": "Space",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "b",
+            "label": "Tactical shortcut: tray 1 slot 3",
+            "keys": [
+              "3"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Science shortcut: tray 1 slot 1",
+            "keys": [
+              "1"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Engineering shortcut: tray 1 slot 2",
+            "keys": [
+              "2"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu / cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Ship/item shortcut: tray 1 slot 5",
+            "keys": [
+              "5"
+            ]
+          },
+          {
+            "input": "left_trigger",
+            "label": "Captain shortcut: tray 1 slot 6",
+            "keys": [
+              "6"
+            ]
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Fire torpedoes",
+            "keys": [
+              "Ctrl",
+              "Space"
+            ]
+          },
+          {
+            "input": "right_trigger",
+            "label": "Fire energy weapons",
+            "keys": [
+              "Space"
+            ]
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Distribute shield power",
+            "keys": [
+              "Delete"
+            ]
+          },
+          {
+            "input": "right_stick_press",
+            "label": "Hold for camera drag with right stick",
+            "mouse_button": 3
+          },
+          {
+            "input": "dpad_up",
+            "label": "Increase throttle",
+            "keys": [
+              "E"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Decrease throttle",
+            "keys": [
+              "Q"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Scan",
+            "keys": [
+              "V"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Cycle target",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "left_stick_up",
+            "label": "Pitch up (default non-inverted PC controls)",
+            "keys": [
+              "S"
+            ]
+          },
+          {
+            "input": "left_stick_down",
+            "label": "Pitch down",
+            "keys": [
+              "W"
+            ]
+          },
+          {
+            "input": "left_stick_left",
+            "label": "Turn left",
+            "keys": [
+              "A"
+            ]
+          },
+          {
+            "input": "left_stick_right",
+            "label": "Turn right",
+            "keys": [
+              "D"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      },
+      {
+        "set": 2,
+        "name": "Ground",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Jump (use F / menu layout to interact)",
+            "keys": [
+              "Space"
+            ]
+          },
+          {
+            "input": "b",
+            "label": "Melee / tray 1 slot 3",
+            "keys": [
+              "3"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Kit/item shortcut: tray 1 slot 4",
+            "keys": [
+              "4"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Swap weapon",
+            "keys": [
+              "Z"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu / cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Captain shortcut: tray 1 slot 5",
+            "keys": [
+              "5"
+            ]
+          },
+          {
+            "input": "left_trigger",
+            "label": "Hold for camera drag with right stick",
+            "mouse_button": 3
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Secondary attack / tray 1 slot 2",
+            "keys": [
+              "2"
+            ]
+          },
+          {
+            "input": "right_trigger",
+            "label": "Primary attack / tray 1 slot 1",
+            "keys": [
+              "1"
+            ]
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Hold to sprint",
+            "keys": [
+              "Shift"
+            ]
+          },
+          {
+            "input": "right_stick_press",
+            "label": "Crouch",
+            "keys": [
+              "C"
+            ]
+          },
+          {
+            "input": "dpad_up",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Holster / unholster",
+            "keys": [
+              "H"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Scan",
+            "keys": [
+              "V"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Cycle target",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "left_stick_up",
+            "label": "Move forward",
+            "keys": [
+              "W"
+            ]
+          },
+          {
+            "input": "left_stick_down",
+            "label": "Move backward",
+            "keys": [
+              "S"
+            ]
+          },
+          {
+            "input": "left_stick_left",
+            "label": "Strafe left",
+            "keys": [
+              "Q"
+            ]
+          },
+          {
+            "input": "left_stick_right",
+            "label": "Strafe right",
+            "keys": [
+              "E"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      },
+      {
+        "set": 3,
+        "name": "Menus",
+        "bindings": [
+          {
+            "input": "a",
+            "label": "Select",
+            "mouse_button": 1
+          },
+          {
+            "input": "b",
+            "label": "Cancel",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "x",
+            "label": "Interact",
+            "keys": [
+              "F"
+            ]
+          },
+          {
+            "input": "y",
+            "label": "Map",
+            "keys": [
+              "M"
+            ]
+          },
+          {
+            "input": "start",
+            "label": "Game menu",
+            "keys": [
+              "Escape"
+            ]
+          },
+          {
+            "input": "left_shoulder",
+            "label": "Scroll up",
+            "mouse_button": 4
+          },
+          {
+            "input": "right_shoulder",
+            "label": "Scroll down",
+            "mouse_button": 5
+          },
+          {
+            "input": "left_trigger",
+            "label": "Context / camera drag",
+            "mouse_button": 3
+          },
+          {
+            "input": "right_trigger",
+            "label": "Select",
+            "mouse_button": 1
+          },
+          {
+            "input": "left_stick_press",
+            "label": "Confirm",
+            "keys": [
+              "Enter"
+            ]
+          },
+          {
+            "input": "right_stick_press",
+            "label": "Next field",
+            "keys": [
+              "Tab"
+            ]
+          },
+          {
+            "input": "dpad_up",
+            "label": "Navigate",
+            "keys": [
+              "Up"
+            ]
+          },
+          {
+            "input": "dpad_right",
+            "label": "Navigate",
+            "keys": [
+              "Right"
+            ]
+          },
+          {
+            "input": "dpad_down",
+            "label": "Navigate",
+            "keys": [
+              "Down"
+            ]
+          },
+          {
+            "input": "dpad_left",
+            "label": "Navigate",
+            "keys": [
+              "Left"
+            ]
+          },
+          {
+            "input": "right_stick_up",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "up"
+          },
+          {
+            "input": "right_stick_right",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "right"
+          },
+          {
+            "input": "right_stick_down",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "down"
+          },
+          {
+            "input": "right_stick_left",
+            "label": "Pointer / camera while camera drag is held",
+            "mouse_move": "left"
+          }
+        ]
+      }
+    ]
+  }
+]
