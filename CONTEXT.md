@@ -496,3 +496,49 @@ User must install manually, restart Bifrost, reapply the template and save/expor
 again for App rules. No uninstall normally required. Installed app and personal
 configuration were not changed. No automated, visual, installer-execution,
 hardware or gameplay tests; manual acceptance remains with the owner.
+
+## 2026-10-07 - Owner STO Space camera assignment correction
+
+Read-only live MCP showed Bifrost 0.1.11, DualSense active Space, no unsaved edits,
+but both loaded mapping and STO app rule still referenced the older 2d3b78f3
+revision with R3 camera hold. Exported current bundled 461cdb8b revision, applied
+it to instance:0 in Space, and updated the existing STO rule to that export,
+preserving Create/Share cycling only Space/Ground/Menus and executable/device.
+Readback confirmed the active path and saved rule use the new revision; native
+Space right-stick directions contain right-mouse hold plus mouse movement.
+Old compiled file remains available. No source/input-engine changes, reinstall,
+restart, injected input or gameplay tests. Owner should focus STO and try the stick;
+actual in-game camera behavior remains unverified.
+
+## 2026-10-07 - Personal STO Ground Shooter adjustment
+
+Owner authorized L2 Aim / R2 shooting adjustment. Read current bundled revision,
+live Ground controller without unsaved edits, and existing rule. Saved personal
+profile personal-sto-dualsense-shooter revision 683191ef: Ground L2 = X Aim,
+R2 = left mouse primary fire, R1 = right mouse secondary fire, right stick =
+mouse look for STO Shooter mode. Space/Menus and other controls unchanged.
+Exported, activated in Ground, updated existing STO rule to personal export;
+Create still cycles only Space/Ground/Menus. MCP readback confirmed assignment.
+Requires owner to enable STO Ground Shooter mode (default B); game setting not
+changed. Bundled catalog and public release unchanged. No injected input or
+hardware/gameplay tests; in-game acceptance remains with owner. No reinstall.
+
+## 2026-10-07 - Assistant MCP numbered-step layout correction
+
+Owner screenshot showed all three numbered circles overlapping their headings.
+Shared label helper uses QSizePolicy::Ignored horizontally; step badges now use
+Fixed sizing and no word wrapping so layout reserves their 30px width. Wrapped
+heading/description live in a separate expanding content widget with zero inner
+margins; existing 14px gap remains. Same layout applies in both color themes.
+Formatted modernshell.cpp with clang-format 14.0.0. No app/visual tests per owner
+instruction. No local Qt build environment; compile/package not performed for
+this change. Source change only; installed 0.1.11 and public installer unchanged.
+
+## 2026-10-07 - 0.1.12 installer preparation
+
+Owner authorized publishing an installer containing the Assistant MCP step layout
+fix and updating the public TROA download. Version bumped to 0.1.12, matching GPL
+source archive name. Only app UI sizing/version metadata changes; personal STO
+Shooter profile remains a local personal mapping, not a bundled catalog change.
+Formatting 14.0.0 and diff whitespace checks passed; Windows compilation and
+packaging pending. No application, visual, hardware or gameplay tests.

@@ -108,14 +108,20 @@ QWidget *step(const QString &number, const QString &title, const QString &descri
     layout->setContentsMargins(0, 3, 0, 3);
     layout->setSpacing(14);
     auto badge = label(number, "step");
+    badge->setWordWrap(false);
+    badge->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     badge->setAlignment(Qt::AlignCenter);
     badge->setFixedSize(30, 30);
     layout->addWidget(badge, 0, Qt::AlignTop);
-    auto text = new QVBoxLayout;
+    auto content = new QWidget;
+    content->setMinimumWidth(0);
+    content->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    auto text = new QVBoxLayout(content);
+    text->setContentsMargins(0, 0, 0, 0);
     text->setSpacing(4);
     text->addWidget(label(title, "heading"));
     text->addWidget(label(description, "muted"));
-    layout->addLayout(text, 1);
+    layout->addWidget(content, 1);
     return widget;
 }
 QString companionPath()
