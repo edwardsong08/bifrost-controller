@@ -1,6 +1,6 @@
 # Star Trek Online - PS5-style controls on PC
 
-This community starting template uses a PS5 DualSense through SDL's standard
+This official Bifrost starting template uses a PS5 DualSense through SDL's standard
 game-controller mapping, with default PC keyboard binds. It is an independently
 maintained, console-inspired layout, not an official console controller port.
 The owner approved the closest practical layout after discussing these limits.

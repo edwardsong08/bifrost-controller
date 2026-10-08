@@ -583,3 +583,33 @@ automatic approval review rejected confirmation because production interruption
 was not specifically authorized. Owner approval requested; restart not performed.
 Installer release and all four default templates are published. Live TROA
 installer delivery verification remains pending until routing recovers.
+
+## 2026-10-07 - Live 0.1.12 delivery and Cloudflare investigation
+
+Owner explicitly approved one website container restart after the earlier
+approval rejection. Coolify restart trh1kmrapmgi6h4bgteepl7i completed at
+21:23:27 EDT; initial follow-up still returned 502. Site recovered by 21:27:49
+EDT without further configuration changes. Original Ray a471550589bbc472 was
+not retained in Cloudflare sampled logs. Related Controller readback Ray
+ a47159609dfb4397 at 21:24:59 EDT shows edge 502, origin 502, Dynamic cache,
+Not mitigated and Not an exploit. Confirms origin-side gateway failure, not a
+Cloudflare security block; precise Caddy/container cause remains unconfirmed.
+No Cloudflare settings, proxy configuration or additional restarts performed.
+
+Public verification at 2026-10-08T01:29:37Z: Controller page HTTP 200 with
+0.1.12 source/hash; download endpoint 307 to the exact v0.1.12-preview installer;
+asset HTTP 200, 18,421,974 bytes, SHA256
+ce1af4b538aa2c447eb8703a8130a6f50630b7bfdf5ea7389ff08d3860c9dcde.
+Evidence saved in ignored .local-downloads/live-installer-022-verification.json.
+Owner manual installation remains unchanged; no app/gameplay tests.
+
+## 2026-10-07 - Official default template revision policy
+
+Owner clarified that his revisions update official defaults in place unless he
+explicitly requests a separate named community template. Recorded policy in
+AGENTS.md and docs/profiles/template-policy.md. One official template per game
+and controller family; modes remain layouts; stable builtin IDs retained.
+Existing catalog-v3 STO defaults already contain all requested corrections in
+0.1.12. No new variant added, installed app restarted, personal copy deleted or
+saved mapping overwritten. Clarified the STO guide's Bifrost ownership wording.
+Static catalog inspection only; no app, automated or gameplay tests.
