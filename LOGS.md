@@ -556,3 +556,29 @@ Personal profiles are preserved; library refresh requires reapply/export for
 existing mappings. v2 remains compatible for older clients. Documented the new
 defaults. Supersedes the layout-only 0.1.12 build before publishing; rebuild now
 includes both requested changes. No automated, visual or gameplay tests.
+
+## 2026-10-07 - Controller 0.1.12 release delivery
+
+Published v0.1.12-preview release 406306299 from exact e183b79bdf2a651c3a22c5da71db2410a2f5736f.
+Windows Actions 37710952653 and formatting 37710956715 passed; preview artifact
+11522082937, installer layout evidence 11521649911. Source archive matches build
+commit bytes; packaged PE dependencies and versioned upgrade layout inspected.
+Installer 18,421,974 bytes, SHA256
+ce1af4b538aa2c447eb8703a8130a6f50630b7bfdf5ea7389ff08d3860c9dcde.
+All four STO v3 templates now default to Ground Shooter controls plus prior
+Space camera, Interact, no-crouch corrections. Assistant MCP step overlap fixed.
+Owner must enable STO Ground Shooter mode and reapply/export library mappings;
+existing personal/active mappings and installed app were not replaced.
+Website PR #112 merged at ecc65bb08a1b783b97702e0674c5193d2b10d481; typecheck passed.
+Live deployment readback pending. Native PR #1 remains draft/unmerged. No app,
+visual, installer-execution, hardware or gameplay tests.
+
+## 2026-10-07 - Public website rollout status
+
+Coolify deployment qendqml0cnldj2r0246urivy built and rolled out website merge
+#112; new container reports Next.js ready on configured port 3000. Public page
+readback returned HTTP 502 after rollout. Requested one website-only restart;
+automatic approval review rejected confirmation because production interruption
+was not specifically authorized. Owner approval requested; restart not performed.
+Installer release and all four default templates are published. Live TROA
+installer delivery verification remains pending until routing recovers.
