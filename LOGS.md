@@ -612,3 +612,34 @@ Existing catalog-v3 STO defaults already contain all requested corrections in
 0.1.12. No new variant added, installed app restarted, personal copy deleted or
 saved mapping overwritten. Clarified the STO guide's Bifrost ownership wording.
 Static catalog inspection only; no app, automated or gameplay tests.
+
+## 2026-10-07 - Consolidate owner STO mapping and prepare fixed page headers
+
+Connected DualSense had no unsaved changes. Exported the shared default revision
+76b8bff4a83e126716a6c2e174d4647141be04c1eac8b7f2190cf8fe2d873aae,
+updated star-trek-online-dualsense rule to its compiled native mapping, and
+activated Space set 1. Create/Share still cycles only Space/Ground/Menus.
+Moved redundant personal-sto-dualsense-shooter.json into profiles/archived
+with dated filename, preserving compiled files/history. MCP list confirms only
+the four shared STO variants remain; context confirms active/shared rule path.
+Re-entering Profile library refreshes the visible list without restarting.
+
+Owner screenshot shows partially clipped page-introduction text below the app
+header when scrolled. Shared scrollPage now keeps section heading/description
+outside its scroll viewport, preventing those header fragments across workspace
+pages. Exact clang-format 14 and whitespace inspection passed. Source fix only;
+not compiled, visually tested, published or included in installed 0.1.12 yet.
+No app restart or gameplay tests.
+
+## 2026-10-23 - Daybreak Blue signed community catalog candidate
+
+Prepared Ed25519 signed catalog distribution for live updates. The app verifies
+the download and cached envelope against its bundled public key before applying
+templates. Listing resolves the signed catalog once instead of per template.
+Old unsigned cache remains on disk but cannot override defaults.
+Added a signer and a Windows build integrity gate requiring the signed payload
+to match the bundled catalog. `python scripts/community_catalog_sign.py --verify`
+passed for 105385 payload bytes; `git diff --check` and exact clang-format
+14.0.0 checks passed. CMake is unavailable locally, so compile/package remains
+open. No automated, app, visual, hardware, or gameplay tests
+were run. The local ignored signing key needs durable owner custody before release.

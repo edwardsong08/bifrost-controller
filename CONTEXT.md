@@ -1,5 +1,16 @@
 # Bifrost Controller context
 
+## Daybreak Blue signed catalog candidate - 2026-10-23
+
+Owner chose to keep live community profile updates with signing. This isolated
+candidate downloads a signed Ed25519 envelope, checks exact payload bytes before
+installing, and checks the signed cache again on read. Bundled defaults, personal
+profiles, active mappings, and update controls remain in place. The legacy
+unsigned cache is retained but ignored; offline users see bundled defaults until
+their first signed download. `profiles/SIGNING.md` documents signing and key
+custody. The candidate key is local and ignored, pending durable owner custody.
+No Windows compile/package, app, automated, visual, or hardware tests are claimed.
+
 ## 0.1.7 installation while Codex stays open - 2026-10-06
 
 Owner reported needing to close Bifrost and Codex for every installer update.
@@ -613,3 +624,21 @@ Existing catalog-v3 STO defaults already contain all requested corrections in
 0.1.12. No new variant added, installed app restarted, personal copy deleted or
 saved mapping overwritten. Clarified the STO guide's Bifrost ownership wording.
 Static catalog inspection only; no app, automated or gameplay tests.
+
+## 2026-10-07 - Consolidate owner STO mapping and prepare fixed page headers
+
+Connected DualSense had no unsaved changes. Exported the shared default revision
+76b8bff4a83e126716a6c2e174d4647141be04c1eac8b7f2190cf8fe2d873aae,
+updated star-trek-online-dualsense rule to its compiled native mapping, and
+activated Space set 1. Create/Share still cycles only Space/Ground/Menus.
+Moved redundant personal-sto-dualsense-shooter.json into profiles/archived
+with dated filename, preserving compiled files/history. MCP list confirms only
+the four shared STO variants remain; context confirms active/shared rule path.
+Re-entering Profile library refreshes the visible list without restarting.
+
+Owner screenshot shows partially clipped page-introduction text below the app
+header when scrolled. Shared scrollPage now keeps section heading/description
+outside its scroll viewport, preventing those header fragments across workspace
+pages. Exact clang-format 14 and whitespace inspection passed. Source fix only;
+not compiled, visually tested, published or included in installed 0.1.12 yet.
+No app restart or gameplay tests.

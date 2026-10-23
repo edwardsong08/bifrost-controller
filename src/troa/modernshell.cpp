@@ -93,13 +93,35 @@ QVBoxLayout *cardLayout(QWidget *widget)
 }
 QWidget *scrollPage(QWidget *content)
 {
+    auto page = new QWidget;
+    auto layout = new QVBoxLayout(page);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(12);
+    // Keep the page identity outside the viewport so scrolling cannot leave
+    // clipped title/description fragments immediately below the app header.
+    auto contentLayout = content->layout();
+    if (contentLayout && contentLayout->count() >= 2)
+    {
+        auto heading = qobject_cast<QLabel *>(contentLayout->itemAt(0)->widget());
+        auto description = qobject_cast<QLabel *>(contentLayout->itemAt(1)->widget());
+        if (heading && heading->property("role").toString() == "section" && description)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                auto item = contentLayout->takeAt(0);
+                layout->addWidget(item->widget());
+                delete item;
+            }
+        }
+    }
     auto scroll = new QScrollArea;
     scroll->setObjectName("troaPageScroll");
     scroll->setFrameShape(QFrame::NoFrame);
     scroll->setWidgetResizable(true);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroll->setWidget(content);
-    return scroll;
+    layout->addWidget(scroll, 1);
+    return page;
 }
 QWidget *step(const QString &number, const QString &title, const QString &description)
 {
@@ -946,14 +968,14 @@ void ModernShell::updateCommunityProfiles()
     m_updateProfiles->setEnabled(false);
     m_catalogStatus->setText("Checking for community profiles…");
     const QUrl url("https://raw.githubusercontent.com/edwardsong08/bifrost-controller/"
-                   "codex/troa-controller-mapper/profiles/catalog-v3.json");
+                   "codex/troa-controller-mapper/profiles/catalog-v3.signed.json");
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setRawHeader("User-Agent", "Bifrost-Controller-Community-Profiles");
     request.setRawHeader("Cache-Control", "no-cache");
     auto reply = m_catalogNetwork->get(request);
     m_catalogReply = reply;
-    reply->setReadBufferSize(256 * 1024 + 1);
+    reply->setReadBufferSize(384 * 1024 + 1);
     auto timeout = new QTimer(reply);
     timeout->setSingleShot(true);
     connect(timeout, &QTimer::timeout, reply, &QNetworkReply::abort);
@@ -962,7 +984,7 @@ void ModernShell::updateCommunityProfiles()
         auto bytes = reply->property("catalog_bytes").toByteArray();
         bytes += reply->readAll();
         reply->setProperty("catalog_bytes", bytes);
-        if (bytes.size() > 256 * 1024)
+        if (bytes.size() > 384 * 1024)
             reply->abort();
     });
     connect(reply, &QNetworkReply::finished, this, [this, reply, timeout, url]() {
