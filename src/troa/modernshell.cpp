@@ -968,14 +968,14 @@ void ModernShell::updateCommunityProfiles()
     m_updateProfiles->setEnabled(false);
     m_catalogStatus->setText("Checking for community profiles…");
     const QUrl url("https://raw.githubusercontent.com/edwardsong08/bifrost-controller/"
-                   "codex/troa-controller-mapper/profiles/catalog-v3.json");
+                   "codex/troa-controller-mapper/profiles/catalog-v3.signed.json");
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
     request.setRawHeader("User-Agent", "Bifrost-Controller-Community-Profiles");
     request.setRawHeader("Cache-Control", "no-cache");
     auto reply = m_catalogNetwork->get(request);
     m_catalogReply = reply;
-    reply->setReadBufferSize(256 * 1024 + 1);
+    reply->setReadBufferSize(384 * 1024 + 1);
     auto timeout = new QTimer(reply);
     timeout->setSingleShot(true);
     connect(timeout, &QTimer::timeout, reply, &QNetworkReply::abort);
@@ -984,7 +984,7 @@ void ModernShell::updateCommunityProfiles()
         auto bytes = reply->property("catalog_bytes").toByteArray();
         bytes += reply->readAll();
         reply->setProperty("catalog_bytes", bytes);
-        if (bytes.size() > 256 * 1024)
+        if (bytes.size() > 384 * 1024)
             reply->abort();
     });
     connect(reply, &QNetworkReply::finished, this, [this, reply, timeout, url]() {

@@ -630,3 +630,16 @@ outside its scroll viewport, preventing those header fragments across workspace
 pages. Exact clang-format 14 and whitespace inspection passed. Source fix only;
 not compiled, visually tested, published or included in installed 0.1.12 yet.
 No app restart or gameplay tests.
+
+## 2026-10-23 - Daybreak Blue signed community catalog candidate
+
+Prepared Ed25519 signed catalog distribution for live updates. The app verifies
+the download and cached envelope against its bundled public key before applying
+templates. Listing resolves the signed catalog once instead of per template.
+Old unsigned cache remains on disk but cannot override defaults.
+Added a signer and a Windows build integrity gate requiring the signed payload
+to match the bundled catalog. `python scripts/community_catalog_sign.py --verify`
+passed for 105385 payload bytes; `git diff --check` and exact clang-format
+14.0.0 checks passed. CMake is unavailable locally, so compile/package remains
+open. No automated, app, visual, hardware, or gameplay tests
+were run. The local ignored signing key needs durable owner custody before release.

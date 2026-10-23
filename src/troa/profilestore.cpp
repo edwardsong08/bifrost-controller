@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "profilestore.h"
+#include "catalogsignature.h"
 #include "controllersupport.h"
 #include "identity.h"
 #include "joycontrolstickdirectionstype.h"
@@ -161,10 +162,13 @@ QJsonArray ProfileStore::catalog()
     QJsonArray result;
     if (file.open(QIODevice::ReadOnly))
         result = QJsonDocument::fromJson(file.readAll()).array();
-    QFile cache(QDir(dataDirectory()).filePath("community-catalog-v3.json"));
-    if (!cache.open(QIODevice::ReadOnly) || cache.size() > 256 * 1024)
+    QFile cache(QDir(dataDirectory()).filePath("community-catalog-v3.signed.json"));
+    if (!cache.open(QIODevice::ReadOnly) || cache.size() > 384 * 1024)
         return result;
-    const auto downloaded = QJsonDocument::fromJson(cache.readAll()).array();
+    const auto payload = verifiedCatalogPayload(cache.readAll());
+    if (payload.isEmpty())
+        return result;
+    const auto downloaded = QJsonDocument::fromJson(payload).array();
     for (const auto &value : downloaded)
     {
         const auto profile = value.toObject();
@@ -183,10 +187,13 @@ QJsonArray ProfileStore::catalog()
 }
 QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
 {
-    if (bytes.size() > 256 * 1024)
+    if (bytes.size() > 384 * 1024)
         return failure("Community download is too large. Existing profiles were kept.");
+    const auto payload = verifiedCatalogPayload(bytes);
+    if (payload.isEmpty())
+        return failure("Community download signature is invalid. Existing profiles were kept.");
     QJsonParseError error;
-    const auto document = QJsonDocument::fromJson(bytes, &error);
+    const auto document = QJsonDocument::fromJson(payload, &error);
     if (error.error != QJsonParseError::NoError || !document.isArray() || document.array().isEmpty() ||
         document.array().size() > 100)
         return failure("Invalid community download. Existing profiles were kept.");
@@ -206,16 +213,13 @@ QJsonObject ProfileStore::installCatalog(const QByteArray &bytes)
     }
     if (!QDir().mkpath(dataDirectory()))
         return failure("Could not create the community cache folder.");
-    const auto path = QDir(dataDirectory()).filePath("community-catalog-v3.json");
+    const auto path = QDir(dataDirectory()).filePath("community-catalog-v3.signed.json");
     QFile existing(path);
-    // Cache formatting must not inflate a valid bounded download past the same size limit.
-    const auto normalized = document.toJson(QJsonDocument::Compact);
-    if (normalized.size() > 256 * 1024)
-        return failure("Community download is too large. Existing profiles were kept.");
-    const bool unchanged = existing.open(QIODevice::ReadOnly) && existing.readAll() == normalized;
+    // Keep the signed bytes intact so the cache can be verified on every read.
+    const bool unchanged = existing.open(QIODevice::ReadOnly) && existing.readAll() == bytes;
     existing.close();
     QSaveFile cache(path);
-    if (!unchanged && (!cache.open(QIODevice::WriteOnly) || cache.write(normalized) != normalized.size() || !cache.commit()))
+    if (!unchanged && (!cache.open(QIODevice::WriteOnly) || cache.write(bytes) != bytes.size() || !cache.commit()))
         return failure("Could not save community templates. Existing profiles were kept.");
     return {{"count", document.array().size()}, {"changed", !unchanged}};
 }
@@ -373,18 +377,10 @@ QJsonObject ProfileStore::read(const QString &id) const
 QJsonArray ProfileStore::list() const
 {
     QJsonArray result;
-    QStringList ids;
-    for (const auto &value : catalog())
-        ids.append(value.toObject().value("id").toString());
-    for (const auto &file : QDir(profileDirectory()).entryList({"*.json"}, QDir::Files))
-        if (!file.startsWith("builtin-"))
-            ids.append(QFileInfo(file).completeBaseName());
-    for (const auto &id : ids)
-    {
-        const auto item = read(id);
-        if (item.contains("error"))
-            continue;
-        auto summary = item.value("profile").toObject();
+    const auto appendSummary = [&result](const QJsonObject &profile, bool bundled) {
+        if (profile.isEmpty() || !ProfileStore::validate(profile).isEmpty())
+            return;
+        auto summary = profile;
         int bindingCount = summary.value("bindings").toArray().size();
         for (const auto &value : summary.value("layouts").toArray())
             bindingCount += value.toObject().value("bindings").toArray().size();
@@ -392,10 +388,16 @@ QJsonArray ProfileStore::list() const
         summary.remove("bindings");
         summary.remove("layouts");
         summary.insert("binding_count", bindingCount);
-        summary.insert("revision", item.value("revision"));
-        summary.insert("bundled", item.value("bundled"));
+        summary.insert("revision", ProfileStore::revision(profile));
+        summary.insert("bundled", bundled);
         result.append(summary);
-    }
+    };
+    // Resolve and verify the signed catalog once per listing, not once per template.
+    for (const auto &value : catalog())
+        appendSummary(value.toObject(), true);
+    for (const auto &file : QDir(profileDirectory()).entryList({"*.json"}, QDir::Files))
+        if (!file.startsWith("builtin-"))
+            appendSummary(readFile(path(QFileInfo(file).completeBaseName())), false);
     return result;
 }
 QJsonObject ProfileStore::save(const QJsonObject &profile, const QString &expectedRevision) const

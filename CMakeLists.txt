@@ -577,6 +577,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(BIFROST_SDL3_COMPAT "Package the SDL3 physical-controller runtime behind the SDL2 API" OFF)
 set(SDL_REQUIRED_VERSION 2.0.14)
 find_package(SDL2 2.0.14 REQUIRED)
+find_package(OpenSSL 1.1.1 REQUIRED COMPONENTS Crypto)
 
 # Others
 if(WITH_X11)
@@ -661,12 +662,14 @@ target_link_libraries(antimicrox
         ${X11_LIBS}
         ${SDL2_LIBRARIES}
         ${EXTRA_LIBS}
+        OpenSSL::Crypto
         )
 
 # Retain the internal target name to keep inherited platform/build logic intact.
 set_target_properties(antimicrox PROPERTIES OUTPUT_NAME "bifrost-controller")
 target_sources(antimicrox PRIVATE
     src/troa/identity.h
+    src/troa/catalogsignature.h src/troa/catalogsignature.cpp
     src/troa/controllersupport.h src/troa/controllersupport.cpp
     src/troa/profilestore.h src/troa/profilestore.cpp
     src/troa/localapi.h src/troa/localapi.cpp
@@ -795,27 +798,26 @@ if(WIN32)
     endif(QT_VERSION_MAJOR EQUAL 5)
     
 
+    find_file(LIBCRYPTO_DLL_FILE
+        NAMES libcrypto-1_1-x64.dll libcrypto-3-x64.dll libcrypto-1_1.dll libcrypto-3.dll
+        HINTS "${SDL2_LIBRARY_DIRS}/../bin" "${CMAKE_INSTALL_PREFIX}/bin" "$ENV{PATH}"
+    )
+    if(NOT LIBCRYPTO_DLL_FILE)
+        message(FATAL_ERROR "Signed community catalog requires the OpenSSL Crypto DLL in Windows packages.")
+    endif()
+    list(APPEND DLL_FILES "${LIBCRYPTO_DLL_FILE}")
+
     if(CHECK_FOR_UPDATES)
         message("Searching for SSL DLLs.")
-
-        find_file(LIBCRYPTO_DLL_FILE
-            NAMES libcrypto-1_1-x64.dll libcrypto-3-x64.dll libcrypto-1_1.dll libcrypto-3.dll
-            HINTS "${SDL2_LIBRARY_DIRS}/../bin" "${CMAKE_INSTALL_PREFIX}/bin" "$ENV{PATH}"
-        )
-
         find_file(LIBSSL_DLL_FILE
             NAMES libssl-1_1-x64.dll libssl-3-x64.dll libssl-1_1.dll libssl-3.dll
             HINTS "${SDL2_LIBRARY_DIRS}/../bin" "${CMAKE_INSTALL_PREFIX}/bin" "$ENV{PATH}"
         )
-
-        if(LIBCRYPTO_DLL_FILE AND LIBSSL_DLL_FILE)
-            list(APPEND DLL_FILES
-                "${LIBCRYPTO_DLL_FILE}"
-                "${LIBSSL_DLL_FILE}"
-            )
+        if(LIBSSL_DLL_FILE)
+            list(APPEND DLL_FILES "${LIBSSL_DLL_FILE}")
         else()
-            message(WARNING "CHECK_FOR_UPDATES is enabled, but required OpenSSL DLL(s) were not found. "
-                            "Package will be built without libcrypto/libssl files.")
+            message(WARNING "CHECK_FOR_UPDATES is enabled, but the OpenSSL SSL DLL was not found. "
+                            "HTTPS may be unavailable in this package.")
         endif()
     endif(CHECK_FOR_UPDATES)
 

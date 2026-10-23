@@ -1,5 +1,16 @@
 # Bifrost Controller context
 
+## Daybreak Blue signed catalog candidate - 2026-10-23
+
+Owner chose to keep live community profile updates with signing. This isolated
+candidate downloads a signed Ed25519 envelope, checks exact payload bytes before
+installing, and checks the signed cache again on read. Bundled defaults, personal
+profiles, active mappings, and update controls remain in place. The legacy
+unsigned cache is retained but ignored; offline users see bundled defaults until
+their first signed download. `profiles/SIGNING.md` documents signing and key
+custody. The candidate key is local and ignored, pending durable owner custody.
+No Windows compile/package, app, automated, visual, or hardware tests are claimed.
+
 ## 0.1.7 installation while Codex stays open - 2026-10-06
 
 Owner reported needing to close Bifrost and Codex for every installer update.
